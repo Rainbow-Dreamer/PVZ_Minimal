@@ -1,8 +1,15 @@
+import os, sys
 from tkinter import *
 from tkinter import ttk
-from pvz_config import *
 from PIL import Image, ImageTk
 import datetime, time, random, keyboard
+import time, random, pygame, os
+from copy import deepcopy
+current_dir = os.getcwd()
+config_path = os.path.join(current_dir, "pvz_config.py")
+with open(config_path, encoding='utf-8') as f:
+    datas = f.read()
+    exec(datas, globals())
 
 
 class Root(Tk):

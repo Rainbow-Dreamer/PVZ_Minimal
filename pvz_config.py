@@ -1,9 +1,8 @@
-import time, random, pygame, os
-from copy import deepcopy
 pygame.mixer.init()
 now_time = time.time()
 start_time = 5
 os.chdir('resource/')
+
 
 def sounds(x):
     return pygame.mixer.Sound(x).get_raw()
