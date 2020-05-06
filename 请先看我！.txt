@@ -1,0 +1,3 @@
+如果您的电脑里有安装python，那么请在这个文件夹的路径下打开cmd，运行pip install -r requirements.txt
+如果您的电脑里没有安装python，那么请等我做一个exe版本，不过可以先到python.org安装一下python，
+再按照上面说的有安装python的指导就可以玩了。
