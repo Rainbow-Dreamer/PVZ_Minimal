@@ -302,12 +302,6 @@ plant_dict = {
 whole_plants = [get_plant(i) for i in plant_dict]
 NULL, PLACE, REMOVE, PAUSE = 0, 1, 2, 3
 choosed_plants = []
-configuration = '''
-for each in whole_plants:
-    each.price = 0
-    each.cooling_time = 0
-'''
-exec(configuration)
 zombies_dict = {
     '普通僵尸':
     zombies(
