@@ -274,7 +274,7 @@ plant_dict = {
           price=25,
           hp=5,
           cooling_time=30,
-          attack_interval=0,
+          attack_interval=15,
           bullet_img='UnarmedPotatoMine.png',
           bullet_attack=90,
           bullet_sound=(sounds('sounds/dirt_rise.ogg'),
@@ -350,26 +350,26 @@ zombies_dict = {
 }
 
 part1 = [
-    get_zombies(random.choice(['普通僵尸', '路障僵尸', '铁桶僵尸']), random.randint(0, 4),
-                8, random.randint(1, 60)) for i in range(20)
+    get_zombies(random.choice(['普通僵尸', '路障僵尸']), random.randint(0, 4),
+                8, random.randint(1, 120)) for i in range(20)
 ]
 
 part2 = [
-    get_zombies(random.choice(['普通僵尸', '路障僵尸', '铁桶僵尸']), random.randint(0, 4),
-                8, random.randint(1, 60)) for i in range(20)
+    get_zombies(random.choice(['普通僵尸', '路障僵尸']), random.randint(0, 4),
+                8, random.randint(1, 120)) for i in range(20)
 ]
 
 part3 = [
-    get_zombies(random.choice(['普通僵尸', '路障僵尸']), random.randint(0, 4), 8,
-                random.randint(1, 60)) for i in range(50)
+    get_zombies(random.choices(['普通僵尸', '路障僵尸','铁桶僵尸'],[0.45,0.45,0.1])[0], random.randint(0, 4), 8,
+                random.randint(1, 60)) for i in range(20)
 ]
 big_wave1 = [
-    get_zombies(random.choice(['普通僵尸', '路障僵尸']), random.randint(0, 4), 8,
-                random.randint(1, 5)) for i in range(50)
+    get_zombies('普通僵尸', random.randint(0, 4), 8,
+                random.randint(1, 5)) for i in range(25)
 ]
 big_wave2 = [
     get_zombies(random.choice(['普通僵尸', '路障僵尸']), random.randint(0, 4), 8,
-                random.randint(1, 5)) for i in range(50)
+                random.randint(1, 5)) for i in range(25)
 ]
 current_stage = Stage(2)
 current_stage.set_normal(0, part1)
