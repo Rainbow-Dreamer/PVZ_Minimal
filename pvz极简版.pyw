@@ -496,7 +496,7 @@ class Root(Tk):
                 if q.status == 1 and [q.rows, q.columns] in around
             ]
             for each in around_zombies:
-                each.hp -= 90
+                each.hp -= cherry_block.plants.bullet_attack
                 if each.hp <= 0:
                     each.status = 0
                     self.killed_zombies += 1
@@ -519,7 +519,7 @@ class Root(Tk):
             hit_zombies_middle = [x for x in hit_zombies if x.columns == j]
             if len(hit_zombies_middle) != 0:
                 for each in hit_zombies_middle:
-                    each.hp -= 90
+                    each.hp -= squash_block.plants.bullet_attack
                     if each.hp <= 0:
                         each.status = 0
                         self.killed_zombies += 1
@@ -533,7 +533,7 @@ class Root(Tk):
                 ]
                 if len(hit_zombies_right) != 0:
                     for each in hit_zombies_right:
-                        each.hp -= 90
+                        each.hp -= squash_block.plants.bullet_attack
                         if each.hp <= 0:
                             each.status = 0
                             self.killed_zombies += 1
@@ -547,7 +547,7 @@ class Root(Tk):
                     ]
                     if len(hit_zombies_left) != 0:
                         for each in hit_zombies_left:
-                            each.hp -= 90
+                            each.hp -= squash_block.plants.bullet_attack
                             if each.hp <= 0:
                                 each.status = 0
                                 self.killed_zombies += 1
@@ -569,7 +569,7 @@ class Root(Tk):
         if len(attack_zombies) != 0:
             potato_check.plants.bullet_sound[1].play()
             for each in attack_zombies:
-                each.hp -= 90
+                each.hp -= potato_check.plants.bullet_attack
                 if each.hp <= 0:
                     each.status = 0
                     self.killed_zombies += 1
@@ -602,7 +602,7 @@ class Root(Tk):
                 x for x in self.whole_zombies if x.status == 1 and x.rows == i
             ]
             for each in attack_zombies:
-                each.hp -= 90
+                each.hp -= jalapeno_blocks.plants.bullet_attack
                 if each.hp <= 0:
                     each.status = 0
                     self.killed_zombies += 1
