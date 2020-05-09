@@ -377,9 +377,16 @@ class Root(Tk):
                     x for x in self.whole_zombies
                     if x.rows == i and x.status == 1
                 ]
-                if any(x.columns + 1 + x.adjust_col == j for x in zombie_row):
-                    zombie_row.sort(key=lambda y: y.columns + 1 + y.adjust_col)
-                    hitted_zombies = zombie_row[0]
+                passed_time = time.time() - self.zombie_time
+                affect_zombies = [
+                    x for x in zombie_row if x.columns + 1 + x.adjust_col == j
+                ]
+                if affect_zombies:
+                    affect_zombies.sort(
+                        key=lambda k:
+                        (passed_time - k.appear_time) / k.move_speed,
+                        reverse=True)
+                    hitted_zombies = affect_zombies[0]
                     hitted_zombies.hp -= obj.attack
                     if type(hitted_zombies.hit_sound) == list:
                         random.choice(hitted_zombies.hit_sound).play()
