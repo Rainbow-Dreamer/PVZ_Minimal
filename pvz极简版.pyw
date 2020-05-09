@@ -147,12 +147,16 @@ class Root(Tk):
         self.zombie_bar = ttk.LabelFrame(self)
         self.zombie_bar_normal_labels = []
         self.zombie_bar_wave_labels = []
+        unit_width = int(50 / (current_stage.num_of_waves +
+                               (current_stage.num_of_waves + 1) * 5))
+        long_width = unit_width * 5
+        short_width = unit_width
         counter = 6 * current_stage.num_of_waves + 4
         for k in range(current_stage.num_of_waves * 2 + 1):
             if k % 2 == 0:
                 normal_labels = []
                 for j in range(5):
-                    current_bar = ttk.Label(self.zombie_bar, width=2)
+                    current_bar = ttk.Label(self.zombie_bar, width=short_width)
                     current_bar.grid(row=0, column=counter - j)
                     normal_labels.append(current_bar)
                 self.zombie_bar_normal_labels.append(normal_labels)
@@ -160,7 +164,7 @@ class Root(Tk):
             else:
                 current_bar = ttk.Label(self.zombie_bar,
                                         image=self.flag_img,
-                                        width=10)
+                                        width=long_width)
                 current_bar.grid(row=0, column=counter)
                 self.zombie_bar_wave_labels.append(current_bar)
                 counter -= 1
