@@ -259,9 +259,9 @@ plant_dict = {
     '窝瓜':
     plant(name='窝瓜',
           img='Squash1.png',
-          price=0,
+          price=50,
           hp=5,
-          cooling_time=0,
+          cooling_time=30,
           attack_interval=1.5,
           bullet_attack=10,
           bullet_sound=([
