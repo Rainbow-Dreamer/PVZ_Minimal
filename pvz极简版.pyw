@@ -52,39 +52,45 @@ class Root(Tk):
         self.plants_already_choosed.grid(sticky='w')
         self.choose_plants_screen = ttk.LabelFrame(self)
         self.choose_buttons = []
-        self.append_plants_buttons = []
-        for i in range(len(whole_plants)):
+        self.num_plants = len(whole_plants)
+        for i in range(self.num_plants):
+            current_plant = whole_plants[i]
+            current_plant.number = i
             current_button = ttk.Button(
                 self.choose_plants_screen,
-                image=whole_plants[i].img,
+                image=current_plant.img,
                 command=lambda i=i: self.append_plants(i))
+            current_button.number = i
             current_button.grid(row=i // 10, column=i % 10)
             self.choose_buttons.append(current_button)
         self.choose_plants_screen.place(x=0, y=200)
         self.start_game = ttk.Button(text='开始游戏', command=self.start_init)
         self.start_game.place(x=0, y=300)
 
+    def draw_choosed_plants(self):
+        for each in self.plants_already_choosed.grid_slaves():
+            each.destroy()
+        for q in range(len(choosed_plants)):
+            the_append_plant = choosed_plants[q]
+            append_button = ttk.Button(self.plants_already_choosed,
+                                       image=the_append_plant.img)
+            append_button.configure(command=lambda q=q, y=the_append_plant.
+                                    number: self.remove_plants(q, y))
+            append_button.grid(row=0, column=q)
+
     def append_plants(self, i):
         the_append_plant = whole_plants[i]
         self.action_text.set(f'你选择了{the_append_plant.name}')
         choose_plant_sound.play()
         choosed_plants.append(the_append_plant)
-        current_index = len(choosed_plants) - 1
-        append_button = ttk.Button(
-            self.plants_already_choosed,
-            image=the_append_plant.img,
-            command=lambda x=the_append_plant, y=i: self.remove_plants(x, y))
-        append_button.grid(row=0, column=current_index)
-        self.append_plants_buttons.append(append_button)
         self.choose_buttons[i].grid_forget()
+        self.draw_choosed_plants()
 
-    def remove_plants(self, x, y):
-        self.action_text.set(f'你取消选择了{x.name}')
-        ind = choosed_plants.index(x)
-        self.append_plants_buttons[ind].destroy()
-        del self.append_plants_buttons[ind]
-        del choosed_plants[ind]
-        self.choose_buttons[y].grid(row=y // 10, column=y % 10)
+    def remove_plants(self, q, x):
+        self.action_text.set(f'你取消选择了{whole_plants[x].name}')
+        del choosed_plants[q]
+        self.draw_choosed_plants()
+        self.choose_buttons[x].grid(row=x // 10, column=x % 10)
 
     def start_init(self):
         pygame.mixer.music.stop()
@@ -240,7 +246,10 @@ class Root(Tk):
         for i in range(self.plants_num):
             plants_info = choosed_plants[i]
             current_text = StringVar()
-            current_text.set(f'${plants_info.price} 冷却中')
+            if plants_info.name != '向日葵':
+                current_text.set(f'${plants_info.price} 冷却中')
+            else:
+                current_text.set(f'${plants_info.price}')
             current_button = ttk.Button(
                 self.choose,
                 image=plants_info.img,
@@ -252,7 +261,7 @@ class Root(Tk):
             current_button.grid(row=0, column=i + 1)
             plants_info.button = current_button
             plants_info.counter = time.time()
-            plants_info.enable = 0
+            plants_info.enable = 0 if plants_info.name != '向日葵' else 1
 
     def init_shovel(self):
         shovel_photo = PhotoImage(file=shovel_img).subsample(2, 2)
