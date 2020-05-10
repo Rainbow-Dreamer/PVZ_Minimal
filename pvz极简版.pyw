@@ -378,19 +378,19 @@ class Root(Tk):
 
     def get_sunshine(self):
         if self.mode != PAUSE:
-            self.sunshine += 25
+            self.sunshine += sky_sunshine
             self.sunshine_text.set(self.sunshine)
             get_sunshine_sound.play()
-            self.action_text.set('成功拿到了25点阳光')
+            self.action_text.set(f'成功拿到了{sky_sunshine}点阳光')
             if self.sunshine_ls:
                 self.sunshine_ls.pop().destroy()
 
-    def flower_get_sunshine(self, i, j):
+    def flower_get_sunshine(self, i, j, k):
         if self.mode != PAUSE:
-            self.sunshine += 25
+            self.sunshine += k
             self.sunshine_text.set(self.sunshine)
             get_sunshine_sound.play()
-            self.action_text.set('成功拿到了25点阳光')
+            self.action_text.set(f'成功拿到了{k}点阳光')
             block_sunshine = self.blocks[i][j].sunshine_ls
             if block_sunshine:
                 block_sunshine.pop().grid_forget()
@@ -795,8 +795,9 @@ class Root(Tk):
                                     flower_sunshine = ttk.Button(
                                         self.maps,
                                         image=self.flower_sunshine_img,
-                                        command=lambda i=i, j=j: self.
-                                        flower_get_sunshine(i, j))
+                                        command=lambda i=i, j=j, k=current.
+                                        plants.bullet_attack: self.
+                                        flower_get_sunshine(i, j, k))
                                     flower_sunshine.image = self.fall_sunshine_img
                                     flower_sunshine.grid(row=i, column=j)
                                     current.sunshine_ls.append(flower_sunshine)

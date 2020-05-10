@@ -195,9 +195,7 @@ zombie_explode = 'explode.png'
 flag_img = 'Zombie_flagpole.png'
 damaged_flag_img = 'Zombie_flagpole2.png'
 zombie_head_img = 'Zombatar_Normal_Zombie.PNG.png'
-# stage 1-6
-#stage_name = '1 - 6'
-stage_name = '人海战术'
+sky_sunshine = 25
 
 choose_seed_volume = 0.5
 background_volume = 0.6
@@ -254,7 +252,8 @@ plant_dict = {
           hp=5,
           cooling_time=7.5,
           attack_interval=10,
-          bullet_img='sun.png'),
+          bullet_img='sun.png',
+          bullet_attack=50),
     '坚果墙':
     plant(name='坚果墙',
           img='Wall-nut1.png',
