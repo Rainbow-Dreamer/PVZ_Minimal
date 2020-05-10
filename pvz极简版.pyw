@@ -18,14 +18,20 @@ class Root(Tk):
         self.wm_iconbitmap(icon_name)
         self.title(title_name)
         self.minsize(*screen_size)
-        self.action_text = StringVar()
-        self.action_text_show = ttk.Label(textvariable=self.action_text)
-        self.action_text_show.place(x=action_text_place_x,
-                                    y=action_text_place_y,
-                                    anchor='center')
-        self.lawn_photo = PhotoImage(file=lawn_img).subsample(2, 2)
+
+        self.lawn_photo = Image.open(lawn_img)
+        lawn_size = 250 // map_size[0]
+        self.lawn_photo = self.lawn_photo.resize((lawn_size, lawn_size),
+                                                 Image.ANTIALIAS)
+        self.lawn_photo = ImageTk.PhotoImage(self.lawn_photo)
         self.lawn_width, self.lawn_height = self.lawn_photo.width(
         ), self.lawn_photo.height()
+        self.action_text = StringVar()
+        self.action_text_show = ttk.Label(textvariable=self.action_text)
+        self.action_text_place_y = map_size[0] * (self.lawn_height + 10) + 150
+        self.action_text_show.place(x=action_text_place_x,
+                                    y=self.action_text_place_y,
+                                    anchor='center')
         for each in whole_plants:
             current_img = Image.open(each.img)
             current_img = current_img.resize(
@@ -104,9 +110,32 @@ class Root(Tk):
         self.init_sunshine()
         self.init_plants()
         self.init_shovel()
+
+        self.choose.grid(row=0, column=0, sticky='W')
+        self.lawnmowers = [0 for j in range(map_size[0])]
+        self.lawnmower_img = Image.open(lawnmower_img)
+        self.lawnmower_img = self.lawnmower_img.resize(
+            (self.lawn_width, self.lawn_height), Image.ANTIALIAS)
+        self.lawnmower_img = ImageTk.PhotoImage(self.lawnmower_img)
+        self.no_lawnmower_img = Image.open(no_lawnmower_img)
+        self.no_lawnmower_img = self.no_lawnmower_img.resize(
+            (self.lawn_width, self.lawn_height), Image.ANTIALIAS)
+        self.no_lawnmower_img = ImageTk.PhotoImage(self.no_lawnmower_img)
+        if lawnmower_rows:
+            self.mower_part = ttk.LabelFrame(self)
+            self.mower_part.place(x=0, y=100)
+            for k in lawnmower_rows:
+                current_mower = lawnmower(k, 0, lawnmower_mode,
+                                          lawnmower_speed, lawnmover_atack)
+                current_mower.show = ttk.Button(
+                    self.mower_part,
+                    image=self.lawnmower_img,
+                    command=lambda: self.action_text.set('我是一辆小推车'))
+                current_mower.show.grid(row=k, column=0, sticky='W')
+                self.lawnmowers[k] = current_mower
+
         self.init_map(*map_size)
-        self.choose.grid(sticky='w')
-        self.maps.grid(sticky='w')
+        self.maps.place(x=65, y=100)
 
         self.choosed_plant = None
         self.sunshine_ls = []
@@ -130,7 +159,7 @@ class Root(Tk):
         self.killed_zombies_show = ttk.Label(
             textvariable=self.killed_zombies_text)
         self.killed_zombies_show.place(x=action_text_place_x + 200,
-                                       y=action_text_place_y,
+                                       y=self.action_text_place_y,
                                        anchor='center')
         self.flag_img = Image.open(flag_img)
         self.flag_img = self.flag_img.resize(
@@ -169,7 +198,7 @@ class Root(Tk):
                 self.zombie_bar_wave_labels.append(current_bar)
                 counter -= 1
         self.zombie_bar.place(x=action_text_place_x,
-                              y=action_text_place_y + 50,
+                              y=self.action_text_place_y + 50,
                               anchor='center')
         self.current_ind = -1
         self.current_zombies_num = len(self.whole_zombies)
@@ -450,18 +479,47 @@ class Root(Tk):
         obj.rows += rows_move
         obj.columns += columns_move
         if obj.columns < 0:
-            self.lose()
-            self.mode = PAUSE
-            return
+            lawnshower_here = self.lawnmowers[obj.rows]
+            if lawnshower_here != 0:
+                generate_lawnmower = ttk.Button(
+                    self.maps,
+                    image=self.lawnmower_img,
+                    command=lambda: self.action_text.set('我是一辆小推车'))
+                generate_lawnmower.image = self.lawnmower_img
+                generate_lawnmower.__dict__.update(lawnshower_here.__dict__)
+                if generate_lawnmower.mode == 0:
+                    obj.hp = 0
+                    obj.status = 0
+                    self.killed_zombies += 1
+                    self.current_killed_zombies += 1
+                    self.killed_zombies_text.set(
+                        f'杀死僵尸数: {self.killed_zombies}')
+                    self.zombie_dead_normal(obj)
+                elif generate_lawnmower.mode == 1:
+                    obj.hp -= generate_lawnmower.attack
+                self.lawnmover_move(generate_lawnmower)
+                lawnshower_here.show.configure(
+                    image=self.no_lawnmower_img,
+                    command=lambda: self.action_text.set('这里没有小推车了'))
+                lawnshower_here.show.grid(row=obj.rows, column=0)
+                self.lawnmowers[obj.rows] = 0
+                return
+
+            else:
+                self.lose()
+                self.mode = PAUSE
+                return
+
         i, j = obj.rows, obj.columns
         #try:
         obj.button.grid(row=i, column=j)
 
         current_grid = self.maps.grid_slaves(row=i, column=j)
-        if any(x.image in self.bullets_dict for x in current_grid):
-            hit_bullets = [
-                x for x in current_grid if x.image in self.bullets_dict
-            ][0]
+        check_bullets = [
+            x for x in current_grid if x.image in self.bullets_dict
+        ]
+        if check_bullets:
+            hit_bullets = check_bullets[0]
             self.moving(hit_bullets, stop=True)
             if type(obj.hit_sound) == list:
                 random.choice(obj.hit_sound).play()
@@ -473,6 +531,32 @@ class Root(Tk):
         #obj.status = 0
         #obj.button.grid_forget()
         #return
+    def lawnmover_move(self, obj):
+        if obj.columns >= self.map_columns:
+            obj.destroy()
+            return
+        attack_size = [obj.columns, obj.columns + 1]
+        current_zombies = [
+            each for each in self.whole_zombies if each.status == 1
+            and each.rows == obj.rows and each.columns in attack_size
+        ]
+
+        if current_zombies:
+            if obj.mode == 0:
+                for each in current_zombies:
+                    each.hp = 0
+                    each.status = 0
+                    self.killed_zombies += 1
+                    self.current_killed_zombies += 1
+                    self.killed_zombies_text.set(
+                        f'杀死僵尸数: {self.killed_zombies}')
+                    self.zombie_dead_normal(each)
+            elif obj.mode == 1:
+                for each in current_zombies:
+                    each.hp -= obj.attack
+        obj.grid(row=obj.rows, column=obj.columns)
+        obj.columns += 1
+        self.after(obj.move_speed, lambda: self.lawnmover_move(obj))
 
     def zombie_eat_plants(self, plants, zombies):
         if self.mode != PAUSE:
@@ -822,6 +906,7 @@ class Root(Tk):
                             f'杀死僵尸数: {self.killed_zombies}')
                         self.zombie_dead_normal(each)
                     else:
+
                         if each.hp_img:
                             hp_tol = each.hp_img[0][0]
                             if (each.change_mode == 0

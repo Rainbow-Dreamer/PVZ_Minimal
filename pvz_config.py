@@ -159,9 +159,26 @@ class Stage:
             return self.big_waves_zombies[num]
 
 
+class lawnmower:
+    def __init__(self, rows, columns, mode=0, move_speed=500, attack=None):
+        # if mode == 0, the lawn mower will kill all zombies in the row by setting their hp to 0
+        # if mode == 1, the lawn mower will have only give an attack to all of the zombies i the row
+        self.rows = rows
+        self.columns = columns
+        self.mode = mode
+        self.move_speed = move_speed
+        self.attack = attack
+
+
+lawnmower_rows = [0, 1, 2, 3, 4]
+lawnmower_mode = 0
+lawnmower_speed = 200
+lawnmover_atack = None
+lawnmower_img = 'Lawn_mower_2.PNG.png'
+no_lawnmower_img = 'no_lawnmower.png'
+
 background_music = 'sounds/Laura Shigihara - Ultimate Battle IN-GAME.ogg'
 action_text_place_x = 270
-action_text_place_y = 440
 
 icon_name = 'pvz.ico'
 title_name = "PVZ极简版"
@@ -263,7 +280,7 @@ plant_dict = {
           hp=5,
           cooling_time=30,
           attack_interval=1.5,
-          bullet_attack=10,
+          bullet_attack=90,
           bullet_sound=([
               sounds('sounds/squash_hmm.ogg'),
               sounds('sounds/squash_hmm2.ogg')

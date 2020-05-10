@@ -1,3 +1,5 @@
+# 这是一个很简单的预设关卡
+
 part1 = [
     get_zombies(random.choice(['普通僵尸', '路障僵尸']), random.randint(0, 4), 8,
                 random.randint(1, 120)) for i in range(20)
