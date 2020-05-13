@@ -1,5 +1,5 @@
 # 这是一个魔鬼难度的关卡，给你的植物开挂了你也打不过系列
-
+start_time = 5
 for k in zombies_dict:
     each = zombies_dict[k]
     each.move_speed = 200

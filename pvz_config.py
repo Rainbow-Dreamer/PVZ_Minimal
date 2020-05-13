@@ -1,6 +1,6 @@
 pygame.mixer.init()
 now_time = time.time()
-start_time = 5
+
 os.chdir('resource/')
 
 
@@ -365,7 +365,7 @@ zombies_dict = {
             change_mode=2)
 }
 file_path_prefix = '../'
-stage_file = '预设关卡1.py'
+stage_file = 'stages/预设关卡1.py'
 stage_file = file_path_prefix + stage_file
 with open(stage_file, encoding='utf-8') as f:
     stage_file_contents = f.read()
