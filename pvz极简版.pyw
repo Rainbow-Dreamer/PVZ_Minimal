@@ -526,6 +526,11 @@ class Root(Tk):
                 self.paused_time = repause_current_time - self.paused_start
                 self.sunshine_time += self.paused_time
                 self.paused_start = None
+                for i in range(map_size[0]):
+                    for j in range(map_size[1]):
+                        block_here = self.blocks[i][j]
+                        if block_here.plants != None:
+                            block_here.plants.time += self.paused_time
                 for k in self.whole_zombies:
                     if k.status == 0 and k.hp > 0:
                         k.appear_time += self.paused_time
