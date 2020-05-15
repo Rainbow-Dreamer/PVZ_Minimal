@@ -1,15 +1,19 @@
-import os, sys
+import os, sys, importlib
 from tkinter import *
 from tkinter import ttk
 from PIL import Image, ImageTk
 import datetime, time, random, keyboard
 import time, random, pygame, os
 from copy import deepcopy
+pygame.mixer.init()
+sys.path.append(os.path.dirname(__file__))
 current_dir = os.getcwd()
 config_path = os.path.join(current_dir, "pvz_config.py")
 with open(config_path, encoding='utf-8') as f:
     datas = f.read()
     exec(datas, globals())
+whole_plants_img = [x[1] for x in whole_plants]
+whole_plants = [[x[0], 0] for x in whole_plants]
 
 
 class Root(Tk):
@@ -18,11 +22,15 @@ class Root(Tk):
         self.wm_iconbitmap(icon_name)
         self.title(title_name)
         self.minsize(*screen_size)
-
+        self.make_label = ttk.Label
+        self.make_button = ttk.Button
+        self.NULL, self.PLACE, self.REMOVE, self.PAUSE = 0, 1, 2, 3
         self.lawn_photo = Image.open(lawn_img)
+
         lawn_size = 250 // map_size[0]
         self.lawn_photo = self.lawn_photo.resize((lawn_size, lawn_size),
                                                  Image.ANTIALIAS)
+        self.background_img = self.lawn_photo.copy()
         self.lawn_photo = ImageTk.PhotoImage(self.lawn_photo)
         self.lawn_width, self.lawn_height = self.lawn_photo.width(
         ), self.lawn_photo.height()
@@ -32,20 +40,7 @@ class Root(Tk):
         self.action_text_show.place(x=action_text_place_x,
                                     y=self.action_text_place_y,
                                     anchor='center')
-        for each in whole_plants:
-            current_img = Image.open(each.img)
-            current_img = current_img.resize(
-                (self.lawn_width, self.lawn_height), Image.ANTIALIAS)
-            each.img = ImageTk.PhotoImage(current_img)
-            if each.bullet_img != None:
-                if each.name in ['土豆雷', '火爆辣椒']:
-                    current_img = Image.open(each.bullet_img)
-                    current_img = current_img.resize(
-                        (self.lawn_width, self.lawn_height), Image.ANTIALIAS)
-                    each.bullet_img = ImageTk.PhotoImage(current_img)
-                else:
-                    each.bullet_img = PhotoImage(
-                        file=each.bullet_img).subsample(5, 5)
+
         pygame.mixer.music.set_volume(choose_seed_volume)
         pygame.mixer.music.play(loops=-1)
         self.plants_already_choosed = ttk.LabelFrame(self, height=200)
@@ -55,44 +50,81 @@ class Root(Tk):
         self.num_plants = len(whole_plants)
         for i in range(self.num_plants):
             current_plant = whole_plants[i]
-            current_plant.number = i
+            current_plant_img = whole_plants_img[i]
+            current_plant[1] = i
+            current_img = Image.open(current_plant_img)
+            ratio = self.lawn_height / current_img.height
+            current_img = current_img.resize((int(
+                current_img.width * ratio), int(current_img.height * ratio)),
+                                             Image.ANTIALIAS)
+            current_img = ImageTk.PhotoImage(current_img)
             current_button = ttk.Button(
                 self.choose_plants_screen,
-                image=current_plant.img,
+                image=current_img,
                 command=lambda i=i: self.append_plants(i))
-            current_button.number = i
-            current_button.grid(row=i // 10, column=i % 10)
+            current_button.image = current_img
+            current_button.grid(row=i // 5, column=i % 5)
             self.choose_buttons.append(current_button)
         self.choose_plants_screen.place(x=0, y=200)
         self.start_game = ttk.Button(text='开始游戏', command=self.start_init)
-        self.start_game.place(x=0, y=300)
+        self.start_game.place(x=0, y=500)
+
+    def make_img(self, each):
+        each.bullet_img_name = each.bullet_img
+        current_img = Image.open(each.img)
+        if each.img_transparent:
+            ratio = self.lawn_height / current_img.height
+            current_img = current_img.resize((int(
+                current_img.width * ratio), int(current_img.height * ratio)),
+                                             Image.ANTIALIAS)
+            center_width = int(self.lawn_width / 2 - current_img.width / 2)
+            temp = self.background_img.copy()
+            temp.paste(current_img, (center_width, 0), current_img)
+            each.img = ImageTk.PhotoImage(temp)
+
+        else:
+            current_img = current_img.resize(
+                (self.lawn_width, self.lawn_height), Image.ANTIALIAS)
+            each.img = ImageTk.PhotoImage(current_img)
+        if each.bullet_img:
+            if not each.is_bullet:
+                current_img = Image.open(each.bullet_img)
+                current_img = current_img.resize(
+                    (self.lawn_width, self.lawn_height), Image.ANTIALIAS)
+                each.bullet_img = ImageTk.PhotoImage(current_img)
+            else:
+                each.bullet_img = ImageTk.PhotoImage(
+                    Image.open(each.bullet_img).resize(
+                        (self.lawn_width // 3, self.lawn_height // 3),
+                        Image.ANTIALIAS))
 
     def draw_choosed_plants(self):
         for each in self.plants_already_choosed.grid_slaves():
             each.destroy()
         for q in range(len(choosed_plants)):
-            the_append_plant = choosed_plants[q]
+            the_append_plant, number = choosed_plants[q]
             append_button = ttk.Button(self.plants_already_choosed,
-                                       image=the_append_plant.img)
-            append_button.configure(command=lambda q=q, y=the_append_plant.
-                                    number: self.remove_plants(q, y))
+                                       image=self.choose_buttons[number].image)
+            append_button.configure(
+                command=lambda q=q, y=number: self.remove_plants(q, y))
             append_button.grid(row=0, column=q)
 
     def append_plants(self, i):
         the_append_plant = whole_plants[i]
-        self.action_text.set(f'你选择了{the_append_plant.name}')
+        self.action_text.set(f'你选择了{the_append_plant[0]}')
         choose_plant_sound.play()
         choosed_plants.append(the_append_plant)
         self.choose_buttons[i].grid_forget()
         self.draw_choosed_plants()
 
     def remove_plants(self, q, x):
-        self.action_text.set(f'你取消选择了{whole_plants[x].name}')
+        self.action_text.set(f'你取消选择了{whole_plants[x][0]}')
         del choosed_plants[q]
         self.draw_choosed_plants()
-        self.choose_buttons[x].grid(row=x // 10, column=x % 10)
+        self.choose_buttons[x].grid(row=x // 5, column=x % 5)
 
     def start_init(self):
+        global choosed_plants
         pygame.mixer.music.stop()
         bg_music = pygame.mixer.music.load(background_music)
         pygame.mixer.music.set_volume(background_volume)
@@ -106,17 +138,22 @@ class Root(Tk):
         self.blocks = []
         self.moving_bullets = []
         self.sunshine_time = game_start_time
+        choosed_plants = [x[0] for x in choosed_plants]
+        choosed_plants = [
+            eval(f'importlib.import_module("plant_scripts.{x}").{x}')
+            for x in choosed_plants
+        ]
+        if modified_file:
+            with open(modified_file, encoding='utf-8') as f:
+                exec(f.read())
 
-        self.bullets_dict = {}
-        for each in choosed_plants:
-            if each.bullet_img != None and each.name not in ['土豆雷', '火爆辣椒']:
-                self.bullets_dict[each.bullet_img] = each.bullet_attack
+        self.plants_generate = deepcopy(choosed_plants)
+
         self.choose = ttk.LabelFrame(self)
         self.maps = ttk.LabelFrame(self)
         self.init_sunshine()
         self.init_plants()
         self.init_shovel()
-
         self.choose.grid(row=0, column=0, sticky='W')
         self.lawnmowers = [0 for j in range(map_size[0])]
         self.lawnmower_img = Image.open(lawnmower_img)
@@ -132,7 +169,7 @@ class Root(Tk):
             self.mower_part.place(x=0, y=100)
             for k in lawnmower_rows:
                 current_mower = lawnmower(k, 0, lawnmower_mode,
-                                          lawnmower_speed, lawnmover_atack)
+                                          lawnmower_speed, lawnmower_atack)
                 current_mower.show = ttk.Button(
                     self.mower_part,
                     image=self.lawnmower_img,
@@ -226,7 +263,9 @@ class Root(Tk):
         self.change_mode(NULL)
 
     def init_sunshine(self):
-        sun_photo = PhotoImage(file=sunshine_img).subsample(2, 2)
+        sun_photo = ImageTk.PhotoImage(
+            Image.open(sunshine_img).resize(
+                (self.lawn_width, self.lawn_height), Image.ANTIALIAS))
         self.sunshine = init_sunshine
         self.sunshine_text = StringVar()
         self.sunshine_text.set(self.sunshine)
@@ -236,17 +275,23 @@ class Root(Tk):
                                        compound=TOP)
         self.sunshine_show.image = sun_photo
         self.sunshine_show.grid(row=0, column=0)
-        self.fall_sunshine_img = PhotoImage(file=fall_sunshine_img).subsample(
-            3, 3)
-        self.flower_sunshine_img = PhotoImage(
-            file=fall_sunshine_img).subsample(4, 4)
+        self.fall_sunshine_img = ImageTk.PhotoImage(
+            Image.open(fall_sunshine_img).resize(
+                (self.lawn_width, self.lawn_height), Image.ANTIALIAS))
+        self.flower_sunshine_img = ImageTk.PhotoImage(
+            Image.open(fall_sunshine_img).resize(
+                (self.lawn_width, self.lawn_height), Image.ANTIALIAS))
 
     def init_plants(self):
+        self.bullets_ls = []
         self.plants_num = len(choosed_plants)
         for i in range(self.plants_num):
             plants_info = choosed_plants[i]
+            self.make_img(plants_info)
+            if plants_info.bullet_img and plants_info.is_bullet:
+                self.bullets_ls.append(plants_info.bullet_img_name)
             current_text = StringVar()
-            if plants_info.name != '向日葵':
+            if not plants_info.no_cooling_start:
                 current_text.set(f'${plants_info.price} 冷却中')
             else:
                 current_text.set(f'${plants_info.price}')
@@ -264,7 +309,9 @@ class Root(Tk):
             plants_info.enable = 0 if plants_info.name != '向日葵' else 1
 
     def init_shovel(self):
-        shovel_photo = PhotoImage(file=shovel_img).subsample(2, 2)
+        shovel_photo = ImageTk.PhotoImage(
+            Image.open(shovel_img).resize((self.lawn_width, self.lawn_height),
+                                          Image.ANTIALIAS))
         self.shovel_button = ttk.Button(
             self.choose,
             image=shovel_photo,
@@ -319,29 +366,30 @@ class Root(Tk):
                 j, k = dim
             if self.mode == PLACE:
                 current = self.blocks[j][k]
-                current_time = time.time()
-                choose_plant = choosed_plants[self.choosed_plant]
                 if current.plants is None:
-                    if choose_plant.name == '土豆雷':
-                        current.configure(image=choose_plant.bullet_img)
-                        current.img = choose_plant.img
+                    current_time = time.time()
+                    choose_plant = self.plants_generate[self.choosed_plant]
+                    current.plants = get_plant(choose_plant, j, k)
+                    self.make_img(current.plants)
+                    if current.plants.name == '土豆雷':
+                        current.configure(image=current.plants.bullet_img)
                     else:
-                        current.configure(image=choose_plant.img)
-                        if choose_plant.bullet_img != None:
-                            current.bullet_image = choose_plant.bullet_img
-                    current.plants = get_plant(choose_plant.name, j, k)
-                    current.time = current_time
-                    current_plant_name = choose_plant.name
+                        current.configure(image=current.plants.img)
+
+                    current.plants.time = current_time
+                    current_plant_name = current.plants.name
+                    current_choosed_plants = choosed_plants[self.choosed_plant]
+                    current.plants.button = current_choosed_plants.button
                     if current_plant_name == '向日葵':
-                        current.sunshine_ls = []
+                        current.plants.sunshine_ls = []
                     set_plants_sound.play()
                     self.action_text.set(
                         f'你成功放置了{current_plant_name}在第{j+1}行，第{k+1}列')
-                    choose_plant.button.textvariable.set(
-                        f'${choose_plant.price} 冷却中')
-                    choose_plant.counter = current_time
-                    choose_plant.enable = 0
-                    self.sunshine -= choose_plant.price
+                    current.plants.button.textvariable.set(
+                        f'${current.plants.price} 冷却中')
+                    current_choosed_plants.counter = current_time
+                    current_choosed_plants.enable = 0
+                    self.sunshine -= current.plants.price
                     self.sunshine_text.set(self.sunshine)
                     self.choosed_plant = None
                     self.mode = NULL
@@ -391,61 +439,36 @@ class Root(Tk):
             self.sunshine_text.set(self.sunshine)
             get_sunshine_sound.play()
             self.action_text.set(f'成功拿到了{k}点阳光')
-            block_sunshine = self.blocks[i][j].sunshine_ls
+            block_sunshine = self.blocks[i][j].plants.sunshine_ls
             if block_sunshine:
-                block_sunshine.pop().grid_forget()
+                block_sunshine.pop().destroy()
 
     def pea_attack(self, i, j):
         pass
 
-    def moving(self, obj, columns_move=0, rows_move=0, stop=False):
-        if self.mode != PAUSE:
-            if stop:
-                obj.grid_forget()
-                return
-            obj.columns += columns_move
-            obj.rows += rows_move
-            i, j = obj.rows, obj.columns
-            if j < self.map_columns:
-                obj.grid(row=i, column=j)
-                current_place = self.blocks[i][j]
-                if obj.attributes == 0:
-                    if current_place.plants is not None:
-                        if current_place.plants.name == '火炬树桩':
-                            obj.attack *= 2
-                            obj.configure(image=current_place.bullet_image)
-                            obj.attributes = 1
-                zombie_row = [
-                    x for x in self.whole_zombies
-                    if x.rows == i and x.status == 1
-                ]
-                passed_time = time.time() - self.zombie_time
-                affect_zombies = [
-                    x for x in zombie_row if x.columns + 1 + x.adjust_col == j
-                ]
-                if affect_zombies:
-                    affect_zombies.sort(
-                        key=lambda k:
-                        (passed_time - k.appear_time) / k.move_speed,
-                        reverse=True)
-                    hitted_zombies = affect_zombies[0]
-                    hitted_zombies.hp -= obj.attack
-                    if type(hitted_zombies.hit_sound) == list:
-                        random.choice(hitted_zombies.hit_sound).play()
-                    else:
-                        hitted_zombies.hit_sound.play()
-                    obj.grid_forget()
-                    return
-                else:
-                    self.after(obj.bullet_speed, lambda: self.moving(obj, 1))
-            else:
-                obj.grid_forget()
-                return
-        else:
-            self.moving_bullets.append(obj)
-            return
-
     def set_zombies(self, current_zombies):
+        current_zombies.attack_sound = [
+            pygame.mixer.Sound(j) for j in current_zombies.attack_sound
+        ]
+        current_zombies.dead_sound = [
+            pygame.mixer.Sound(j)
+            if type(j) != list else [pygame.mixer.Sound(k) for k in j]
+            for j in current_zombies.dead_sound
+        ]
+        current_zombies.hit_sound = [
+            pygame.mixer.Sound(j) for j in current_zombies.hit_sound
+        ]
+        if current_zombies.hit_sound_ls:
+            for k in range(len(current_zombies.hit_sound_ls)):
+                current = current_zombies.hit_sound_ls[k][1]
+                current_zombies.hit_sound_ls[k][1] = pygame.mixer.Sound(
+                    current) if type(current) != list else [
+                        pygame.mixer.Sound(y) for y in current
+                    ]
+        if current_zombies.other_sound:
+            current_zombies.other_sound = [
+                pygame.mixer.Sound(k) for k in current_zombies.other_sound
+            ]
         zombie_img = Image.open(current_zombies.img)
         zombie_img = zombie_img.resize((self.lawn_width, self.lawn_height),
                                        Image.ANTIALIAS)
@@ -459,88 +482,9 @@ class Root(Tk):
         current_zombies.button = current_zombies_button
         current_zombies.next_to_plants = False
 
-    def zombie_move(self,
-                    obj,
-                    columns_move,
-                    rows_move=0,
-                    stop=False,
-                    reset=False):
-        if reset:
-            obj.adjust_col = -1
-        if stop or self.mode == PAUSE:
-            return
-        if obj.status == 0:
-            return
-        check_if_plants = self.blocks[obj.rows][obj.columns].plants
-        if check_if_plants is not None:
-            obj.next_to_plants = True
-            obj.nexted_plants = check_if_plants
-            obj.adjust_col = -1
-            return
-        check_if_plants2 = self.blocks[obj.rows][obj.columns +
-                                                 columns_move].plants
-        if check_if_plants2 is not None:
-            obj.columns += columns_move
-            obj.next_to_plants = True
-            obj.nexted_plants = check_if_plants2
-            obj.adjust_col = 0
-            return
-        obj.rows += rows_move
-        obj.columns += columns_move
-        if obj.columns < 0:
-            lawnshower_here = self.lawnmowers[obj.rows]
-            if lawnshower_here != 0:
-                generate_lawnmower = ttk.Button(
-                    self.maps,
-                    image=self.lawnmower_img,
-                    command=lambda: self.action_text.set('我是一辆小推车'))
-                generate_lawnmower.image = self.lawnmower_img
-                generate_lawnmower.__dict__.update(lawnshower_here.__dict__)
-                if generate_lawnmower.mode == 0:
-                    obj.hp = 0
-                    obj.status = 0
-                    self.killed_zombies += 1
-                    self.current_killed_zombies += 1
-                    self.killed_zombies_text.set(
-                        f'杀死僵尸数: {self.killed_zombies}')
-                    self.zombie_dead_normal(obj)
-                elif generate_lawnmower.mode == 1:
-                    obj.hp -= generate_lawnmower.attack
-                self.lawnmover_move(generate_lawnmower)
-                lawnshower_here.show.configure(
-                    image=self.no_lawnmower_img,
-                    command=lambda: self.action_text.set('这里没有小推车了'))
-                lawnshower_here.show.grid(row=obj.rows, column=0)
-                self.lawnmowers[obj.rows] = 0
-                return
-
-            else:
-                self.lose()
-                self.mode = PAUSE
-                return
-
-        i, j = obj.rows, obj.columns
-        #try:
-        obj.button.grid(row=i, column=j)
-
-        current_grid = self.maps.grid_slaves(row=i, column=j)
-        check_bullets = [
-            x for x in current_grid if x.image in self.bullets_dict
-        ]
-        if check_bullets:
-            hit_bullets = check_bullets[0]
-            self.moving(hit_bullets, stop=True)
-            if type(obj.hit_sound) == list:
-                random.choice(obj.hit_sound).play()
-            else:
-                obj.hit_sound.play()
-            obj.hp -= self.bullets_dict[hit_bullets.image]
-        self.after(obj.move_speed, lambda: self.zombie_move(obj, -1))
-        #except:
-        #obj.status = 0
-        #obj.button.grid_forget()
-        #return
-    def lawnmover_move(self, obj):
+    def lawnmower_move(self, obj):
+        if obj.columns == 0:
+            lawnmower_sound.play()
         if obj.columns >= self.map_columns:
             obj.destroy()
             return
@@ -565,162 +509,10 @@ class Root(Tk):
                     each.hp -= obj.attack
         obj.grid(row=obj.rows, column=obj.columns)
         obj.columns += 1
-        self.after(obj.move_speed, lambda: self.lawnmover_move(obj))
-
-    def zombie_eat_plants(self, plants, zombies):
-        if self.mode != PAUSE:
-            if plants is None or plants.hp <= 0 or plants.status == 0 or zombies.hp <= 0:
-                zombies.next_to_plants = False
-                self.after(
-                    zombies.move_speed, lambda: self.zombie_move(
-                        zombies, zombies.adjust_col, reset=True))
-                return
-            else:
-                if type(zombies.attack_sound) == list:
-                    random.choice(zombies.attack_sound).play()
-                else:
-                    zombies.attack_sound.play()
-                plants.hp -= zombies.attack
-                self.after(
-                    zombies.attack_speed,
-                    lambda x=plants, y=zombies: self.zombie_eat_plants(x, y))
-
-    def cherry_explode(self, i, j):
-        cherry_block = self.blocks[i][j]
-        if cherry_block.plants != None and cherry_block.plants.hp > 0:
-            cherry_block.plants.bullet_sound[0].play()
-            around = [[i - 1 + x, j - 1 + y] for x in range(3)
-                      for y in range(3)]
-            around = [
-                k for k in around
-                if 0 <= k[0] < self.map_rows and 0 <= k[1] < self.map_columns
-            ]
-            around_zombies = [
-                q for q in self.whole_zombies
-                if q.status == 1 and [q.rows, q.columns] in around
-            ]
-            for each in around_zombies:
-                each.hp -= cherry_block.plants.bullet_attack
-                if each.hp <= 0:
-                    each.status = 0
-                    self.killed_zombies += 1
-                    self.current_killed_zombies += 1
-                    self.killed_zombies_text.set(
-                        f'杀死僵尸数: {self.killed_zombies}')
-                    each.button.configure(image=self.zombie_explode_img)
-                    self.after(3000, lambda t=each: t.button.grid_forget())
-            cherry_block.configure(image=self.lawn_photo)
-            cherry_block.plants = None
-
-    def squash_attack(self, i, j):
-        squash_block = self.blocks[i][j]
-        if squash_block.plants != None and squash_block.plants.hp > 0:
-            squash_block.plants.bullet_sound[1].play()
-            hit_zombies = [
-                x for x in self.whole_zombies
-                if x.status == 1 and x.rows == i and abs(x.columns - j) <= 1
-            ]
-            hit_zombies_middle = [x for x in hit_zombies if x.columns == j]
-            if len(hit_zombies_middle) != 0:
-                for each in hit_zombies_middle:
-                    each.hp -= squash_block.plants.bullet_attack
-                    if each.hp <= 0:
-                        each.status = 0
-                        self.killed_zombies += 1
-                        self.current_killed_zombies += 1
-                        self.killed_zombies_text.set(
-                            f'杀死僵尸数: {self.killed_zombies}')
-                        each.button.grid_forget()
-            else:
-                hit_zombies_right = [
-                    x for x in hit_zombies if x.columns - j == 1
-                ]
-                if len(hit_zombies_right) != 0:
-                    for each in hit_zombies_right:
-                        each.hp -= squash_block.plants.bullet_attack
-                        if each.hp <= 0:
-                            each.status = 0
-                            self.killed_zombies += 1
-                            self.current_killed_zombies += 1
-                            self.killed_zombies_text.set(
-                                f'杀死僵尸数: {self.killed_zombies}')
-                            each.button.grid_forget()
-                else:
-                    hit_zombies_left = [
-                        x for x in hit_zombies if x.columns - j == -1
-                    ]
-                    if len(hit_zombies_left) != 0:
-                        for each in hit_zombies_left:
-                            each.hp -= squash_block.plants.bullet_attack
-                            if each.hp <= 0:
-                                each.status = 0
-                                self.killed_zombies += 1
-                                self.current_killed_zombies += 1
-                                self.killed_zombies_text.set(
-                                    f'杀死僵尸数: {self.killed_zombies}')
-                                each.button.grid_forget()
-            squash_block.configure(image=self.lawn_photo)
-            squash_block.plants = None
-
-    def potato_detect(self, i, j):
-        potato_check = self.blocks[i][j]
-        if potato_check.plants is None or potato_check.plants.hp <= 0:
-            return
-        attack_zombies = [
-            x for x in self.whole_zombies
-            if x.status == 1 and x.rows == i and x.columns == j
-        ]
-        if len(attack_zombies) != 0:
-            potato_check.plants.bullet_sound[1].play()
-            for each in attack_zombies:
-                each.hp -= potato_check.plants.bullet_attack
-                if each.hp <= 0:
-                    each.status = 0
-                    self.killed_zombies += 1
-                    self.current_killed_zombies += 1
-                    self.killed_zombies_text.set(
-                        f'杀死僵尸数: {self.killed_zombies}')
-                    each.button.configure(image=self.zombie_explode_img)
-                    self.after(3000, lambda t=each: t.button.grid_forget())
-            potato_check.configure(image=self.lawn_photo)
-            potato_check.plants = None
-            return
-        self.after(50, lambda: self.potato_detect(i, j))
-
-    def jalapeno_explode(self, i, j):
-        jalapeno_blocks = self.blocks[i][j]
-        if jalapeno_blocks.plants is not None and jalapeno_blocks.plants.hp > 0:
-            jalapeno_blocks.plants.bullet_sound[0].play()
-            fire_ls = []
-            for k in range(self.map_columns):
-                current_button = ttk.Button(
-                    self.maps,
-                    image=jalapeno_blocks.bullet_image,
-                    command=lambda i=i, k=k: self.block_action(i, k))
-                current_button.image = jalapeno_blocks.bullet_image
-                current_button.grid(row=i, column=k)
-                fire_ls.append(current_button)
-                self.after(2000, current_button.destroy)
-
-            attack_zombies = [
-                x for x in self.whole_zombies if x.status == 1 and x.rows == i
-            ]
-            for each in attack_zombies:
-                each.hp -= jalapeno_blocks.plants.bullet_attack
-                if each.hp <= 0:
-                    each.status = 0
-                    self.killed_zombies += 1
-                    self.current_killed_zombies += 1
-                    self.killed_zombies_text.set(
-                        f'杀死僵尸数: {self.killed_zombies}')
-                    each.button.configure(image=self.zombie_explode_img)
-                    fire_ls[each.columns + 1 + each.adjust_col].grid_forget()
-                    self.after(3000, lambda t=each: t.button.grid_forget())
-            jalapeno_blocks.configure(image=self.lawn_photo)
-            jalapeno_blocks.plants = None
+        self.after(obj.move_speed, lambda: self.lawnmower_move(obj))
 
     def zombie_dead_normal(self, obj):
-        obj.button.grid_forget()
+        obj.button.destroy()
         obj.dead_sound[0].play()
         self.after(2000, lambda: random.choice(obj.dead_sound[1]).play())
 
@@ -739,19 +531,20 @@ class Root(Tk):
                         k.appear_time += self.paused_time
                 self.zombies_move_call()
                 for each_bullet in self.moving_bullets:
-                    self.moving(each_bullet)
+                    if each_bullet.func:
+                        each_bullet.func(self, each_bullet)
                 self.moving_bullets = []
                 for g in self.blocks:
                     for h in g:
                         h.time = repause_current_time
         else:
             nrow, ncol = map_size
-            current_time = time.time()
-            if current_time - self.sunshine_time >= sunshine_cooling_time:
+            self.current_time = time.time()
+            if self.current_time - self.sunshine_time >= sunshine_cooling_time:
                 self.appear_sunshine()
-                self.sunshine_time = current_time
+                self.sunshine_time = self.current_time
             for each_plant in choosed_plants:
-                if current_time - each_plant.counter > each_plant.cooling_time:
+                if self.current_time - each_plant.counter > each_plant.cooling_time:
                     each_plant.enable = 1
                     each_plant.button.textvariable.set(f'${each_plant.price}')
             for i in range(nrow):
@@ -760,13 +553,15 @@ class Root(Tk):
                     current = self.blocks[i][j]
                     if current.plants is not None:
                         if current.plants.hp <= 0:
-                            plant_bite_sound.play()
-                            self.action_text.set(
-                                f'第{i+1}行，第{j+1}列的植物{current.plants.name}被吃掉了')
-                            current.plants = None
-                            current.configure(image=self.lawn_photo)
-                            j += 1
-                            continue
+                            if current.plants.dead_normal:
+                                plant_bite_sound.play()
+                                self.action_text.set(
+                                    f'第{i+1}行，第{j+1}列的植物{current.plants.name}被吃掉了'
+                                )
+                                current.plants = None
+                                current.configure(image=self.lawn_photo)
+                                j += 1
+                                continue
                         if current.plants.hp_img:
                             plants_hp_tol = current.plants.hp_img[0][0]
                             if (current.plants.change_mode == 0 and
@@ -784,66 +579,12 @@ class Root(Tk):
                                     Image.ANTIALIAS)
                                 new_hp_img = ImageTk.PhotoImage(new_hp_img)
                                 current.configure(image=new_hp_img)
-                                current.image = new_hp_img
+                                current.plants.img = new_hp_img
                                 current.plants.hp_img = current.plants.hp_img[
                                     1:]
                         if current.plants.status == 1:
-                            current_plant = current.plants.name
-                            if current_plant == '向日葵':
-                                if current_time - current.time >= current.plants.attack_interval:
-                                    current.time = current_time
-                                    flower_sunshine = ttk.Button(
-                                        self.maps,
-                                        image=self.flower_sunshine_img,
-                                        command=lambda i=i, j=j, k=current.
-                                        plants.bullet_attack: self.
-                                        flower_get_sunshine(i, j, k))
-                                    flower_sunshine.image = self.fall_sunshine_img
-                                    flower_sunshine.grid(row=i, column=j)
-                                    current.sunshine_ls.append(flower_sunshine)
-                            elif current_plant == '豌豆射手':
-                                if any(x.status == 1 and x.rows == i
-                                       for x in self.whole_zombies):
-                                    if current_time - current.time >= current.plants.attack_interval:
-                                        current.time = current_time
-                                        new_pea = ttk.Label(
-                                            self.maps,
-                                            image=current.bullet_image)
-                                        new_pea.image = current.bullet_image
-                                        new_pea.bullet_speed = current.plants.bullet_speed
-                                        new_pea.attack = current.plants.bullet_attack
-                                        new_pea.rows = i
-                                        new_pea.columns = j
-                                        new_pea.attributes = 0
-                                        current.plants.bullet_sound[0].play()
-                                        self.moving(new_pea)
-
-                            elif current_plant == '樱桃炸弹':
-                                if current_time - current.time >= current.plants.attack_interval:
-                                    current.plants.status = 0
-                                    self.cherry_explode(i, j)
-                            elif current_plant == '窝瓜':
-                                if any(x.status == 1 and x.rows == i
-                                       and abs(x.columns - j) <= 1
-                                       for x in self.whole_zombies):
-                                    random.choice(
-                                        current.plants.bullet_sound[0]).play()
-                                    current.plants.status = 0
-                                    self.after(int(
-                                        current.plants.attack_interval * 1000),
-                                               lambda i=i, j=j: self.
-                                               squash_attack(i, j))
-                            elif current_plant == '土豆雷':
-                                if current_time - current.time >= current.plants.attack_interval:
-                                    current.configure(image=current.img)
-                                    current.plants.bullet_sound[0].play()
-                                    current.plants.status = 0
-                                    self.potato_detect(i, j)
-                            elif current_plant == '火爆辣椒':
-                                if current_time - current.time >= current.plants.attack_interval:
-                                    current.plants.status = 0
-                                    self.jalapeno_explode(i, j)
-
+                            if current.plants.func:
+                                current.plants.runs(self)
                     j += 1
 
         self.after(1, self.check_plants)
@@ -943,28 +684,21 @@ class Root(Tk):
                                             each.full_hp - each.hp >= hit_tol):
                                 each.hit_sound = each.hit_sound_ls[0][1]
                                 each.hit_sound_ls = each.hit_sound_ls[1:]
-                        if each.next_to_plants:
-                            each.next_to_plants = False
-                            self.after(
-                                each.attack_speed,
-                                lambda plants=each.nexted_plants, zombies=each:
-                                self.zombie_eat_plants(plants, zombies))
+                        if each.eachtime_func:
+                            each.runs(self, num=1)
                 else:
                     if each.hp > 0 and passed_time >= each.appear_time:
                         self.set_zombies(each)
                         each.alive()
-                        self.zombie_move(each, 0)
+                        if each.start_func:
+                            each.runs(self, num=0)
         self.after(1, self.check_zombies)
 
     def zombies_move_call(self):
         for each in self.whole_zombies:
             if each.status == 1 and each.hp > 0:
-                if each.next_to_plants:
-                    self.after(each.attack_speed,
-                               lambda plants=each.nexted_plants, zombies=each:
-                               self.zombie_eat_plants(plants, zombies))
-                else:
-                    self.zombie_move(each, 0)
+                if each.repause_func:
+                    each.runs(self, num=2)
 
     def lose(self):
         self.action_text.set('僵尸进了你的家里！')
