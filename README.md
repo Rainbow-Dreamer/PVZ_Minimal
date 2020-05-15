@@ -7,11 +7,47 @@ pvz极简版，完全原创，自由度最大的植物大战僵尸
 
 正下方的僵尸进度条和原版设计得差不多，在你定制自己的关卡时，这个进度条也会相应做出改变。
 
-接下来我会详细地说明这个极简版pvz的数据结构设计。
+目前的版本的游戏结构设计是给每个植物和每个僵尸一个独立的脚本文件，并且所有植物的脚本文件都放在
+
+plant_scripts文件夹里，所有僵尸的脚本文件都放在zombie_scripts文件夹里。
+
+每一个关卡也都对应着一个独立的脚本文件，所有关卡的脚本文件都放在stages文件夹里。
+
+resource文件夹是存放游戏所有的图片，音乐，音效的文件夹，也就是游戏的资源文件夹，如果有需要批量修改参数的脚本
+
+也需要放在这里，然后在pvz_config配置文件里把modified_file修改为脚本文件名即可。
+
+在resource文件夹里还有一个common.py的文件，这个是在读取关卡时，会转到resource文件夹，这个common.py的脚本文件
+
+会进行每种僵尸的音效资源的预处理。
+
+接下来我会详细地说明这个极简版pvz的数据结构设计。想要自己制作新植物和新僵尸的人请务必要认真看完。
 
 首先是植物类型的设计。每一种植物都属于植物类型。植物类型的内部参数如下：
 
-name, img, price, hp, cooling_time, hp_img, attack_interval, bullet_img, bullet_speed, bullet_attack, bullet_sound, sound_volume, self_attack, change_mode, rows, columns
+name,
+img,
+price, 
+hp, 
+cooling_time, 
+hp_img, 
+attack_interval, 
+bullet_img, 
+bullet_speed, 
+bullet_attack, 
+bullet_sound, 
+sound_volume, 
+self_attack, 
+change_mode,
+func,
+bullet_func,
+effects,
+no_cooling_start,
+is_bullet,
+dead_normal,
+img_transparent, 
+rows, 
+columns
 
 我接下来一一讲解这些参数。（先说下，这些参数都可以直接到pvz_config.py文件里修改，保存之后，打开游戏就是你想要的东西了）
 
@@ -40,6 +76,7 @@ bullet_img是植物发射的子弹的图片路径。
 bullet_speed是植物发射的子弹的移动速度，单位为毫秒（千分之一秒）。比如豌豆射手发射的豌豆每过0.2秒移动一格，那么这里就是200。
 
 bullet_attack是植物发射的子弹的攻击力。
+
 这个极简版pvz的血量设计是以一个豌豆射手的一个豌豆的攻击力作为单位，也就是说，豌豆射手的豌豆攻击力为1，对应的普通僵尸的血量为10，因为在原版里一只普通僵尸满血状态下刚好可以被豌豆打10下。豌豆射手一般被僵尸啃5下没掉，因此豌豆射手的血量默认为5。
 
 bullet_sound是植物发射子弹时的声音文件路径。
@@ -58,13 +95,60 @@ change_mode为1的时候，血量小于或等于一个值时就变成对应的�
 
 change_mode为2的时候，血量减少的量大于或等于一个值时就变成对应的图片，也就是被啃了多少下之后。
 
+func是植物在游戏每次的循环里运行的算法，是一个带有两个参数的函数，第一个参数self是植物自己，第二个参数games是游戏主体，
+
+通过这两个参数就可以实现植物和游戏主体的全面互动，玩家自己制作新植物的算法时也可以随心所欲。如果一个func不够用的话，
+
+这个func自己可以调用其他的函数，只需要写在植物脚本里就行了。
+
+bullet_func是游戏在玩家暂停之后，继续游戏的时候对之前暂停时停下的子弹的后续处理函数，一般为继续之前同样的子弹移动函数。
+
+effects是一个字典，键为一个植物对其他的植物或子弹或僵尸会产生的效果影响类型，对应的值为一个函数，可以把受到影响的植物或子弹或僵尸
+
+的参数进行修改或者其他你想做的事情。会受到影响的植物或者子弹或者僵尸自己的脚本里也需要写上对应的探测部分，一般来说写在func里即可。
+
+no_cooling_start是一个布尔值，为True的时候，游戏开局时直接冷却好，后面正常冷却。为False的时候，游戏从开局时就正常冷却。默认值为False。
+
+一般只有向日葵这个植物会用到这个参数，向日葵的no_cooling_start是True。
+
+is_bullet是一个布尔值，为True的时候，植物的bullet_img，也就是子弹图片会按照地面图片的三分之一尺寸进行缩放，
+
+为False的时候则不会进行缩放，按照原尺寸。默认值为True。
+
+dead_normal是一个布尔值，为True的时候，植物的生命值小于或等于0的时候会被判定为死亡并且消失，为False的时候不会，
+
+玩家可以在func里设置生命值小于或等于0时这个植物要做什么事情。默认值为True。（比如爆炸坚果这个植物就需要这个参数设置为False）
+
+img_transparent是一个布尔值，为True的时候，植物的图片会被当成背景透明的图片，并且调整好尺寸和位置和地面图片合成作为新的植物图片，
+
+为False的时候直接使用植物的图片而不作任何处理。默认值为False。
+
 rows是植物所在的行数，columns是植物所在的列数，这两个值共同表示当前植物的位置。
 
 以上就是植物的所有参数，这些参数全部都可以随意修改。在pvz_config.py这个文件里的plant_dict，有目前我写完的植物参数，这些都可以随便改。
 
 接下来是僵尸类型的设计。每一种僵尸都属于僵尸类型。僵尸类型的内部参数如下：
 
-name, img, hp, move_speed, attack, attack_speed, attack_sound, dead_sound, hit_sound, hit_sound_ls, hp_img, rows, columns, appear_time, change_mode
+name, 
+img, 
+hp, 
+move_speed, 
+attack, 
+attack_speed, 
+attack_sound, 
+dead_sound, 
+hit_sound, 
+hit_sound_ls, 
+hp_img, 
+start_func,
+eachtime_func,
+repause_func,
+other_sound,
+img_transparent,
+rows, 
+columns, 
+appear_time, 
+change_mode
 
 name是僵尸的名字。
 
@@ -87,6 +171,16 @@ hit_sound是僵尸被植物攻击时的声音文件路径。
 hit_sound_ls是僵尸的生命值减少到多少之后，对应的声音文件路径，写法参考之前植物的hp_img。
 
 hp_img，也一样参考之前植物的hp_img。
+
+start_func是这个僵尸在游戏里出现的时候做的事情，玩家在写脚本时可以从regular里面import默认的start_func，regular里默认的start_func是zombie_move。
+
+eachtime_func是这个僵尸在游戏每次循环都会做的事情，在regular里面默认为next_to_plants。
+
+repause_func是这个僵尸在游戏暂停后继续游戏时会做的事情，在regular里面默认为repause。
+
+other_sound是僵尸需要的除被攻击的声音，攻击的声音，被打败时的声音之外的其他音效。
+
+img_transparent参考植物里的img_transparent。
 
 rows和columns是僵尸的行数和列数。
 
@@ -131,7 +225,12 @@ current_stage = Stage(2)
 
 如果当前的关卡打赢了，下面的状态栏会显示你赢了，然后过7秒后游戏自己关闭。僵尸进家的时候，下面的状态栏显示你输了，然后也是过7秒游戏自己关闭。目前这个游戏是自己定制关卡然后玩，接下来我准备加入选择小游戏的模式，然后我是僵尸，砸罐子，锤子砸僵尸等等小游戏也准备做一下。
 
-感谢大家的支持~
-
 2020.5.9新增: 现在关卡程序可以独立于pvz_config（配置文件）之外，自己写好关卡的python程序之后，和游戏主程序exe放在一个地方，然后在pvz_config最下面的stage_file名字改成
-你写的关卡文件名，记得加上文件后缀。与此相似地，如果有批量修改植物和僵尸或者其他参数的需求，也可以单独写一个python程序文件，然后把pvz_config文件最下面的modified_file从None改成你写的程序文件名就行。 我写了一些关卡让大家测试，预设关卡1和看手速这两关，一个是普通难度，另一个是魔鬼难度。（给你开挂了你也打不过系列）按照刚才说的改配置文件就可以玩这些关卡。
+你写的关卡文件名，记得加上文件后缀。与此相似地，如果有批量修改植物和僵尸或者其他参数的需求，也可以单独写一个python程序文件，然后把pvz_config文件最下面的modified_file从None改成你写的程序文件名就行。
+
+2020.5.14新增：目前已经把pvz极简版的代码结构全部调整好了，现在的游戏文件夹里有一个植物脚本文件夹plant_scripts，
+里面每一个脚本都是专属一个植物的，与之同理也有僵尸脚本文件夹zombie_scripts，现在大家自制植物写算法会非常方便，
+直接写一个新的植物脚本即可。我目前还原了一些β版特性的植物，比如十字火爆辣椒，爆炸坚果，（为了区分原版植物，图片可能稍有不同）
+以及我发现一些二代的植物其实特性还挺有意思，所以也开始还原一部分二代的植物，目前已经做完了番薯，能够吸引前方1x3的相邻行的僵尸到自己的行，
+并且自己有着与坚果墙同等级的防御力。已经更新到公开版本。
+小游戏部分，已经做好了锤僵尸。
