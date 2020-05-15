@@ -531,6 +531,8 @@ class Root(Tk):
                         block_here = self.blocks[i][j]
                         if block_here.plants != None:
                             block_here.plants.time += self.paused_time
+                for each in choosed_plants:
+                    each.counter += self.paused_time
                 for k in self.whole_zombies:
                     if k.status == 0 and k.hp > 0:
                         k.appear_time += self.paused_time
