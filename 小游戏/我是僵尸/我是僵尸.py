@@ -256,7 +256,7 @@ class Root(Tk):
             if self.mode == PLACE:
                 if k < plant_line - 1:
                     sunshine_not_enough.play()
-                    self.action_text.set('请种植在5列的右边')
+                    self.action_text.set('请种植在第5列或者其右边')
                     self.mode = NULL
                 else:
                     current = self.blocks[j][k]
