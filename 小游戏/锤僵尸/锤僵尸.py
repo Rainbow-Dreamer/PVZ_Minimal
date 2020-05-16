@@ -1,10 +1,4 @@
-import os, sys, importlib, pygame
-from tkinter import *
-from tkinter import ttk
-from PIL import Image, ImageTk
-import datetime, time, random, keyboard
-import time, random, os
-from copy import deepcopy
+os.chdir('锤僵尸')
 with open('config.py', encoding='utf-8') as f:
     exec(f.read())
 

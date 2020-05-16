@@ -70,7 +70,6 @@ class Root(Tk):
         self.start_game.place(x=0, y=500)
 
     def make_img(self, each):
-        each.bullet_img_name = each.bullet_img
         current_img = Image.open(each.img)
         if each.img_transparent:
             ratio = self.lawn_height / current_img.height
@@ -86,17 +85,21 @@ class Root(Tk):
             current_img = current_img.resize(
                 (self.lawn_width, self.lawn_height), Image.ANTIALIAS)
             each.img = ImageTk.PhotoImage(current_img)
-        if each.bullet_img:
-            if not each.is_bullet:
-                current_img = Image.open(each.bullet_img)
-                current_img = current_img.resize(
-                    (self.lawn_width, self.lawn_height), Image.ANTIALIAS)
-                each.bullet_img = ImageTk.PhotoImage(current_img)
-            else:
-                each.bullet_img = ImageTk.PhotoImage(
-                    Image.open(each.bullet_img).resize(
-                        (self.lawn_width // 3, self.lawn_height // 3),
-                        Image.ANTIALIAS))
+        try:
+            each.bullet_img_name = each.bullet_img
+            if each.bullet_img:
+                if not each.is_bullet:
+                    current_img = Image.open(each.bullet_img)
+                    current_img = current_img.resize(
+                        (self.lawn_width, self.lawn_height), Image.ANTIALIAS)
+                    each.bullet_img = ImageTk.PhotoImage(current_img)
+                else:
+                    each.bullet_img = ImageTk.PhotoImage(
+                        Image.open(each.bullet_img).resize(
+                            (self.lawn_width // 3, self.lawn_height // 3),
+                            Image.ANTIALIAS))
+        except:
+            pass
 
     def draw_choosed_plants(self):
         for each in self.plants_already_choosed.grid_slaves():
@@ -469,16 +472,13 @@ class Root(Tk):
             current_zombies.other_sound = [
                 pygame.mixer.Sound(k) for k in current_zombies.other_sound
             ]
-        zombie_img = Image.open(current_zombies.img)
-        zombie_img = zombie_img.resize((self.lawn_width, self.lawn_height),
-                                       Image.ANTIALIAS)
-        zombie_img = ImageTk.PhotoImage(zombie_img)
+        self.make_img(current_zombies)
         current_zombies_button = ttk.Button(
             self.maps,
-            image=zombie_img,
+            image=current_zombies.img,
             command=lambda current_zombies=current_zombies: self.block_action(
                 current_zombies, mode=1))
-        current_zombies_button.image = zombie_img
+        current_zombies_button.image = current_zombies.img
         current_zombies.button = current_zombies_button
         current_zombies.next_to_plants = False
 

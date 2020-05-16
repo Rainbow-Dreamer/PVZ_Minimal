@@ -1,0 +1,1 @@
+game_path = 'pvz极简版.pyw'
