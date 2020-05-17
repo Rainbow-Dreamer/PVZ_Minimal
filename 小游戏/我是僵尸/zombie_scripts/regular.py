@@ -87,7 +87,7 @@ def zombie_eat_plants(games, plants, self):
             if plants.name == '向日葵':
                 for t in range(2):
                     flower_sunshine = games.make_button(games.maps,image=games.flower_sunshine_img)
-                    flower_sunshine.configure(command=lambda obj=flower_sunshine,sun=plants.bullet_attack: games.flower_get_sunshine(obj, sun))
+                    flower_sunshine.configure(command=lambda sun=flower_sunshine, obj=self: games.flower_get_sunshine(sun, obj))
                     flower_sunshine.image = games.fall_sunshine_img
                     flower_sunshine.grid(row=plants.rows, column=plants.columns)
             plants.hp -= self.attack

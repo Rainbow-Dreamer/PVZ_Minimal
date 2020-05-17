@@ -7,12 +7,10 @@ def sunflower_check(self, games):
         self.time = games.current_time
         flower_sunshine = games.make_button(
             games.maps,
-            image=games.flower_sunshine_img,
-            command=lambda: games.flower_get_sunshine(i, j, self.bullet_attack
-                                                      ))
+            image=games.flower_sunshine_img)
+        flower_sunshine.configure(command=lambda: games.flower_get_sunshine(flower_sunshine, self))
         flower_sunshine.image = games.fall_sunshine_img
         flower_sunshine.grid(row=i, column=j)
-        self.sunshine_ls.append(flower_sunshine)
 
 
 向日葵 = plant(name='向日葵',

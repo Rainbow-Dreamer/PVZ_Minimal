@@ -309,7 +309,7 @@ class Root(Tk):
             current_button.grid(row=0, column=i + 1)
             plants_info.button = current_button
             plants_info.counter = time.time()
-            plants_info.enable = 0 if plants_info.name != '向日葵' else 1
+            plants_info.enable = 1 if plants_info.no_cooling_start else 0
 
     def init_shovel(self):
         shovel_photo = ImageTk.PhotoImage(
@@ -374,7 +374,7 @@ class Root(Tk):
                     choose_plant = self.plants_generate[self.choosed_plant]
                     current.plants = get_plant(choose_plant, j, k)
                     self.make_img(current.plants)
-                    if current.plants.name == '土豆雷':
+                    if current.plants.use_bullet_img_first:
                         current.configure(image=current.plants.bullet_img)
                     else:
                         current.configure(image=current.plants.img)
@@ -383,8 +383,6 @@ class Root(Tk):
                     current_plant_name = current.plants.name
                     current_choosed_plants = choosed_plants[self.choosed_plant]
                     current.plants.button = current_choosed_plants.button
-                    if current_plant_name == '向日葵':
-                        current.plants.sunshine_ls = []
                     set_plants_sound.play()
                     self.action_text.set(
                         f'你成功放置了{current_plant_name}在第{j+1}行，第{k+1}列')
@@ -436,18 +434,13 @@ class Root(Tk):
             if self.sunshine_ls:
                 self.sunshine_ls.pop().destroy()
 
-    def flower_get_sunshine(self, i, j, k):
+    def flower_get_sunshine(self, sun, obj):
         if self.mode != PAUSE:
-            self.sunshine += k
+            self.sunshine += obj.bullet_attack
             self.sunshine_text.set(self.sunshine)
             get_sunshine_sound.play()
-            self.action_text.set(f'成功拿到了{k}点阳光')
-            block_sunshine = self.blocks[i][j].plants.sunshine_ls
-            if block_sunshine:
-                block_sunshine.pop().destroy()
-
-    def pea_attack(self, i, j):
-        pass
+            self.action_text.set(f'成功拿到了{obj.bullet_attack}点阳光')
+            sun.destroy()
 
     def set_zombies(self, current_zombies):
         current_zombies.attack_sound = [

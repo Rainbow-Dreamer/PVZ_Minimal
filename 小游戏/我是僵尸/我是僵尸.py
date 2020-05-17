@@ -308,16 +308,14 @@ class Root(Tk):
             if self.sunshine_ls:
                 self.sunshine_ls.pop().destroy()
 
-    def flower_get_sunshine(self, obj, sun):
+    def flower_get_sunshine(self, sun, obj):
         if self.mode != PAUSE:
-            self.sunshine += sun
+            self.sunshine += obj.bullet_attack
             self.sunshine_text.set(self.sunshine)
             get_sunshine_sound.play()
-            self.action_text.set(f'成功拿到了{sun}点阳光')
-            obj.destroy()
+            self.action_text.set(f'成功拿到了{obj.bullet_attack}点阳光')
+            sun.destroy()
 
-    def pea_attack(self, i, j):
-        pass
 
     def set_zombies(self, current_zombies):
         current_zombies.attack_sound = [

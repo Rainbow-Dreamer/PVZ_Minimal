@@ -140,4 +140,4 @@ with open(stage_file, encoding='utf-8') as f:
 os.chdir('../resource/')
 exec(stage_file_contents)
 
-modified_file = 'modified.py'
+modified_file = None

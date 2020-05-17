@@ -45,4 +45,5 @@ def potato_detect(self, games):
             bullet_attack=90,
             bullet_sound=('sounds/dirt_rise.ogg', 'sounds/potato_mine.ogg'),
             func=potato_checking,
-            is_bullet=False)
+            is_bullet=False,
+            use_bullet_img_first=True)
