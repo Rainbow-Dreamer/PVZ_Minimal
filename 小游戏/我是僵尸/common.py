@@ -6,6 +6,8 @@ zombies_sample = [eval(j) for j in zombies_names]
 for each in zombies_sample:
     if each.move_speed > 7000:
         each.move_speed = 5000
+    if each.name == '撑杆僵尸':
+        each.move_speed = 3000
 os.chdir('../../../resource/')
 for current_zombies in zombies_sample:
     current_zombies.attack_sound = [

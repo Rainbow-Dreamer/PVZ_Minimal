@@ -25,8 +25,20 @@ def zombie_move(self, games, columns_move=0, rows_move=0, reset=False):
     self.rows += rows_move
     self.columns += columns_move
     if self.columns < 0:
-        self.button.destroy()
-        return
+        if games.brains[self.rows] > 0:
+            if type(self.attack_sound) == list:
+                random.choice(self.attack_sound).play()
+            else:
+                self.attack_sound.play()
+            games.brains[self.rows] -= 1
+            if games.brains[self.rows] <= 0:
+                games.brains_show[self.rows].configure(image=games.no_brain_img)
+                games.plant_bite_sound.play()
+            games.after(self.attack_speed,
+                        lambda: zombie_move(self, games))
+        else:
+            self.button.destroy()     
+        return        
 
     i, j = self.rows, self.columns
     self.button.grid(row=i, column=j)

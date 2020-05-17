@@ -1,5 +1,5 @@
 whole_plants_name = ['窝瓜', '豌豆射手', '火炬树桩', '向日葵', '土豆雷', '坚果墙', '爆炸坚果']
-zombies_names = ['普通僵尸', '路障僵尸', '读报僵尸', '铁桶僵尸']
+zombies_names = ['普通僵尸', '路障僵尸', '读报僵尸', '铁桶僵尸', '撑杆僵尸']
 
 
 def sounds(x):
@@ -103,6 +103,7 @@ zombie_explode = 'explode.png'
 flag_img = 'Zombie_flagpole.png'
 damaged_flag_img = 'Zombie_flagpole2.png'
 zombie_head_img = 'Zombatar_Normal_Zombie.PNG.png'
+brain_img = 'BrainPvZH.png'
 sky_sunshine = 25
 
 background_volume = 0.6

@@ -15,28 +15,32 @@ def pole_zombies_move(self,
     if self.status == 0:
         return
     check_if_plants = games.blocks[self.rows][self.columns].plants
-    if check_if_plants is not None:
+    if check_if_plants:
         if self.has_pole:
             self.other_sound[0].play()
             self.has_pole = 0
+            if columns_move == 0:
+                self.columns -= 1            
         else:
             self.next_to_plants = True
             self.nexted_plants = check_if_plants
             self.adjust_col = -1
             return
-    check_if_plants2 = games.blocks[self.rows][self.columns +
-                                               columns_move].plants
-    if check_if_plants2 is not None:
-        if self.has_pole:
-            self.columns -= 1
-            self.other_sound[0].play()
-            self.has_pole = 0
-        else:
-            self.columns += columns_move
-            self.next_to_plants = True
-            self.nexted_plants = check_if_plants2
-            self.adjust_col = 0
-            return
+    else:
+        check_if_plants2 = games.blocks[self.rows][self.columns +
+                                                   columns_move].plants
+        if check_if_plants2:
+            if self.has_pole:
+                self.columns -= 1
+                self.other_sound[0].play()
+                self.has_pole = 0
+            else:
+                self.columns += columns_move
+                self.next_to_plants = True
+                self.nexted_plants = check_if_plants2
+                self.adjust_col = 0
+                return
+   
     self.rows += rows_move
     self.columns += columns_move
     if self.columns < 0:

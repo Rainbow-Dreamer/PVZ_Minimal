@@ -49,29 +49,28 @@ class Root(Tk):
         self.maps = ttk.LabelFrame(self)
         self.init_sunshine()
         self.init_zombies()
-        
+        self.plant_bite_sound = plant_bite_sound
         self.choose.grid(row=0, column=0, sticky='W')
-        self.lawnmowers = [0 for j in range(map_size[0])]
-        self.lawnmower_img = Image.open(lawnmower_img)
-        self.lawnmower_img = self.lawnmower_img.resize(
+        self.brain_img = brain_img
+        self.brains = [5 for j in range(map_size[0])]
+        self.brains_show = []
+        self.brain_img = Image.open(brain_img)
+        self.brain_img = self.brain_img.resize(
             (self.lawn_width, self.lawn_height), Image.ANTIALIAS)
-        self.lawnmower_img = ImageTk.PhotoImage(self.lawnmower_img)
-        self.no_lawnmower_img = Image.open(no_lawnmower_img)
-        self.no_lawnmower_img = self.no_lawnmower_img.resize(
+        self.brain_img = ImageTk.PhotoImage(self.brain_img)
+        self.no_brain_img = Image.open(no_lawnmower_img)
+        self.no_brain_img = self.no_brain_img.resize(
             (self.lawn_width, self.lawn_height), Image.ANTIALIAS)
-        self.no_lawnmower_img = ImageTk.PhotoImage(self.no_lawnmower_img)
-        if lawnmower_rows:
-            self.mower_part = ttk.LabelFrame(self)
-            self.mower_part.place(x=0, y=100)
-            for k in lawnmower_rows:
-                current_mower = lawnmower(k, 0, lawnmower_mode,
-                                          lawnmower_speed, lawnmower_atack)
-                current_mower.show = ttk.Button(
-                    self.mower_part,
-                    image=self.lawnmower_img,
-                    command=lambda: self.action_text.set('我是一辆小推车'))
-                current_mower.show.grid(row=k, column=0, sticky='W')
-                self.lawnmowers[k] = current_mower
+        self.no_brain_img = ImageTk.PhotoImage(self.no_brain_img)
+        self.brain_part = ttk.LabelFrame(self)
+        self.brain_part.place(x=0, y=100)
+        for k in range(map_size[0]):
+            current_brain = ttk.Button(
+                self.brain_part,
+                image=self.brain_img,
+                command=lambda: self.action_text.set('我是一个脑子'))
+            current_brain.grid(row=k, column=0, sticky='W')
+            self.brains_show.append(current_brain)
 
         self.init_map(*map_size)
         self.maps.place(x=65, y=100)
@@ -102,7 +101,7 @@ class Root(Tk):
         self.check_zombies()
     
     def init_plant_ls(self):
-        #self.bullets_ls = []
+        self.bullets_ls = []
         for i in range(map_size[0]):
             for j in range(plant_line):
                 current_plant = plants_list[i][j]
@@ -112,8 +111,8 @@ class Root(Tk):
                 current.plants.counter = current_time
                 current.plants.time = current_time
                 self.make_img(current.plants)
-                #if current.plants.bullet_img and current.plants.is_bullet and current.plants.bullet_img_name not in self.bullets_ls:
-                    #self.bullets_ls.append(current.plants.bullet_img_name)                
+                if current.plants.bullet_img and current.plants.is_bullet and current.plants.bullet_img_name not in self.bullets_ls:
+                    self.bullets_ls.append(current.plants.bullet_img_name)                
                 current.configure(image=current.plants.img)
                 
                 
@@ -387,6 +386,10 @@ class Root(Tk):
         self.after(2000, lambda: random.choice(obj.dead_sound[1]).play())
 
     def check_plants(self):
+        if all(x <= 0 for x in self.brains):
+            self.action_text.set('你赢了')
+            self.after(3000, self.win)
+            return
         if self.mode == PAUSE:
             if keyboard.is_pressed('p'):
                 self.mode = NULL
@@ -516,6 +519,7 @@ class Root(Tk):
         self.after(7000, quit)
 
     def win(self):
+        self.mode = PAUSE
         self.after(7000, quit)
 
 
