@@ -133,6 +133,7 @@ whole_plants = [(x,
                  eval(f'importlib.import_module("plant_scripts.{x}").{x}.img'))
                 for x in whole_plants_name]
 
+modified_file = None
 os.chdir('stages/')
 stage_file = '预设关卡1.py'
 with open(stage_file, encoding='utf-8') as f:
@@ -140,4 +141,3 @@ with open(stage_file, encoding='utf-8') as f:
 os.chdir('../resource/')
 exec(stage_file_contents)
 
-modified_file = None
