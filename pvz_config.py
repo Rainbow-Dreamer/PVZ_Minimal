@@ -126,6 +126,7 @@ huge_wave_sound = pygame.mixer.Sound('sounds/hugewave.ogg')
 lawnmower_sound = pygame.mixer.Sound('sounds/lawnmower.ogg')
 
 NULL, PLACE, REMOVE, PAUSE = 0, 1, 2, 3
+show_zombies = True
 choosed_plants = []
 os.chdir('..')
 sys.path.append('plant_scripts/')
@@ -140,4 +141,3 @@ with open(stage_file, encoding='utf-8') as f:
     stage_file_contents = f.read()
 os.chdir('../resource/')
 exec(stage_file_contents)
-
