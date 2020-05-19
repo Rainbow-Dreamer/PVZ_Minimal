@@ -67,18 +67,17 @@ class lawnmower:
         self.attack = attack
 
 
-
-
 whole_plants_name = [
     '窝瓜', '豌豆射手', '火炬树桩', '向日葵', '土豆雷', '坚果墙', '樱桃炸弹', '火爆辣椒', '十字火爆辣椒',
     '爆炸坚果', '番薯', '寒冰射手'
 ]
-whole_plants = [(x,
-                 eval(f"__import__('plant_scripts.{x}', fromlist=['plant_scripts']).{x}.img"))
-                for x in whole_plants_name]
+whole_plants = [(
+    x,
+    eval(f"__import__('plant_scripts.{x}', fromlist=['plant_scripts']).{x}.img"
+         )) for x in whole_plants_name]
 modified_file = None
 stage_file = '预设关卡1.py'
-with open('stages/'+stage_file, encoding='utf-8') as f:
+with open('stages/' + stage_file, encoding='utf-8') as f:
     stage_file_contents = f.read()
 
 os.chdir('resource/')

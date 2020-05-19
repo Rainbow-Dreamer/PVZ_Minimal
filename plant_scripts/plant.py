@@ -22,6 +22,7 @@ class plant:
                  dead_normal=True,
                  img_transparent=False,
                  use_bullet_img_first=False,
+                 other_img=None,
                  rows=None,
                  columns=None):
         self.name = name
@@ -47,6 +48,7 @@ class plant:
         self.dead_normal = dead_normal
         self.img_transparent = img_transparent
         self.use_bullet_img_first = use_bullet_img_first
+        self.other_img = other_img
         self.rows = rows
         self.columns = columns
         self.status = 1

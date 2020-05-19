@@ -82,8 +82,10 @@ class Root(Tk):
             each.img = ImageTk.PhotoImage(temp)
 
         else:
-            current_img = current_img.resize(
-                (self.lawn_width, self.lawn_height), Image.ANTIALIAS)
+            ratio = self.lawn_height / current_img.height
+            current_img = current_img.resize((int(
+                current_img.width * ratio), int(current_img.height * ratio)),
+                                             Image.ANTIALIAS)
             each.img = ImageTk.PhotoImage(current_img)
         try:
             each.bullet_img_name = each.bullet_img
@@ -98,6 +100,17 @@ class Root(Tk):
                         Image.open(each.bullet_img).resize(
                             (self.lawn_width // 3, self.lawn_height // 3),
                             Image.ANTIALIAS))
+            if each.other_img:
+                for j in range(len(each.other_img)):
+                    img_name, resize_num = each.other_img[j]
+                    current_other_img = Image.open(img_name)
+                    ratio = self.lawn_height / current_other_img.height
+                    current_other_img = current_other_img.resize(
+                        (int(current_other_img.width * ratio / resize_num),
+                         int(current_other_img.height * ratio / resize_num)),
+                        Image.ANTIALIAS)
+                    each.other_img[j][0] = ImageTk.PhotoImage(
+                        current_other_img)
         except:
             pass
 
@@ -151,7 +164,7 @@ class Root(Tk):
                 exec(f.read())
 
         self.plants_generate = deepcopy(choosed_plants)
-
+        self.paused_time = 0
         self.choose = ttk.LabelFrame(self)
         self.maps = ttk.LabelFrame(self)
         self.init_sunshine()
@@ -546,9 +559,7 @@ class Root(Tk):
                     if each_bullet.func:
                         each_bullet.func(self, each_bullet)
                 self.moving_bullets = []
-                for g in self.blocks:
-                    for h in g:
-                        h.time = repause_current_time
+                self.paused_time = 0
         else:
             nrow, ncol = map_size
             self.current_time = time.time()

@@ -1,5 +1,6 @@
 from plant import plant
 import random, time
+from copy import deepcopy
 
 
 def snow_pea_check(self, games):
@@ -15,12 +16,15 @@ def snow_pea_check(self, games):
             new_pea.bullet_sound = self.bullet_sound
             new_pea.rows = i
             new_pea.columns = j
+            new_pea.name = 'snow pea'
             new_pea.attributes = 0
             new_pea.stop = False
             new_pea.func = self.bullet_func
             new_pea.target_zombies = None
             new_pea.sound = self.bullet_sound[1]
+            new_pea.change_img = self.other_img[0][0]
             new_pea.used = 0
+            new_pea.melt = 0
             self.bullet_sound[0].play()
             moving(games, new_pea)
 
@@ -35,11 +39,14 @@ def moving(games, obj, columns_move=0, rows_move=0):
         i, j = obj.rows, obj.columns
         if j < games.map_columns:
             if obj.used:
-                if obj.target_zombies.status and games.zombie_time - obj.start_frozen >= 10:
+                if obj.target_zombies.status and games.current_time - (
+                        obj.start_frozen + games.paused_time) >= 10:
                     obj.target_zombies.move_speed //= 2
                     obj.target_zombies.attack_speed //= 2
-                    hitted_zombies.frozen = 0
+                    obj.target_zombies.frozen = 0
                     return
+                else:
+                    games.after(10, lambda: moving(games, obj))
             else:
                 obj.grid(row=i, column=j)
                 current_place = games.blocks[i][j]
@@ -48,7 +55,8 @@ def moving(games, obj, columns_move=0, rows_move=0):
                         if 'bullet' in current_place.plants.effects:
                             current_place.plants.effects['bullet'](obj)
                 zombie_row = [
-                    x for x in games.whole_zombies if x.rows == i and x.status == 1
+                    x for x in games.whole_zombies
+                    if x.rows == i and x.status == 1
                 ]
                 passed_time = time.time() - games.zombie_time
                 affect_zombies = [
@@ -56,7 +64,8 @@ def moving(games, obj, columns_move=0, rows_move=0):
                 ]
                 if affect_zombies:
                     affect_zombies.sort(
-                        key=lambda k: (passed_time - k.appear_time) / k.move_speed,
+                        key=lambda k:
+                        (passed_time - k.appear_time) / k.move_speed,
                         reverse=True)
                     hitted_zombies = affect_zombies[0]
                     hitted_zombies.hp -= obj.attack
@@ -65,21 +74,26 @@ def moving(games, obj, columns_move=0, rows_move=0):
                     else:
                         hitted_zombies.hit_sound.play()
                     obj.destroy()
-                    has_frozen = hasattr(hitted_zombies, 'frozen')
-                    if (has_frozen and not hitted_zombies.frozen) or (not has_frozen):
-                        obj.sound.play()
-                        hitted_zombies.frozen = 1
-                        hitted_zombies.move_speed *= 2
-                        hitted_zombies.attack_speed *= 2                        
-                        obj.target_zombies = hitted_zombies
-                        obj.used = 1
-                        obj.start_frozen = games.zombie_time
-                        moving(games, obj)
+                    if not obj.melt:
+                        has_frozen = hasattr(hitted_zombies, 'frozen')
+                        if (has_frozen and
+                                not hitted_zombies.frozen) or (not has_frozen):
+                            obj.sound.play()
+                            hitted_zombies.frozen = 1
+                            hitted_zombies.move_speed *= 2
+                            hitted_zombies.attack_speed *= 2
+                            obj.target_zombies = hitted_zombies
+                            obj.used = 1
+                            obj.start_frozen = deepcopy(games.current_time)
+                            moving(games, obj)
+                        else:
+                            return
                     else:
                         return
-                            
+
                 else:
-                    games.after(obj.bullet_speed, lambda: moving(games, obj, 1))
+                    games.after(obj.bullet_speed,
+                                lambda: moving(games, obj, 1))
         else:
             obj.destroy()
             return
@@ -99,4 +113,5 @@ def moving(games, obj, columns_move=0, rows_move=0):
              bullet_attack=1,
              bullet_sound=('sounds/throw.ogg', 'sounds/frozen.ogg'),
              func=snow_pea_check,
-             bullet_func=moving)
+             bullet_func=moving,
+             other_img=[['pea.png', 3]])
