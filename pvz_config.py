@@ -1,11 +1,3 @@
-whole_plants_name = [
-    '窝瓜', '豌豆射手', '火炬树桩', '向日葵', '土豆雷', '坚果墙', '樱桃炸弹', '火爆辣椒', '十字火爆辣椒',
-    '爆炸坚果', '番薯'
-]
-
-os.chdir('resource/')
-
-
 def sounds(x):
     return pygame.mixer.Sound(x).get_raw()
 
@@ -75,6 +67,22 @@ class lawnmower:
         self.attack = attack
 
 
+
+
+whole_plants_name = [
+    '窝瓜', '豌豆射手', '火炬树桩', '向日葵', '土豆雷', '坚果墙', '樱桃炸弹', '火爆辣椒', '十字火爆辣椒',
+    '爆炸坚果', '番薯'
+]
+whole_plants = [(x,
+                 eval(f"__import__('plant_scripts.{x}', fromlist=['plant_scripts']).{x}.img"))
+                for x in whole_plants_name]
+modified_file = None
+stage_file = '预设关卡1.py'
+with open('stages/'+stage_file, encoding='utf-8') as f:
+    stage_file_contents = f.read()
+
+os.chdir('resource/')
+
 lawnmower_rows = [0, 1, 2, 3, 4]
 lawnmower_mode = 0
 lawnmower_speed = 200
@@ -128,16 +136,5 @@ lawnmower_sound = pygame.mixer.Sound('sounds/lawnmower.ogg')
 NULL, PLACE, REMOVE, PAUSE = 0, 1, 2, 3
 show_zombies = True
 choosed_plants = []
-os.chdir('..')
-sys.path.append('plant_scripts/')
-whole_plants = [(x,
-                 eval(f'importlib.import_module("plant_scripts.{x}").{x}.img'))
-                for x in whole_plants_name]
 
-modified_file = None
-os.chdir('stages/')
-stage_file = '预设关卡1.py'
-with open(stage_file, encoding='utf-8') as f:
-    stage_file_contents = f.read()
-os.chdir('../resource/')
 exec(stage_file_contents)

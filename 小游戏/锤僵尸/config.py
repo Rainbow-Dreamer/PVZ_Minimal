@@ -1,8 +1,3 @@
-
-pygame.mixer.init()
-os.chdir('../../resource/')
-
-
 def sounds(x):
     return pygame.mixer.Sound(x).get_raw()
 
@@ -55,6 +50,14 @@ class lawnmower:
         self.move_speed = move_speed
         self.attack = attack
 
+pygame.mixer.init()
+stage_file = '锤僵尸简单难度.py'
+with open(stage_file, encoding='utf-8') as f:
+    stage_file_contents = f.read()
+
+os.chdir('../../resource/')
+
+
 
 lawnmower_rows = [0, 1, 2, 3, 4]
 lawnmower_mode = 0
@@ -102,9 +105,4 @@ zombies_coming_sound = pygame.mixer.Sound('sounds/awooga.ogg')
 huge_wave_sound = pygame.mixer.Sound('sounds/hugewave.ogg')
 lawnmower_sound = pygame.mixer.Sound('sounds/lawnmower.ogg')
 NULL, PLACE, REMOVE, PAUSE = 0, 1, 2, 3
-stage_file = '锤僵尸简单难度.py'
-os.chdir('../小游戏/锤僵尸')
-with open(stage_file, encoding='utf-8') as f:
-    stage_file_contents = f.read()
-os.chdir('../../resource/')
 exec(stage_file_contents)

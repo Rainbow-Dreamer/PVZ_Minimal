@@ -1,14 +1,13 @@
-os.chdir('zombie_scripts/')
 sys.path.append('.')
 for x in zombies_names:
-    exec(f'from {x} import {x}')
+    exec(f'from zombie_scripts.{x} import {x}')
 zombies_sample = [eval(j) for j in zombies_names]
 for each in zombies_sample:
     if each.move_speed > 7000:
         each.move_speed = 5000
     if each.name == '撑杆僵尸':
         each.move_speed = 3000
-os.chdir('../../../resource/')
+os.chdir('../../resource/')
 for current_zombies in zombies_sample:
     current_zombies.attack_sound = [
         sounds(j) for j in current_zombies.attack_sound

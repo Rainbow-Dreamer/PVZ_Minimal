@@ -1,7 +1,8 @@
-import sys
-sys.path.append('../zombie_scripts/')
-
-[exec(f'{x} = __import__("{x}").{x}', globals()) for x in zombies_names]
+os.chdir('..')
+sys.path.append('.')
+for x in zombies_names:
+    exec(f'from zombie_scripts.{x} import {x}')
+os.chdir('resource/')
 zombies_sample = [eval(j) for j in zombies_names]
 for current_zombies in zombies_sample:
     current_zombies.attack_sound = [

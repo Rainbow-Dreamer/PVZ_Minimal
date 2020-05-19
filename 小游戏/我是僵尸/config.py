@@ -6,10 +6,11 @@ def sounds(x):
     return pygame.mixer.Sound(x).get_raw()
 
 pygame.mixer.init()
+
 with open('common.py', encoding='utf-8') as f:
     exec(f.read())
 
-choosed_zombies = [eval(x) for x in zombies_names]
+choosed_zombies = zombies_sample
 
 
 

@@ -1,5 +1,4 @@
 # 这是一个魔鬼难度的关卡，给你的植物开挂了你也打不过系列
-start_time = 5
 zombies_names = ['普通僵尸', '路障僵尸', '读报僵尸', '撑杆僵尸', '铁桶僵尸']
 with open('common.py', encoding='utf-8') as f:
     exec(f.read())
