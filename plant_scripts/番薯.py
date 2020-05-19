@@ -3,7 +3,8 @@ from plant import plant
 
 def move_here(each, i):
     each.rows = i
-    each.button.grid(row=i, column=each.columns)
+    if each.button.winfo_exists():
+        each.button.grid(row=i, column=each.columns)
 
 
 def attract(self, games):

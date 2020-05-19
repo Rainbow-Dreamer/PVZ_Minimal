@@ -71,7 +71,7 @@ def moving(games, obj, columns_move=0, rows_move=0):
              price=100,
              hp=5,
              cooling_time=7.5,
-             attack_interval=2,
+             attack_interval=1.4,
              bullet_img='pea.png',
              bullet_speed=200,
              bullet_attack=1,
