@@ -1,1 +1,1 @@
-game_path = 'pvz极简版.pyw'
+pvz极简版.pyw
