@@ -68,19 +68,19 @@ class Root(Tk):
         current_img = Image.open(each.img)
         if each.img_transparent:
             ratio = self.lawn_height / current_img.height
-            current_img = current_img.resize((int(
-                current_img.width * ratio / resize_num), int(current_img.height * ratio / resize_num)),
-                                             Image.ANTIALIAS)
+            current_img = current_img.resize(
+                (int(current_img.width * ratio / resize_num),
+                 int(current_img.height * ratio / resize_num)),
+                Image.ANTIALIAS)
             center_width = int(self.lawn_width / 2 - current_img.width / 2)
             temp = self.background_img.copy()
             temp.paste(current_img, (center_width, 0), current_img)
             each.img = ImageTk.PhotoImage(temp)
 
         else:
-            ratio = self.lawn_height / current_img.height
-            current_img = current_img.resize((int(
-                current_img.width * ratio / resize_num), int(current_img.height * ratio / resize_num)),
-                                             Image.ANTIALIAS)
+            current_img = current_img.resize(
+                (int(self.lawn_width / resize_num),
+                 int(self.lawn_height / resize_num)), Image.ANTIALIAS)
             each.img = ImageTk.PhotoImage(current_img)
         try:
             each.bullet_img_name = each.bullet_img
@@ -99,11 +99,9 @@ class Root(Tk):
                 for j in range(len(each.other_img)):
                     img_name, resize_num = each.other_img[j]
                     current_other_img = Image.open(img_name)
-                    ratio = self.lawn_height / current_other_img.height
                     current_other_img = current_other_img.resize(
-                        (int(current_other_img.width * ratio / resize_num),
-                         int(current_other_img.height * ratio / resize_num)),
-                        Image.ANTIALIAS)
+                        (int(self.lawn_width / resize_num),
+                         int(self.lawn_height / resize_num)), Image.ANTIALIAS)
                     each.other_img[j][0] = ImageTk.PhotoImage(
                         current_other_img)
         except:
