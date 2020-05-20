@@ -64,12 +64,12 @@ class Root(Tk):
         self.start_game = ttk.Button(text='开始游戏', command=self.start_init)
         self.start_game.place(x=0, y=500)
 
-    def make_img(self, each):
+    def make_img(self, each, resize_num=1):
         current_img = Image.open(each.img)
         if each.img_transparent:
             ratio = self.lawn_height / current_img.height
             current_img = current_img.resize((int(
-                current_img.width * ratio), int(current_img.height * ratio)),
+                current_img.width * ratio / resize_num), int(current_img.height * ratio / resize_num)),
                                              Image.ANTIALIAS)
             center_width = int(self.lawn_width / 2 - current_img.width / 2)
             temp = self.background_img.copy()
@@ -79,7 +79,7 @@ class Root(Tk):
         else:
             ratio = self.lawn_height / current_img.height
             current_img = current_img.resize((int(
-                current_img.width * ratio), int(current_img.height * ratio)),
+                current_img.width * ratio / resize_num), int(current_img.height * ratio / resize_num)),
                                              Image.ANTIALIAS)
             each.img = ImageTk.PhotoImage(current_img)
         try:

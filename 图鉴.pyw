@@ -15,7 +15,7 @@ for each in paper_sound:
 os.chdir('plant_scripts')
 sys.path.append('.')
 filename = os.listdir()
-remove_ls = ['__pycache__', '__init__.py', 'plant.py']
+remove_ls = ['__pycache__', '__init__.py', 'plant.py', 'bullets.py']
 for each in remove_ls:
     if each in filename:
         filename.remove(each)
