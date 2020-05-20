@@ -1,9 +1,9 @@
 os.chdir('..')
 sys.path.append('.')
 for x in zombies_names:
-    exec(f'from zombie_scripts.{x} import {x}')
+    exec(f'from zombie_scripts.{x} import {x}', globals())
+zombies_sample = [eval(j, globals()) for j in zombies_names]
 os.chdir('resource/')
-zombies_sample = [eval(j) for j in zombies_names]
 for current_zombies in zombies_sample:
     current_zombies.attack_sound = [
         sounds(j) for j in current_zombies.attack_sound

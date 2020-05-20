@@ -76,9 +76,9 @@ whole_plants = [(
     eval(f"__import__('plant_scripts.{x}', fromlist=['plant_scripts']).{x}.img"
          )) for x in whole_plants_name]
 modified_file = None
-stage_file = '预设关卡1.py'
-with open('stages/' + stage_file, encoding='utf-8') as f:
-    stage_file_contents = f.read()
+stage_file = os.listdir('stages')
+stage_file.remove('__init__.py')
+stage_file = [x[:-3] for x in stage_file]
 
 os.chdir('resource/')
 
@@ -135,5 +135,3 @@ lawnmower_sound = pygame.mixer.Sound('sounds/lawnmower.ogg')
 NULL, PLACE, REMOVE, PAUSE = 0, 1, 2, 3
 show_zombies = True
 choosed_plants = []
-
-exec(stage_file_contents)

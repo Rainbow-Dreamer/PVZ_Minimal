@@ -1,3 +1,10 @@
+import os, sys, importlib, pygame
+from tkinter import *
+from tkinter import ttk
+from PIL import Image, ImageTk
+import datetime, time, random, keyboard
+import time, random, os
+from copy import deepcopy
 pygame.mixer.init()
 sys.path.append(os.path.dirname(__file__))
 current_dir = os.getcwd()
@@ -63,6 +70,16 @@ class Root(Tk):
         self.choose_plants_screen.place(x=0, y=200)
         self.start_game = ttk.Button(text='开始游戏', command=self.start_init)
         self.start_game.place(x=0, y=500)
+        self.choose_stage_text = ttk.Label(self, text='请选择关卡')
+        self.choose_stage_text.place(x=450, y=220)
+        self.choose_stages_bar = Scrollbar(self)
+        self.choose_stages_bar.place(x=400, y=250)
+        self.choose_stages = Listbox(self,
+                                     yscrollcommand=self.choose_stages_bar.set)
+        for k in stage_file:
+            self.choose_stages.insert(END, k)
+        self.choose_stages.place(x=450, y=250)
+        self.choose_stages_bar.config(command=self.choose_stages.yview)
 
     def make_img(self, each, resize_num=1):
         current_img = Image.open(each.img)
@@ -133,6 +150,12 @@ class Root(Tk):
         self.choose_buttons[x].grid(row=x // 5, column=x % 5)
 
     def start_init(self):
+        choosed_stage = self.choose_stages.get(ACTIVE)
+        with open(f'../stages/{choosed_stage}.py', encoding='utf-8') as f:
+            stage_file_contents = f.read()
+        exec(stage_file_contents, globals())
+        self.stage_name = ttk.Label(self, text=choosed_stage)
+        self.stage_name.place(x=10, y=self.action_text_place_y + 50)
         global choosed_plants
         pygame.mixer.music.stop()
         bg_music = pygame.mixer.music.load(background_music)
@@ -141,6 +164,8 @@ class Root(Tk):
         self.plants_already_choosed.destroy()
         self.choose_plants_screen.destroy()
         self.start_game.destroy()
+        self.choose_stages.destroy()
+        self.choose_stages_bar.destroy()
         game_start_time = time.time()
         self.game_start_time = game_start_time
         self.mode = NULL

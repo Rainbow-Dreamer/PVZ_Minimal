@@ -10,26 +10,26 @@ for each in zombies_sample:
 # 但是就这样你也是打不过
 modified_file = 'modified.py'
 part1 = [
-    get_zombies(random.choice([普通僵尸, 路障僵尸, 铁桶僵尸]), random.randint(0, 4),
-                8, random.randint(1, 60)) for i in range(200)
+    get_zombies(random.choice([普通僵尸, 路障僵尸, 铁桶僵尸]), random.randint(0, 4), 8,
+                random.randint(1, 60)) for i in range(200)
 ]
 
 part2 = [
-    get_zombies(random.choice([普通僵尸, 路障僵尸, 铁桶僵尸]), random.randint(0, 4),
-                8, random.randint(1, 60)) for i in range(300)
+    get_zombies(random.choice([普通僵尸, 路障僵尸, 铁桶僵尸]), random.randint(0, 4), 8,
+                random.randint(1, 60)) for i in range(300)
 ]
 
 part3 = [
-    get_zombies(random.choice([普通僵尸, 路障僵尸, 铁桶僵尸]), random.randint(0, 4),
-                8, random.randint(1, 60)) for i in range(300)
+    get_zombies(random.choice([普通僵尸, 路障僵尸, 铁桶僵尸]), random.randint(0, 4), 8,
+                random.randint(1, 60)) for i in range(300)
 ]
 big_wave1 = [
     get_zombies(普通僵尸, random.randint(0, 4), 8, random.randint(1, 5))
     for i in range(100)
 ]
 big_wave2 = [
-    get_zombies(random.choice([普通僵尸, 路障僵尸, 铁桶僵尸]), random.randint(0, 4),
-                8, random.randint(1, 5)) for i in range(100)
+    get_zombies(random.choice([普通僵尸, 路障僵尸, 铁桶僵尸]), random.randint(0, 4), 8,
+                random.randint(1, 5)) for i in range(100)
 ]
 current_stage = Stage(2)
 current_stage.set_normal(0, part1)
