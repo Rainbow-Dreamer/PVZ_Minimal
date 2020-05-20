@@ -37,23 +37,24 @@ def moving(games, obj, columns_move=0, rows_move=0):
                 if current_place.plants.effects:
                     if 'bullet' in current_place.plants.effects:
                         current_place.plants.effects['bullet'](obj)
-            zombie_row = [
-                x for x in games.whole_zombies if x.rows == i and x.status == 1
-            ]
             passed_time = time.time() - games.zombie_time
             affect_zombies = [
-                x for x in zombie_row if x.columns + 1 + x.adjust_col == j
+                x for x in games.whole_zombies if x.status == 1 and x.rows == i and x.columns + 1 + x.adjust_col == j
             ]
             if affect_zombies:
                 affect_zombies.sort(
                     key=lambda k: (passed_time - k.appear_time) / k.move_speed,
-                    reverse=True)
+                    reverse=True)                
                 hitted_zombies = affect_zombies[0]
                 hitted_zombies.hp -= obj.attack
                 if type(hitted_zombies.hit_sound) == list:
                     random.choice(hitted_zombies.hit_sound).play()
                 else:
                     hitted_zombies.hit_sound.play()
+                if obj.attributes == 1:
+                    sputter = obj.attack/len(affect_zombies)
+                    for sputter_zombies in affect_zombies[1:]:
+                        sputter_zombies.hp -= sputter                       
                 obj.destroy()
                 return
             else:
