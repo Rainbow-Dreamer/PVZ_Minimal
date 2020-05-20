@@ -439,7 +439,9 @@ class Root(Tk):
                     if plants_on_block is None:
                         self.action_text.set('这是一块空荡荡的草坪')
                     else:
-                        self.action_text.set(f'这上面有个{plants_on_block.name}')
+                        self.action_text.set(
+                            f'这上面有个{plants_on_block.name}, 当前生命值{plants_on_block.hp}'
+                        )
 
     def appear_sunshine(self):
         if self.mode != PAUSE:

@@ -16,6 +16,7 @@ class zombies:
                  repause_func=None,
                  other_sound=None,
                  img_transparent=False,
+                 information=None,
                  rows=None,
                  columns=None,
                  appear_time=None,
@@ -37,6 +38,7 @@ class zombies:
         self.repause_func = repause_func
         self.other_sound = other_sound
         self.img_transparent = img_transparent
+        self.information = information
         self.rows = rows
         self.columns = columns
         self.appear_time = appear_time

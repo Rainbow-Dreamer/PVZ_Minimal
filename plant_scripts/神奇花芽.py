@@ -37,8 +37,6 @@ def random_choose(self, games):
             f'你成功放置了{current_plant_name}在第{j+1}行，第{k+1}列')
         current.plants.button.textvariable.set(
             f'${current.plants.price} 冷却中')
-        current_choosed_plants.counter = current_time
-        current_choosed_plants.enable = 0
     
 
 
