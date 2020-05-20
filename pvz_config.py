@@ -91,7 +91,7 @@ no_lawnmower_img = 'no_lawnmower.png'
 
 background_music = 'sounds/Laura Shigihara - Ultimate Battle IN-GAME.ogg'
 action_text_place_x = 270
-
+lawn_size = 60
 icon_name = 'pvz.ico'
 title_name = "PVZ极简版"
 screen_size = 900, 600

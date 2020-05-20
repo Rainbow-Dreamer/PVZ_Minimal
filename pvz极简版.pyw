@@ -19,8 +19,10 @@ class Root(Tk):
         self.make_button = ttk.Button
         self.NULL, self.PLACE, self.REMOVE, self.PAUSE = 0, 1, 2, 3
         self.lawn_photo = Image.open(lawn_img)
-
-        lawn_size = 250 // map_size[0]
+        global lawn_size
+        if not lawn_size:
+            lawn_size = 250 // map_size[0]
+            print(lawn_size)
         self.lawn_photo = self.lawn_photo.resize((lawn_size, lawn_size),
                                                  Image.ANTIALIAS)
         self.background_img = self.lawn_photo.copy()
@@ -160,12 +162,16 @@ class Root(Tk):
         self.paused_time = 0
         self.get_plant = get_plant
         self.choose = ttk.LabelFrame(self)
-        self.maps = ttk.LabelFrame(self)
+
         self.init_sunshine()
         self.init_plants()
         self.init_shovel()
         self.choosed_plants = choosed_plants
-        self.choose.grid(row=0, column=0, sticky='W')
+        self.choose.grid(row=0, sticky='W')
+        self.whole_map = LabelFrame(self, borderwidth=0, highlightthickness=0)
+        self.whole_map.grid(row=1, sticky='W')
+        self.maps = ttk.LabelFrame(self.whole_map)
+        self.lawnmower_frame = ttk.LabelFrame(self.whole_map)
         self.lawnmowers = [0 for j in range(map_size[0])]
         self.lawnmower_img = Image.open(lawnmower_img)
         self.lawnmower_img = self.lawnmower_img.resize(
@@ -175,22 +181,21 @@ class Root(Tk):
         self.no_lawnmower_img = self.no_lawnmower_img.resize(
             (self.lawn_width, self.lawn_height), Image.ANTIALIAS)
         self.no_lawnmower_img = ImageTk.PhotoImage(self.no_lawnmower_img)
+
         if lawnmower_rows:
-            self.mower_part = ttk.LabelFrame(self)
-            self.mower_part.place(x=0, y=100)
             for k in lawnmower_rows:
                 current_mower = lawnmower(k, 0, lawnmower_mode,
                                           lawnmower_speed, lawnmower_atack)
                 current_mower.show = ttk.Button(
-                    self.mower_part,
+                    self.lawnmower_frame,
                     image=self.lawnmower_img,
                     command=lambda: self.action_text.set('我是一辆小推车'))
                 current_mower.show.grid(row=k, column=0, sticky='W')
                 self.lawnmowers[k] = current_mower
 
         self.init_map(*map_size)
-        self.maps.place(x=65, y=100)
-
+        self.lawnmower_frame.grid(row=0, column=0, sticky='W')
+        self.maps.grid(row=0, column=1, sticky='W')
         self.choosed_plant = None
         self.sunshine_ls = []
         self.map_rows, self.map_columns = map_size
