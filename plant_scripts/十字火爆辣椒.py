@@ -1,5 +1,5 @@
 from plant import plant
-'''
+text = '''
 十字火爆辣椒
 
 特性：对当前所在行和所在列都进行一整排的燃烧，伤害和火爆辣椒一样。
@@ -87,4 +87,5 @@ def jalapeno_explode(self, games):
                bullet_attack=90,
                bullet_sound=('sounds/jalapeno.ogg', ),
                is_bullet=False,
-               func=jalapeno_check)
+               func=jalapeno_check,
+               information=text)

@@ -1,7 +1,7 @@
 from plant import *
 import random
 
-'''
+text = '''
 神奇花芽
 
 特性：随机变成一个当前所选的植物。
@@ -48,4 +48,5 @@ def random_choose(self, games):
              hp=5,
              cooling_time=7.5,
              attack_interval=2,
-             func=random_choose)
+             func=random_choose,
+             information=text)

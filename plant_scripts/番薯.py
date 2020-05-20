@@ -1,5 +1,5 @@
 from plant import plant
-'''
+text = '''
 番薯
 
 特性：吸引前方1x3的相邻行的僵尸到自己的行，防御力比坚果墙稍弱。
@@ -32,4 +32,5 @@ def attract(self, games):
            hp=40,
            cooling_time=20,
            img_transparent=True,
-           func=attract)
+           func=attract,
+           information=text)

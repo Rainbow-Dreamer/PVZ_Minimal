@@ -1,5 +1,5 @@
 from plant import plant
-'''
+text = '''
 爆炸坚果
 
 特性：防御力和普通坚果墙一样，区别是僵尸吃完的时候，爆炸坚果会爆炸，
@@ -45,4 +45,5 @@ def wallnut_explode(self, games):
              cooling_time=30,
              bullet_sound=('sounds/cherrybomb.ogg', ),
              func=wallnut_explode,
-             dead_normal=False)
+             dead_normal=False,
+             information=text)
