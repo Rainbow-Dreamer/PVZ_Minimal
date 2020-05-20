@@ -156,6 +156,7 @@ class Root(Tk):
             current_info = [
                 choose_obj.name, f'所需阳光：{choose_obj.price}',
                 f'生命值：{choose_obj.hp}', f'冷却时间：{choose_obj.cooling_time}',
+                f'攻击力：{choose_obj.bullet_attack if choose_obj.bullet_attack else 0}',
                 choose_obj.information if choose_obj.information else ''
             ]
         elif self.mode == 1:
