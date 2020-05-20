@@ -158,11 +158,13 @@ class Root(Tk):
 
         self.plants_generate = deepcopy(choosed_plants)
         self.paused_time = 0
+        self.get_plant = get_plant
         self.choose = ttk.LabelFrame(self)
         self.maps = ttk.LabelFrame(self)
         self.init_sunshine()
         self.init_plants()
         self.init_shovel()
+        self.choosed_plants = choosed_plants
         self.choose.grid(row=0, column=0, sticky='W')
         self.lawnmowers = [0 for j in range(map_size[0])]
         self.lawnmower_img = Image.open(lawnmower_img)
