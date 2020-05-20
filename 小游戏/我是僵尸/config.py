@@ -129,13 +129,10 @@ lawnmower_sound = pygame.mixer.Sound('sounds/lawnmower.ogg')
 plant_line = 5
 NULL, PLACE, REMOVE, PAUSE = 0, 1, 2, 3
 choosed_plants = []
-os.chdir(abs_path + '/我是僵尸/')
-plants_path = 'plant_scripts/'
-os.chdir(plants_path)
+os.chdir(abs_path+'\\我是僵尸')
 sys.path.append('.')
-whole_plants = [eval(f'__import__("{x}").{x}') for x in whole_plants_name]
+whole_plants = [eval(f'__import__("plant_scripts.{x}", fromlist=["plant_scripts"]).{x}') for x in whole_plants_name]
 stage_file = '我是僵尸关卡.py'
-os.chdir('..')
 with open(stage_file, encoding='utf-8') as f:
     stage_file_contents = f.read()
 os.chdir('../../resource/')
