@@ -1,5 +1,19 @@
 from plant import *
 import random
+
+'''
+神奇花芽
+
+特性：随机变成一个当前所选的植物。
+
+小花芽刚从泥土里探出脑袋，就看到一堆高大很多的植物围在身边，
+大家都不知道她未来会长成什么样的植物，因此都带着期盼的目光。
+没错，这只是一株不知名的小花芽罢了，但是这是什么植物的花芽呢？
+戴夫前几天在批发市场上看到有个小摊把一堆花芽摆在一起以同样的
+价格出售，想着说不定能赚到一些好植物，也就估且买了一些回来。
+现在，就是见证手气的时刻了。
+'''
+
 def random_choose(self, games):
     if games.current_time - self.time >= self.attack_interval:
         choosed_plant = random.randint(0, games.plants_num-1)
