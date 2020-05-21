@@ -12,7 +12,7 @@ def peashooter_check(self, games):
             new_pea.image = self.bullet_img
             new_pea.bullet_img_name = self.bullet_img_name
             new_pea.bullet_speed = self.bullet_speed
-            new_pea.attack = random.choices([1, 2, 5, 10, 50], weights=[0.35, 0.35, 0.15, 0.1, 0.05], k=1)[0]
+            new_pea.attack = random.choices([1, 2, 5, 10, 50], weights=[0.6, 0.25, 0.1, 0.04, 0.01], k=1)[0]
             new_pea.bullet_sound = self.bullet_sound
             new_pea.rows = random.randint(0, games.map_rows-1)
             new_pea.columns = j
@@ -70,12 +70,12 @@ def moving(games, obj, columns_move=0, rows_move=0):
 
 text = '''
 特性：当随机豌豆射手的右边任意一行出现僵尸的时候，从随机的一行发射一个攻击力随机的豌豆，
-攻击力从1, 2, 5, 10, 50里面按照出现概率0.35, 0.35, 0.15, 0.1, 0.05里面随机选择。
+攻击力从1, 2, 5, 10, 50里面按照出现概率0.6, 0.25, 0.1, 0.04, 0.01里面随机选择。
 '''
 
 随机豌豆射手 = plant(name='随机豌豆射手',
              img='random_peashooter.png',
-             price=150,
+             price=200,
              hp=5,
              cooling_time=7.5,
              attack_interval=1.4,
