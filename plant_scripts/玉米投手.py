@@ -108,10 +108,10 @@ def moving(games, obj, columns_move=0, rows_move=0):
 
 玉米投手 = plant(name='玉米投手',
              img='Kernel-pult1.png',
-             price=0,
+             price=100,
              hp=5,
-             cooling_time=0,
-             attack_interval=1.4,
+             cooling_time=7.5,
+             attack_interval=3,
              bullet_img='Cornpult_kernal.png',
              bullet_speed=200,
              bullet_attack=1,
