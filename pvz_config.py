@@ -67,10 +67,14 @@ class lawnmower:
         self.attack = attack
 
 
-whole_plants_name = [
-    '窝瓜', '豌豆射手', '火炬树桩', '向日葵', '土豆雷', '坚果墙', '樱桃炸弹', '火爆辣椒', '十字火爆辣椒',
-    '爆炸坚果', '番薯', '寒冰射手', '神奇花芽', '随机豌豆射手'
-]
+whole_plants_name = None
+if whole_plants_name is None:
+    whole_plants_name = os.listdir('plant_scripts')
+    except_ls = ['__pycache__', '__init__.py', 'plant.py', 'bullets.py']
+    for each in except_ls:
+        if each in whole_plants_name:
+            whole_plants_name.remove(each)
+    whole_plants_name = [x[:-3] for x in whole_plants_name]
 whole_plants = [(
     x,
     eval(f"__import__('plant_scripts.{x}', fromlist=['plant_scripts']).{x}.img"

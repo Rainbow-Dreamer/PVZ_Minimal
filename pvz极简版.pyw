@@ -1,3 +1,10 @@
+import os, sys, importlib, pygame
+from tkinter import *
+from tkinter import ttk
+from PIL import Image, ImageTk
+import datetime, time, random, keyboard
+import time, random, os
+from copy import deepcopy
 pygame.mixer.init()
 sys.path.append(os.path.dirname(__file__))
 current_dir = os.getcwd()
@@ -22,7 +29,6 @@ class Root(Tk):
         global lawn_size
         if not lawn_size:
             lawn_size = 250 // map_size[0]
-            print(lawn_size)
         self.lawn_photo = self.lawn_photo.resize((lawn_size, lawn_size),
                                                  Image.ANTIALIAS)
         self.background_img = self.lawn_photo.copy()
@@ -43,12 +49,15 @@ class Root(Tk):
         self.choose_plants_screen = ttk.LabelFrame(self)
         self.choose_buttons = []
         self.num_plants = len(whole_plants)
+        average_height = 200 / (self.num_plants / 5)
+        if lawn_size <= average_height:
+            average_height = lawn_size
         for i in range(self.num_plants):
             current_plant = whole_plants[i]
             current_plant_img = whole_plants_img[i]
             current_plant[1] = i
             current_img = Image.open(current_plant_img)
-            ratio = self.lawn_height / current_img.height
+            ratio = average_height / current_img.height
             current_img = current_img.resize((int(
                 current_img.width * ratio), int(current_img.height * ratio)),
                                              Image.ANTIALIAS)
@@ -106,13 +115,22 @@ class Root(Tk):
                             Image.ANTIALIAS))
             if each.other_img:
                 for j in range(len(each.other_img)):
-                    img_name, resize_num = each.other_img[j]
+                    current_other_img_ls = each.other_img[j]
+                    current_len = len(current_other_img_ls)
+                    if current_len == 2:
+                        img_name, resize_num = current_other_img_ls
+                        as_bullet = False
+                    elif current_len == 3:
+                        img_name, resize_num, as_bullet = current_other_img_ls
                     current_other_img = Image.open(img_name)
                     current_other_img = current_other_img.resize(
                         (int(self.lawn_width / resize_num),
                          int(self.lawn_height / resize_num)), Image.ANTIALIAS)
-                    each.other_img[j][0] = ImageTk.PhotoImage(
+                    current_other_img_ls[1] = img_name
+                    current_other_img_ls[0] = ImageTk.PhotoImage(
                         current_other_img)
+                    if as_bullet:
+                        self.bullets_ls.append(img_name)
         except:
             pass
 
