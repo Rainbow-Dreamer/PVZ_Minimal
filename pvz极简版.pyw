@@ -93,7 +93,6 @@ class Root(Tk):
                  int(self.lawn_height / resize_num)), Image.ANTIALIAS)
             each.img = ImageTk.PhotoImage(current_img)
         try:
-            each.bullet_img_name = each.bullet_img
             if each.bullet_img:
                 if not each.is_bullet:
                     current_img = Image.open(each.bullet_img)
