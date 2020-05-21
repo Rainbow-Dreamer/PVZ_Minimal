@@ -24,7 +24,6 @@ class plant:
                  use_bullet_img_first=False,
                  other_img=None,
                  information=None,
-                 bullet_img_transparent=True,
                  rows=None,
                  columns=None):
         self.name = name
@@ -53,7 +52,6 @@ class plant:
         self.use_bullet_img_first = use_bullet_img_first
         self.other_img = other_img
         self.information = information
-        self.bullet_img_transparent = bullet_img_transparent
         self.rows = rows
         self.columns = columns
         self.status = 1
