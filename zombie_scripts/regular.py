@@ -102,5 +102,8 @@ def zombie_eat_plants(games, plants, self):
             else:
                 self.attack_sound.play()
             plants.hp -= self.attack
+            if plants.effects:
+                if 'zombies' in plants.effects:
+                    plants.effects['zombies'](plants, self, games)
             games.after(self.attack_speed,
                         lambda: zombie_eat_plants(games, plants, self))
