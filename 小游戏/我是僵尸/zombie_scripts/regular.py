@@ -72,6 +72,8 @@ def repause(self, games):
 
 
 def zombie_eat_plants(games, plants, self):
+    if self.stop:
+        return    
     if games.mode != games.PAUSE:
         if plants is None or plants.hp <= 0 or plants.status == 0 or self.hp <= 0:
             self.next_to_plants = False
