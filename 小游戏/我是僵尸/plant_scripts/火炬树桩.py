@@ -6,8 +6,6 @@ from plant import plant
              cooling_time=7.5,
              bullet_img='FirePea.png')
 
-def get_bullet_img(obj):
-    return obj.bullet_img
 def fire_update(self, obj):
     if obj.attributes == 0:
         obj.attack *= 2
@@ -15,14 +13,14 @@ def fire_update(self, obj):
         obj.attributes = 1
 
 
-def normal_fire_update(obj):
+def normal_fire_update(self, obj):
     if hasattr(obj, 'name') and obj.name == 'snow pea':
         obj.configure(image=obj.change_img)
         obj.melt = 1
     else:
         if obj.attributes == 0:
             obj.attack *= 2
-            obj.configure(image=火炬树桩.bullet_img)
+            obj.configure(image=self.bullet_img)
             obj.attributes = 1
 
 
