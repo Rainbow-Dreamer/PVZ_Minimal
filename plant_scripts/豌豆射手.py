@@ -4,7 +4,7 @@ import random, time
 
 def peashooter_check(self, games):
     i, j = self.rows, self.columns
-    if any(x.status == 1 and x.rows == i for x in games.whole_zombies):
+    if any(x.status == 1 and x.rows == i and x.columns + 1 + x.adjust_col >= j for x in games.whole_zombies):
         if games.current_time - self.time >= self.attack_interval:
             self.time = games.current_time
             new_pea = games.make_label(games.maps, image=self.bullet_img)
@@ -36,7 +36,7 @@ def moving(games, obj, columns_move=0, rows_move=0):
             if current_place.plants is not None:
                 if current_place.plants.effects:
                     if 'bullet' in current_place.plants.effects:
-                        current_place.plants.effects['bullet'](obj)
+                        current_place.plants.effects['bullet'](current_place.plants, obj)
             passed_time = time.time() - games.zombie_time
             affect_zombies = [
                 x for x in games.whole_zombies if x.status == 1 and x.rows == i and x.columns + 1 + x.adjust_col == j

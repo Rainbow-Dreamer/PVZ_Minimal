@@ -7,7 +7,7 @@ class Root(Tk):
     def __init__(self):
         super(Root, self).__init__()
         self.wm_iconbitmap(icon_name)
-        self.title('我是僵尸')
+        self.title('我是僵尸无尽模式')
         self.minsize(*screen_size)
         self.make_label = ttk.Label
         self.make_button = ttk.Button
@@ -16,6 +16,7 @@ class Root(Tk):
         self.lawn_photo = Image.open(lawn_img)
         self.plants_num = plants_num
         self.whole_plants = whole_plants
+        self.get_plant = get_plant
         self.paused_time = 0
         lawn_size = 250 // map_size[0]
         self.lawn_photo = self.lawn_photo.resize((lawn_size, lawn_size),
@@ -76,7 +77,7 @@ class Root(Tk):
 
         self.init_map(*map_size)
         self.maps.place(x=65, y=100)
-        self.get_plant = get_plant
+
         self.choosed_zombies = None
         self.sunshine_ls = []
         self.map_rows, self.map_columns = map_size
@@ -97,10 +98,34 @@ class Root(Tk):
         self.killed_zombies_show.place(x=action_text_place_x + 200,
                                        y=self.action_text_place_y,
                                        anchor='center')
-        
+        self.win_stages = 0
+        self.win_stages_text = StringVar()
+        self.win_stages_text.set(f'通关数：{self.win_stages}')
+        self.win_stages_label = ttk.Label(self, textvariable=self.win_stages_text)
+        self.win_stages_label.place(x=action_text_place_x + 300,
+                                       y=self.action_text_place_y,
+                                       anchor='center')
         self.zombie_time = time.time()
         self.check_plants()
         self.check_zombies()
+    
+    
+    def next_stage(self):
+        self.brains = [5 for j in range(map_size[0])]
+        self.brains_show = []
+        for k in range(map_size[0]):
+            current_brain = ttk.Button(
+                self.brain_part,
+                image=self.brain_img,
+                command=lambda: self.action_text.set('我是一个脑子'))
+            current_brain.grid(row=k, column=0, sticky='W')
+            self.brains_show.append(current_brain)
+        self.choosed_zombies = None
+        self.whole_zombies = []
+        self.init_plant_ls()
+        self.zombie_time = time.time()
+        self.check_plants()
+    
     
     def init_plant_ls(self):
         self.bullets_ls = []
@@ -119,7 +144,8 @@ class Root(Tk):
                     current.configure(image=current.plants.bullet_img)
                 else:
                     current.configure(image=current.plants.img)
-                       
+                
+                
                 
             
     
@@ -173,6 +199,7 @@ class Root(Tk):
                         self.bullets_ls.append(img_name)
         except:
             pass
+
     
 
         
@@ -541,8 +568,10 @@ class Root(Tk):
         self.after(7000, quit)
 
     def win(self):
-        self.mode = PAUSE
-        self.after(7000, quit)
+        self.win_stages += 1
+        self.win_stages_text.set(f'通关数：{self.win_stages}')
+        exec(stage_file_contents)
+        self.next_stage()
 
 
 root = Root()

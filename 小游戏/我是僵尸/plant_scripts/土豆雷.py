@@ -1,6 +1,12 @@
 from plant import plant
 
 
+def potato_checking(self, games):
+    if games.current_time - self.time >= self.attack_interval:
+        games.blocks[self.rows][self.columns].configure(image=self.img)
+        self.bullet_sound[0].play()
+        self.status = 0
+        potato_detect(self, games)
 
 
 def potato_detect(self, games):
@@ -11,7 +17,7 @@ def potato_detect(self, games):
         x for x in games.whole_zombies
         if x.status == 1 and x.rows == i and x.columns == j
     ]
-    if attack_zombies:
+    if len(attack_zombies) != 0:
         self.bullet_sound[1].play()
         for each in attack_zombies:
             each.hp -= self.bullet_attack
@@ -26,6 +32,7 @@ def potato_detect(self, games):
         potato_block.configure(image=games.lawn_photo)
         potato_block.plants = None
         return
+    games.after(50, lambda: potato_detect(self, games))
 
 
 土豆雷 = plant(name='土豆雷',
@@ -33,9 +40,10 @@ def potato_detect(self, games):
             price=25,
             hp=5,
             cooling_time=30,
-            attack_interval=15,
+            attack_interval=2,
             bullet_img='UnarmedPotatoMine.png',
             bullet_attack=90,
             bullet_sound=('sounds/dirt_rise.ogg', 'sounds/potato_mine.ogg'),
-            func=potato_detect,
-            is_bullet=False)
+            func=potato_checking,
+            is_bullet=False,
+            use_bullet_img_first=True)

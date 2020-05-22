@@ -46,4 +46,6 @@ def wallnut_explode(self, games):
              bullet_sound=('sounds/cherrybomb.ogg', ),
              func=wallnut_explode,
              dead_normal=False,
-             information=text)
+             information=text,
+             hp_img=((2 / 3, 'Explode-o-nut2.png'), (1 / 3,
+                                                      'Explode-o-nut3.png')))

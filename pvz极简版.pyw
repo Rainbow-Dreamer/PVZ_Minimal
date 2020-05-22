@@ -404,7 +404,7 @@ class Root(Tk):
     def block_action(self, j, k=None, mode=0):
         if self.mode != PAUSE:
             if mode == 1:
-                dim = j.rows, j.columns + 1 + j.adjust_col
+                dim = j.rows, j.columns
                 j, k = dim
             if self.mode == PLACE:
                 current = self.blocks[j][k]

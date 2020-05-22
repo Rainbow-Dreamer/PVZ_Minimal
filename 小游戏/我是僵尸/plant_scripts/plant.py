@@ -22,6 +22,8 @@ class plant:
                  dead_normal=True,
                  img_transparent=False,
                  use_bullet_img_first=False,
+                 other_img=None,
+                 information=None,
                  rows=None,
                  columns=None):
         self.name = name
@@ -33,6 +35,7 @@ class plant:
         self.hp_img = hp_img
         self.attack_interval = attack_interval
         self.bullet_img = bullet_img
+        self.bullet_img_name = bullet_img
         self.bullet_speed = bullet_speed
         self.bullet_attack = bullet_attack
         self.bullet_sound = bullet_sound
@@ -47,6 +50,8 @@ class plant:
         self.dead_normal = dead_normal
         self.img_transparent = img_transparent
         self.use_bullet_img_first = use_bullet_img_first
+        self.other_img = other_img
+        self.information = information
         self.rows = rows
         self.columns = columns
         self.status = 1

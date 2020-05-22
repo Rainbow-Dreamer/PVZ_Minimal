@@ -7,7 +7,7 @@ class Root(Tk):
     def __init__(self):
         super(Root, self).__init__()
         self.wm_iconbitmap(icon_name)
-        self.title(title_name)
+        self.title('锤僵尸')
         self.minsize(*screen_size)
         self.make_label = ttk.Label
         self.make_button = ttk.Button

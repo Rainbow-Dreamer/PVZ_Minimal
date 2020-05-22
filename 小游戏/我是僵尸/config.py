@@ -1,4 +1,12 @@
-whole_plants_name = ['窝瓜', '豌豆射手', '火炬树桩', '向日葵', '土豆雷', '坚果墙', '爆炸坚果']
+whole_plants_name = None
+if whole_plants_name is None:
+    whole_plants_name = os.listdir('plant_scripts')
+    except_ls = ['__pycache__', '__init__.py', 'plant.py', 'bullets.py']
+    for each in except_ls:
+        if each in whole_plants_name:
+            whole_plants_name.remove(each)
+    whole_plants_name = [x[:-3] for x in whole_plants_name]
+
 zombies_names = ['普通僵尸', '路障僵尸', '读报僵尸', '铁桶僵尸', '撑杆僵尸']
 
 
@@ -132,6 +140,7 @@ choosed_plants = []
 os.chdir(abs_path+'\\我是僵尸')
 sys.path.append('.')
 whole_plants = [eval(f'__import__("plant_scripts.{x}", fromlist=["plant_scripts"]).{x}') for x in whole_plants_name]
+plants_num = len(whole_plants)
 stage_file = '我是僵尸关卡.py'
 with open(stage_file, encoding='utf-8') as f:
     stage_file_contents = f.read()
