@@ -73,6 +73,7 @@ def repause(self, games):
 
 def zombie_eat_plants(games, plants, self):
     if self.stop:
+        self.next_to_plants = False
         return    
     if games.mode != games.PAUSE:
         if plants is None or plants.hp <= 0 or plants.status == 0 or self.hp <= 0:
@@ -96,6 +97,8 @@ def zombie_eat_plants(games, plants, self):
             if plants.effects:
                 if 'zombies' in plants.effects:
                     plants.effects['zombies'](plants, self, games)            
-           
+            if self.stop:
+                self.next_to_plants = False
+                return    
             games.after(self.attack_speed,
                         lambda: zombie_eat_plants(games, plants, self))
