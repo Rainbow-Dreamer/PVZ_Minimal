@@ -1,3 +1,10 @@
+import os, sys, importlib, pygame
+from tkinter import *
+from tkinter import ttk
+from PIL import Image, ImageTk
+import datetime, time, random, keyboard
+import time, random, os
+from copy import deepcopy
 pygame.mixer.init()
 sys.path.append(os.path.dirname(__file__))
 current_dir = os.getcwd()
@@ -17,6 +24,7 @@ class Root(Tk):
         self.minsize(*screen_size)
         self.make_label = ttk.Label
         self.make_button = ttk.Button
+        self.get_zombies = get_zombies
         self.NULL, self.PLACE, self.REMOVE, self.PAUSE = 0, 1, 2, 3
         self.lawn_photo = Image.open(lawn_img)
         global lawn_size
