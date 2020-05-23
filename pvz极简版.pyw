@@ -1,10 +1,3 @@
-import os, sys, importlib, pygame
-from tkinter import *
-from tkinter import ttk
-from PIL import Image, ImageTk
-import datetime, time, random, keyboard
-import time, random, os
-from copy import deepcopy
 pygame.mixer.init()
 sys.path.append(os.path.dirname(__file__))
 current_dir = os.getcwd()
