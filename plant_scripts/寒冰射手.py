@@ -5,7 +5,7 @@ from copy import deepcopy
 
 def snow_pea_check(self, games):
     i, j = self.rows, self.columns
-    if any(x.status == 1 and x.rows == i and x.columns + 1 + x.adjust_col >= j
+    if any(x.status == 1 and x.rows == i and x.columns >= j
            for x in games.whole_zombies):
         if games.current_time - self.time >= self.attack_interval:
             self.time = games.current_time

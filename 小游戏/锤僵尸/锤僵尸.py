@@ -71,7 +71,6 @@ class Root(Tk):
         self.map_rows, self.map_columns = map_size
 
         self.bind("<Button-3>", lambda e: self.action_text.set(''))
-        self.bind("<space>", lambda e: self.pause())
         self.zombie_explode_img = Image.open(zombie_explode)
         self.zombie_explode_img = self.zombie_explode_img.resize(
             (self.lawn_width, self.lawn_height), Image.ANTIALIAS)

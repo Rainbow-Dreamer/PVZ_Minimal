@@ -591,6 +591,8 @@ class Root(Tk):
                 for k in self.whole_zombies:
                     if k.status == 0 and k.hp > 0:
                         k.appear_time += self.paused_time
+                    elif k.status == 1:
+                        k.time += self.paused_time
                 self.zombies_move_call()
                 for each_bullet in self.moving_bullets:
                     if each_bullet.func:
