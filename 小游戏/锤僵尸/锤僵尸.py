@@ -31,8 +31,7 @@ class Root(Tk):
         bg_music = pygame.mixer.music.load(background_music)
         pygame.mixer.music.set_volume(background_volume)
         pygame.mixer.music.play(loops=-1)
-        game_start_time = time.time()
-        self.game_start_time = game_start_time
+        self.game_start_time = time.time()
         self.mode = NULL
         self.blocks = []
         self.moving_bullets = []
@@ -215,7 +214,6 @@ class Root(Tk):
             get_sunshine_sound.play()
             self.action_text.set(f'成功拿到了{obj.bullet_attack}点阳光')
             sun.destroy()
-
 
     def set_zombies(self, current_zombies):
         current_zombies.attack_sound = [

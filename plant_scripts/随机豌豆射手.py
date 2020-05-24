@@ -38,7 +38,7 @@ def moving(games, obj, columns_move=0, rows_move=0):
                 if current_place.plants.effects:
                     if 'bullet' in current_place.plants.effects:
                         current_place.plants.effects['bullet'](current_place.plants, obj)
-            passed_time = time.time() - games.zombie_time
+            passed_time = games.current_time - games.zombie_time
             affect_zombies = [
                 x for x in games.whole_zombies if x.status == 1 and x.rows == i and x.columns + 1 + x.adjust_col == j
             ]

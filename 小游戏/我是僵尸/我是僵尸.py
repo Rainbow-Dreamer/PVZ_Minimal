@@ -3,6 +3,7 @@ with open('config.py', encoding='utf-8') as f:
     datas = f.read()
     exec(datas, globals())
 
+
 class Root(Tk):
     def __init__(self):
         super(Root, self).__init__()
@@ -36,8 +37,7 @@ class Root(Tk):
         bg_music = pygame.mixer.music.load(background_music)
         pygame.mixer.music.set_volume(background_volume)
         pygame.mixer.music.play(loops=-1)
-        game_start_time = time.time()
-        self.game_start_time = game_start_time
+        self.game_start_time = time.time()
         self.mode = NULL
         self.blocks = []
         self.moving_bullets = []
@@ -88,7 +88,7 @@ class Root(Tk):
         self.zombie_explode_img = self.zombie_explode_img.resize(
             (self.lawn_width, self.lawn_height), Image.ANTIALIAS)
         self.zombie_explode_img = ImageTk.PhotoImage(self.zombie_explode_img)
-        
+
         self.killed_zombies = 0
         self.killed_zombies_text = StringVar()
         self.current_killed_zombies = 0
@@ -98,32 +98,29 @@ class Root(Tk):
         self.killed_zombies_show.place(x=action_text_place_x + 200,
                                        y=self.action_text_place_y,
                                        anchor='center')
-        
+
         self.zombie_time = time.time()
         self.check_plants()
         self.check_zombies()
-    
+
     def init_plant_ls(self):
         self.bullets_ls = []
+        current_time = time.time()
         for i in range(map_size[0]):
             for j in range(plant_line):
                 current_plant = plants_list[i][j]
                 current = self.blocks[i][j]
                 current.plants = get_plant(current_plant, i, j)
-                current_time = time.time()
                 current.plants.counter = current_time
                 current.plants.time = current_time
                 self.make_img(current.plants)
                 if current.plants.bullet_img and current.plants.is_bullet and current.plants.bullet_img_name not in self.bullets_ls:
-                    self.bullets_ls.append(current.plants.bullet_img_name)                
+                    self.bullets_ls.append(current.plants.bullet_img_name)
                 if current.plants.use_bullet_img_first:
                     current.configure(image=current.plants.bullet_img)
                 else:
                     current.configure(image=current.plants.img)
-                       
-                
-            
-    
+
     def make_img(self, each, resize_num=1):
         current_img = Image.open(each.img)
         if each.img_transparent:
@@ -174,9 +171,7 @@ class Root(Tk):
                         self.bullets_ls.append(img_name)
         except:
             pass
-    
 
-        
     def pause(self):
         if self.mode != PAUSE:
             self.mode = PAUSE
@@ -228,7 +223,6 @@ class Root(Tk):
             current_button.grid(row=0, column=i + 1)
             zombies_info.button = current_button
             zombies_info.enable = 1
-
 
     def init_map(self, rows, columns):
         lawn_photo = self.lawn_photo
@@ -282,7 +276,7 @@ class Root(Tk):
                     self.mode = NULL
                 else:
                     current = self.blocks[j][k]
-                    current_time = time.time()
+                    current_time = self.current_time
                     choose_zombies = self.plants_generate[self.choosed_zombies]
                     current_zombies = get_zombies(choose_zombies, j, k, 0)
                     self.make_img(current_zombies)
@@ -291,7 +285,7 @@ class Root(Tk):
                         current_zombies.button.grid(row=j, column=k)
                     current_zombies.alive()
                     if current_zombies.start_func:
-                        current_zombies.runs(self, num=0)                    
+                        current_zombies.runs(self, num=0)
                     current_zombies.time = current_time
                     current_zombies_name = current_zombies.name
                     set_plants_sound.play()
@@ -319,10 +313,8 @@ class Root(Tk):
                 plants_on_block = self.blocks[j][k].plants
                 if plants_on_block:
                     self.action_text.set(
-                            f'这上面有个{plants_on_block.name}, 当前生命值{plants_on_block.hp}'
-                        )
-
-
+                        f'这上面有个{plants_on_block.name}, 当前生命值{plants_on_block.hp}'
+                    )
 
     def get_sunshine(self):
         if self.mode != PAUSE:
@@ -340,7 +332,6 @@ class Root(Tk):
             get_sunshine_sound.play()
             self.action_text.set(f'成功拿到了{obj.bullet_attack}点阳光')
             sun.destroy()
-
 
     def set_zombies(self, current_zombies):
         current_zombies.attack_sound = [
@@ -486,7 +477,7 @@ class Root(Tk):
     def check_zombies(self):
 
         if self.mode != PAUSE:
-            current_time = time.time()
+            current_time = self.current_time
             for each in self.whole_zombies:
                 if each.status == 1:
                     if each.hp <= 0:

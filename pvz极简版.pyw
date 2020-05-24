@@ -170,8 +170,7 @@ class Root(Tk):
         self.start_game.destroy()
         self.choose_stages.destroy()
         self.choose_stages_bar.destroy()
-        game_start_time = time.time()
-        self.game_start_time = game_start_time
+        self.game_start_time = time.time()
         self.mode = NULL
         self.blocks = []
         self.moving_bullets = []
@@ -239,7 +238,7 @@ class Root(Tk):
         self.normal_or_wave = 0
         self.whole_zombies = current_stage.get(0)
         self.killed_zombies = 0
-        self.zombie_time = game_start_time + start_time
+        self.zombie_time = self.game_start_time + start_time
         self.killed_zombies_text = StringVar()
         self.killed_zombies_text.set(f'杀死僵尸数: {self.killed_zombies}')
         self.killed_zombies_show = ttk.Label(
@@ -348,7 +347,7 @@ class Root(Tk):
             current_button.textvariable = current_text
             current_button.grid(row=0, column=i + 1)
             plants_info.button = current_button
-            plants_info.counter = time.time()
+            plants_info.counter = self.game_start_time
             plants_info.enable = 1 if plants_info.no_cooling_start else 0
 
     def init_shovel(self):
@@ -410,7 +409,7 @@ class Root(Tk):
             if self.mode == PLACE:
                 current = self.blocks[j][k]
                 if current.plants is None:
-                    current_time = time.time()
+                    current_time = games.current_time
                     choose_plant = self.plants_generate[self.choosed_plant]
                     current.plants = get_plant(choose_plant, j, k)
                     self.make_img(current.plants)
@@ -644,7 +643,7 @@ class Root(Tk):
     def check_zombies(self):
 
         if self.mode != PAUSE:
-            current_time = time.time()
+            current_time = self.current_time
             if self.normal_or_wave == 0:
                 new_ind = int(self.current_killed_zombies /
                               (self.current_zombies_num * 0.2))
