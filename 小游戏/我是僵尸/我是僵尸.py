@@ -11,6 +11,7 @@ class Root(Tk):
         self.minsize(*screen_size)
         self.make_label = ttk.Label
         self.make_button = ttk.Button
+        self.get_zombies = get_zombies
         self.NULL, self.PLACE, self.REMOVE, self.PAUSE = 0, 1, 2, 3
         self.whole_zombies = []
         self.lawn_photo = Image.open(lawn_img)

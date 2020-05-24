@@ -30,35 +30,20 @@ def dance_with_move(self, games, columns_move=0, rows_move=0, reset=False):
     self.rows += rows_move
     self.columns += columns_move
     if self.columns < 0:
-        lawnmower_here = games.lawnmowers[self.rows]
-        if lawnmower_here != 0:
-            generate_lawnmower = games.make_button(
-                games.maps,
-                image=games.lawnmower_img,
-                command=lambda: games.action_text.set('我是一辆小推车'))
-            generate_lawnmower.image = games.lawnmower_img
-            generate_lawnmower.__dict__.update(lawnmower_here.__dict__)
-            if generate_lawnmower.mode == 0:
-                self.hp = 0
-                self.status = 0
-                games.killed_zombies += 1
-                games.current_killed_zombies += 1
-                games.killed_zombies_text.set(f'杀死僵尸数: {games.killed_zombies}')
-                games.zombie_dead_normal(self)
-            elif generate_lawnmower.mode == 1:
-                self.hp -= generate_lawnmower.attack
-            games.lawnmower_move(generate_lawnmower)
-            lawnmower_here.show.configure(
-                image=games.no_lawnmower_img,
-                command=lambda: games.action_text.set('这里没有小推车了'))
-            lawnmower_here.show.grid(row=self.rows, column=0)
-            games.lawnmowers[self.rows] = 0
-            return
-
+        if games.brains[self.rows] > 0:
+            if type(self.attack_sound) == list:
+                random.choice(self.attack_sound).play()
+            else:
+                self.attack_sound.play()
+            games.brains[self.rows] -= 1
+            if games.brains[self.rows] <= 0:
+                games.brains_show[self.rows].configure(image=games.no_brain_img)
+                games.plant_bite_sound.play()
+            games.after(self.attack_speed,
+                        lambda: zombie_move(self, games))
         else:
-            games.lose()
-            games.mode = games.PAUSE
-            return
+            self.button.destroy()     
+        return        
 
     i, j = self.rows, self.columns
     self.button.grid(row=i, column=j)
@@ -76,6 +61,7 @@ def dance_with_move(self, games, columns_move=0, rows_move=0, reset=False):
 
 
 
+
 def dance_with_eat_plants(games, plants, self):
     if games.mode != games.PAUSE:
         if plants is None or plants.hp <= 0 or plants.status == 0 or self.hp <= 0:
@@ -86,6 +72,12 @@ def dance_with_eat_plants(games, plants, self):
                 random.choice(self.attack_sound).play()
             else:
                 self.attack_sound.play()
+            if plants.name == '向日葵':
+                for t in range(2):
+                    flower_sunshine = games.make_button(games.maps,image=games.flower_sunshine_img)
+                    flower_sunshine.configure(command=lambda sun=flower_sunshine, obj=plants: games.flower_get_sunshine(sun, obj))
+                    flower_sunshine.image = games.fall_sunshine_img
+                    flower_sunshine.grid(row=plants.rows, column=plants.columns)
             plants.hp -= self.attack
             if plants.effects:
                 if 'zombies' in plants.effects:
@@ -110,7 +102,7 @@ def dance_with_check_plant(self, games):
             self.eating = True
             self.nexted_plants = check_if_plants
             dance_with_eat_plants(games, self.nexted_plants, self)
-            return  
+            return    
 
 
 舞伴僵尸.start_func = zombie_move
@@ -126,9 +118,9 @@ def calls(self, games, i, j):
         if 0 <= x[0] < games.map_rows and 0 <= x[1] < games.map_columns
     ]
     for each_place in available_rows:
-        games.current_zombies_num += 1
         current_obj = games.get_zombies(舞伴僵尸, *each_place)
         current_obj.appear_time = games.current_time - games.zombie_time
+        games.make_img(current_obj)
         games.set_zombies(current_obj)
         current_obj.alive()
         current_obj.replace = False
@@ -143,6 +135,8 @@ def dance_move(self, games, columns_move=0, rows_move=0, reset=False):
     if self.hp <= 0 or self.status == 0:
         for each in self.calls_zombies:
             each.stop = False
+            each.next_to_plants = False
+            each.eating = False
             each.eachtime_func = next_to_plant
             each.repause_func = repause
             each.start_func(each, games)
@@ -171,43 +165,24 @@ def dance_move(self, games, columns_move=0, rows_move=0, reset=False):
         self.nexted_plants = check_if_plants2
         self.adjust_col = 0
         return
-    if (games.map_columns -
-        (self.columns + columns_move) >= 4) and (not self.first_plant):
-        calls(self, games, self.rows, self.columns + columns_move)
     if not any(x.eating for x in self.calls_zombies):
         self.rows += rows_move
         self.columns += columns_move
         if self.columns < 0:
-            lawnmower_here = games.lawnmowers[self.rows]
-            if lawnmower_here != 0:
-                generate_lawnmower = games.make_button(
-                    games.maps,
-                    image=games.lawnmower_img,
-                    command=lambda: games.action_text.set('我是一辆小推车'))
-                generate_lawnmower.image = games.lawnmower_img
-                generate_lawnmower.__dict__.update(lawnmower_here.__dict__)
-                if generate_lawnmower.mode == 0:
-                    self.hp = 0
-                    self.status = 0
-                    games.killed_zombies += 1
-                    games.current_killed_zombies += 1
-                    games.killed_zombies_text.set(
-                        f'杀死僵尸数: {games.killed_zombies}')
-                    games.zombie_dead_normal(self)
-                elif generate_lawnmower.mode == 1:
-                    self.hp -= generate_lawnmower.attack
-                games.lawnmower_move(generate_lawnmower)
-                lawnmower_here.show.configure(
-                    image=games.no_lawnmower_img,
-                    command=lambda: games.action_text.set('这里没有小推车了'))
-                lawnmower_here.show.grid(row=self.rows, column=0)
-                games.lawnmowers[self.rows] = 0
-                return
-
+            if games.brains[self.rows] > 0:
+                if type(self.attack_sound) == list:
+                    random.choice(self.attack_sound).play()
+                else:
+                    self.attack_sound.play()
+                games.brains[self.rows] -= 1
+                if games.brains[self.rows] <= 0:
+                    games.brains_show[self.rows].configure(image=games.no_brain_img)
+                    games.plant_bite_sound.play()
+                games.after(self.attack_speed,
+                            lambda: zombie_move(self, games))
             else:
-                games.lose()
-                games.mode = games.PAUSE
-                return
+                self.button.destroy()     
+            return        
 
     i, j = self.rows, self.columns
     self.button.grid(row=i, column=j)
@@ -233,12 +208,14 @@ def call_new(self, games, each, k):
     current_obj = games.get_zombies(舞伴僵尸, each.rows, each.columns)
     current_obj.appear_time = games.current_time - games.zombie_time
     self.calls_zombies[k] = current_obj
+    games.make_img(current_obj)
     games.set_zombies(current_obj)
     current_obj.alive()
     current_obj.replace = False
     current_obj.button.grid(row=current_obj.rows,
                             column=current_obj.columns)
     games.whole_zombies.append(current_obj)
+
 
 def dance_next_to_plant(self, games):
     if self.first_plant:
@@ -290,6 +267,12 @@ def dance_eat_plants(games, plants, self):
                 random.choice(self.attack_sound).play()
             else:
                 self.attack_sound.play()
+            if plants.name == '向日葵':
+                for t in range(2):
+                    flower_sunshine = games.make_button(games.maps,image=games.flower_sunshine_img)
+                    flower_sunshine.configure(command=lambda sun=flower_sunshine, obj=plants: games.flower_get_sunshine(sun, obj))
+                    flower_sunshine.image = games.fall_sunshine_img
+                    flower_sunshine.grid(row=plants.rows, column=plants.columns)
             plants.hp -= self.attack
             if plants.effects:
                 if 'zombies' in plants.effects:
@@ -305,6 +288,7 @@ def dance_eat_plants(games, plants, self):
                img='Old_Dancing_Zombie1.png',
                hp=17,
                move_speed=3000,
+               price=350,
                attack=1,
                attack_speed=1000,
                attack_sound=regular_attack_sound,
