@@ -4,7 +4,7 @@ from regular import *
                img='Conehead_Zombie1.png',
                hp=28,
                price=75,
-               move_speed=9000,
+               move_speed=9,
                attack=1,
                attack_speed=1000,
                attack_sound=regular_attack_sound,

@@ -3,7 +3,7 @@ from regular import *
 路障僵尸 = zombies(name='路障僵尸',
                img='Conehead_Zombie1.png',
                hp=28,
-               move_speed=9000,
+               move_speed=9,
                attack=1,
                attack_speed=1000,
                attack_sound=regular_attack_sound,

@@ -1,3 +1,10 @@
+import os, sys, importlib, pygame
+from tkinter import *
+from tkinter import ttk
+from PIL import Image, ImageTk
+import datetime, time, random, keyboard
+import time, random, os
+from copy import deepcopy
 pygame.mixer.init()
 sys.path.append(os.path.dirname(__file__))
 current_dir = os.getcwd()
@@ -174,7 +181,7 @@ class Root(Tk):
         self.mode = NULL
         self.blocks = []
         self.moving_bullets = []
-        self.sunshine_time = game_start_time
+        self.sunshine_time = self.game_start_time
         choosed_plants = [x[0] for x in choosed_plants]
         choosed_plants = [
             eval(f'importlib.import_module("plant_scripts.{x}").{x}')
@@ -409,7 +416,7 @@ class Root(Tk):
             if self.mode == PLACE:
                 current = self.blocks[j][k]
                 if current.plants is None:
-                    current_time = games.current_time
+                    current_time = self.current_time
                     choose_plant = self.plants_generate[self.choosed_plant]
                     current.plants = get_plant(choose_plant, j, k)
                     self.make_img(current.plants)
@@ -527,6 +534,8 @@ class Root(Tk):
         current_zombies_button.image = current_zombies.img
         current_zombies.button = current_zombies_button
         current_zombies.next_to_plants = False
+        current_zombies.eating = False
+        current_zombies.time = self.current_time
 
     def lawnmower_move(self, obj):
         if obj.columns == 0:

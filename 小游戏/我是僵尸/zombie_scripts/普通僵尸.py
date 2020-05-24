@@ -4,7 +4,7 @@ from regular import *
                img='0.png',
                hp=10,
                price=50,
-               move_speed=9000,
+               move_speed=9,
                attack=1,
                attack_speed=1000,
                attack_sound=regular_attack_sound,

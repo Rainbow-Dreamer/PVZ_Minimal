@@ -47,6 +47,7 @@ def moving(games, obj, columns_move=0, rows_move=0):
             if games.current_time - obj.time >= 5:
                 if obj.hit_zombies.stick_butter == 1:
                     obj.hit_zombies.stick_butter = 0
+                    obj.hit_zombies.time = games.current_time - obj.hit_zombies.remain_time
                     obj.hit_zombies.stop = False
                     for k in obj.hit_zombies.butter_obj:
                         k.destroy()
@@ -66,8 +67,7 @@ def moving(games, obj, columns_move=0, rows_move=0):
                 passed_time = games.current_time - games.zombie_time
                 affect_zombies = [
                     x for x in games.whole_zombies
-                    if x.status == 1 and x.rows == i and x.columns + 1 +
-                    x.adjust_col == j
+                    if x.status == 1 and x.rows == i and x.columns == j
                 ]
                 if affect_zombies:
                     affect_zombies.sort(
@@ -87,9 +87,12 @@ def moving(games, obj, columns_move=0, rows_move=0):
                         obj.waiting = 1
                         hitted_zombies.stop = True
                         if not hasattr(hitted_zombies, 'stick_butter'):
+                            hitted_zombies.remain_time = games.current_time - hitted_zombies.time
                             hitted_zombies.stick_butter = 1
                             hitted_zombies.butter_obj = [obj]
                         else:
+                            if hitted_zombies.stick_butter == 0:
+                                hitted_zombies.remain_time = games.current_time - hitted_zombies.time                            
                             hitted_zombies.stick_butter += 1
                             hitted_zombies.butter_obj.append(obj)
                         obj.hit_zombies = hitted_zombies

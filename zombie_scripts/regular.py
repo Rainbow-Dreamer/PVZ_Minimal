@@ -1,9 +1,7 @@
 import random
 
 
-def zombie_move(self, games, columns_move=0, rows_move=0, reset=False):
-    if reset:
-        self.adjust_col = -1
+def zombie_move(self, games, columns_move=0, rows_move=0):
     if self.stop or games.mode == games.PAUSE:
         return
     if self.status == 0:
@@ -17,7 +15,6 @@ def zombie_move(self, games, columns_move=0, rows_move=0, reset=False):
     check_if_plants2 = games.blocks[self.rows][self.columns +
                                                columns_move].plants
     if check_if_plants2 is not None:
-        self.columns += columns_move
         self.next_to_plants = True
         self.nexted_plants = check_if_plants2
         self.adjust_col = 0
@@ -68,12 +65,17 @@ def zombie_move(self, games, columns_move=0, rows_move=0, reset=False):
         attack_bullet.bullet_sound[0].play()
         self.hp -= attack_bullet.attack
         attack_bullet.stop = True
-    games.after(self.move_speed, lambda: zombie_move(self, games, -1))
 
 
 def next_to_plant(self, games):
+    if not self.eating and not self.stop:
+        if games.current_time - self.time >= self.move_speed:
+            self.time = games.current_time
+            zombie_move(self, games, -1)
     if self.next_to_plants:
         self.next_to_plants = False
+        self.eat_time = games.current_time
+        self.eating = True
         games.after(self.attack_speed,
                     lambda: zombie_eat_plants(games, self.nexted_plants, self))
 
@@ -88,14 +90,15 @@ def repause(self, games):
 
 def zombie_eat_plants(games, plants, self):
     if self.stop:
+        self.time += (games.current_time - self.eat_time)
         self.next_to_plants = False
+        self.eating = False
         return
     if games.mode != games.PAUSE:
         if plants is None or plants.hp <= 0 or plants.status == 0 or self.hp <= 0:
+            self.time += (games.current_time - self.eat_time)
             self.next_to_plants = False
-            games.after(
-                self.move_speed,
-                lambda: zombie_move(self, games, self.adjust_col, reset=True))
+            self.eating = False
             return
         else:
             if type(self.attack_sound) == list:
@@ -107,7 +110,9 @@ def zombie_eat_plants(games, plants, self):
                 if 'zombies' in plants.effects:
                     plants.effects['zombies'](plants, self, games)
             if self.stop:
+                self.time += (games.current_time - self.eat_time)
                 self.next_to_plants = False
+                self.eating = False
                 return  
             games.after(self.attack_speed,
                         lambda: zombie_eat_plants(games, plants, self))

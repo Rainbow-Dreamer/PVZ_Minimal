@@ -14,7 +14,7 @@ def newspaper(self, games):
         if self.hp <= 10:
             random.choice(self.other_sound).play()
             self.angry = 1
-            self.move_speed = 500
+            self.move_speed = 0.5
             self.attack = 36
             self.attack_speed = 100
             self.stop = True
@@ -24,7 +24,7 @@ def newspaper(self, games):
 读报僵尸 = zombies(name='读报僵尸',
                img='Newspaper_Zombie1.png',
                hp=17.5,
-               move_speed=9000,
+               move_speed=9,
                attack=1,
                attack_speed=1000,
                attack_sound=regular_attack_sound,

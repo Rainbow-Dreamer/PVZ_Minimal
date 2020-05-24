@@ -3,7 +3,7 @@ from regular import *
 铁桶僵尸 = zombies(name='铁桶僵尸',
                img='bucket.png',
                hp=66,
-               move_speed=9000,
+               move_speed=9,
                attack=1,
                attack_speed=1000,
                attack_sound=regular_attack_sound,

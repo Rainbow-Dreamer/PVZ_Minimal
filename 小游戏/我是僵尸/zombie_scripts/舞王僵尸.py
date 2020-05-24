@@ -287,7 +287,7 @@ def dance_eat_plants(games, plants, self):
 舞王僵尸 = zombies(name='舞王僵尸',
                img='Old_Dancing_Zombie1.png',
                hp=17,
-               move_speed=3000,
+               move_speed=5,
                price=350,
                attack=1,
                attack_speed=1000,
