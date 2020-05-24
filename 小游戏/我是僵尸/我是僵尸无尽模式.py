@@ -335,11 +335,26 @@ class Root(Tk):
                     self.action_text.set('这里并没有植物，请问您要铲什么？')
                 self.mode = NULL
             else:
-                plants_on_block = self.blocks[j][k].plants
-                if plants_on_block:
-                    self.action_text.set(
-                        f'这上面有个{plants_on_block.name}, 当前生命值{plants_on_block.hp}'
-                    )
+                if mode == 1 and show_zombies:
+                    current_block_zombies = [
+                        x.name for x in self.whole_zombies
+                        if x.status == 1 and x.rows == j and x.columns == k
+                    ]
+                    current_block_zombies_types = set(current_block_zombies)
+                    zombies_message = f'第{j+1}行第{k+1}列的格子上有' + ', '.join([
+                        f'{current_block_zombies.count(t)}个{t}'
+                        for t in current_block_zombies_types
+                    ])
+                    self.action_text.set(zombies_message)
+                else:
+                    plants_on_block = self.blocks[j][k].plants
+                    if plants_on_block is None:
+                        self.action_text.set('这是一块空荡荡的草坪')
+                    else:
+                        self.action_text.set(
+                            f'这上面有个{plants_on_block.name}, 当前生命值{plants_on_block.hp}'
+                        )
+
 
     def get_sunshine(self):
         if self.mode != PAUSE:

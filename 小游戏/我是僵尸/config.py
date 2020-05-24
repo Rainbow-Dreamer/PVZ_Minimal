@@ -8,7 +8,7 @@ if whole_plants_name is None:
     whole_plants_name = [x[:-3] for x in whole_plants_name]
 
 zombies_names = ['普通僵尸', '路障僵尸', '读报僵尸', '铁桶僵尸', '撑杆僵尸', '舞王僵尸']
-
+show_zombies = True
 
 def sounds(x):
     return pygame.mixer.Sound(x).get_raw()
