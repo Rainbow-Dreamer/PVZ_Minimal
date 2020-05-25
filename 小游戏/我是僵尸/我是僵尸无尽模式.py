@@ -405,6 +405,7 @@ class Root(Tk):
         current_zombies.button = current_zombies_button
         current_zombies.next_to_plants = False
         current_zombies.eating = False
+        current_zombies.time = self.current_time
 
     def lawnmower_move(self, obj):
         if obj.columns == 0:

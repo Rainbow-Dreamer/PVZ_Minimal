@@ -168,20 +168,15 @@ def dance_move(self, games, columns_move=0, rows_move=0):
         attack_bullet.bullet_sound[0].play()
         self.hp -= attack_bullet.attack
         attack_bullet.stop = True
-    if not any(x.eating for x in self.calls_zombies):
-        for each in self.calls_zombies:
-            games.after(each.move_speed,
-                        lambda each=each: dance_with_move(each, games, -1))
-    games.after(self.move_speed, lambda: dance_move(self, games, -1))
 
 
 def call_new(self, games, each, k):
     if self.hp > 0:
-        games.current_zombies_num += 1
         current_obj = games.get_zombies(舞伴僵尸, each.rows, each.columns)
         current_obj.appear_time = games.current_time - games.zombie_time
         current_obj.adjust_col = 0
         self.calls_zombies[k] = current_obj
+        games.make_img(current_obj)
         games.set_zombies(current_obj)
         current_obj.alive()
         current_obj.replace = False
