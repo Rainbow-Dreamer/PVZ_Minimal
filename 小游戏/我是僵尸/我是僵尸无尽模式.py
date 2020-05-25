@@ -359,7 +359,6 @@ class Root(Tk):
                             f'这上面有个{plants_on_block.name}, 当前生命值{plants_on_block.hp}'
                         )
 
-
     def get_sunshine(self):
         if self.mode != PAUSE:
             self.sunshine += sky_sunshine
@@ -468,7 +467,7 @@ class Root(Tk):
                     if k.status == 0 and k.hp > 0:
                         k.appear_time += self.paused_time
                     elif k.status == 1:
-                        k.time += self.paused_time                    
+                        k.time += self.paused_time
                 self.zombies_move_call()
                 for each_bullet in self.moving_bullets:
                     if each_bullet.func:
@@ -531,7 +530,7 @@ class Root(Tk):
                     if each.hp <= 0:
                         each.status = 0
                         if each.eachtime_func:
-                            each.runs(self, num=1)                        
+                            each.runs(self, num=1)
                         self.killed_zombies += 1
                         self.current_killed_zombies += 1
                         self.killed_zombies_text.set(

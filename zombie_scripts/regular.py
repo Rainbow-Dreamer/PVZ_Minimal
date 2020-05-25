@@ -77,8 +77,9 @@ def next_to_plant(self, games):
             self.next_to_plants = False
             self.eat_time = games.current_time
             self.eating = True
-            games.after(self.attack_speed,
-                        lambda: zombie_eat_plants(games, self.nexted_plants, self))
+            games.after(
+                self.attack_speed,
+                lambda: zombie_eat_plants(games, self.nexted_plants, self))
 
 
 def repause(self, games):
@@ -114,6 +115,6 @@ def zombie_eat_plants(games, plants, self):
                 self.time += (games.current_time - self.eat_time)
                 self.next_to_plants = False
                 self.eating = False
-                return  
+                return
             games.after(self.attack_speed,
                         lambda: zombie_eat_plants(games, plants, self))

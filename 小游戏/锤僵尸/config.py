@@ -50,14 +50,13 @@ class lawnmower:
         self.move_speed = move_speed
         self.attack = attack
 
+
 pygame.mixer.init()
 stage_file = '锤僵尸简单难度.py'
 with open(stage_file, encoding='utf-8') as f:
     stage_file_contents = f.read()
 
 os.chdir('../../resource/')
-
-
 
 lawnmower_rows = [0, 1, 2, 3, 4]
 lawnmower_mode = 0

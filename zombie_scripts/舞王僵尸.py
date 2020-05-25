@@ -6,6 +6,7 @@ from 普通僵尸 import 普通僵尸 as 舞伴僵尸
 舞伴僵尸.name = '舞伴僵尸'
 舞伴僵尸.with_stop = False
 
+
 def dance_with_move(self, games, columns_move=0, rows_move=0):
     if self.hp <= 0 or self.status == 0:
         return
@@ -13,13 +14,14 @@ def dance_with_move(self, games, columns_move=0, rows_move=0):
         return
     if self.status == 0:
         return
-    check_if_plants = games.blocks[self.rows][self.columns + columns_move].plants
+    check_if_plants = games.blocks[self.rows][self.columns +
+                                              columns_move].plants
     if check_if_plants is not None:
         self.eating = True
         self.adjust_col = -1
         self.nexted_plants = check_if_plants
         dance_with_eat_plants(games, self.nexted_plants, self)
-        return      
+        return
     self.rows += rows_move
     self.columns += columns_move
     if self.columns < 0:
@@ -68,7 +70,6 @@ def dance_with_move(self, games, columns_move=0, rows_move=0):
         attack_bullet.stop = True
 
 
-
 def dance_with_eat_plants(games, plants, self):
     if games.mode != games.PAUSE:
         if plants is None or plants.hp <= 0 or plants.status == 0 or self.hp <= 0:
@@ -87,7 +88,7 @@ def dance_with_eat_plants(games, plants, self):
                     plants.effects['zombies'](plants, self, games)
             if self.stop:
                 self.columns += self.adjust_col
-                self.button.grid(row=self.rows, column=self.columns)                
+                self.button.grid(row=self.rows, column=self.columns)
                 self.eating = False
                 return
             games.after(self.attack_speed,
@@ -98,8 +99,6 @@ def dance_with_repause(self, games):
     if self.next_to_plants:
         games.after(self.attack_speed,
                     lambda: dance_eat_plants(games, self.nexted_plants, self))
-
-
 
 
 舞伴僵尸.start_func = zombie_move
@@ -139,11 +138,11 @@ def dance_move(self, games, columns_move=0, rows_move=0):
     if check_if_plants2:
         self.next_to_plants = True
         self.nexted_plants = check_if_plants2
-        self.adjust_col = 0        
+        self.adjust_col = 0
         if not self.first_plant:
-            calls(self, games, self.rows, self.columns)   
+            calls(self, games, self.rows, self.columns)
             self.time = games.current_time
-        
+
         return
     if (games.map_columns -
         (self.columns + columns_move) >= 4) and (not self.first_plant):
@@ -166,8 +165,7 @@ def dance_move(self, games, columns_move=0, rows_move=0):
                 self.status = 0
                 games.killed_zombies += 1
                 games.current_killed_zombies += 1
-                games.killed_zombies_text.set(
-                    f'杀死僵尸数: {games.killed_zombies}')
+                games.killed_zombies_text.set(f'杀死僵尸数: {games.killed_zombies}')
                 games.zombie_dead_normal(self)
             elif generate_lawnmower.mode == 1:
                 self.hp -= generate_lawnmower.attack
@@ -196,7 +194,6 @@ def dance_move(self, games, columns_move=0, rows_move=0):
         attack_bullet.bullet_sound[0].play()
         self.hp -= attack_bullet.attack
         attack_bullet.stop = True
-    
 
 
 def call_new(self, games, each, k):
@@ -213,6 +210,7 @@ def call_new(self, games, each, k):
                                 column=current_obj.columns)
         games.whole_zombies.append(current_obj)
 
+
 def dance_next_to_plant(self, games):
     if self.hp <= 0 or self.status == 0:
         for each in self.calls_zombies:
@@ -220,35 +218,35 @@ def dance_next_to_plant(self, games):
             each.eachtime_func = next_to_plant
             each.repause_func = repause
             each.start_func(each, games)
-    
+
     if self.next_to_plants:
         self.next_to_plants = False
         self.eating = True
         self.eat_time = games.current_time
         games.after(self.attack_speed,
-                    lambda: dance_eat_plants(games, self.nexted_plants, self))        
+                    lambda: dance_eat_plants(games, self.nexted_plants, self))
     if self.first_plant:
         for k in range(len(self.calls_zombies)):
             each = self.calls_zombies[k]
             if each.hp <= 0:
                 if not each.replace:
                     each.replace = True
-                    games.after(3000, lambda each=each, k=k: call_new(self, games, each, k))
-    
+                    games.after(
+                        3000,
+                        lambda each=each, k=k: call_new(self, games, each, k))
+
     if self.eating or any(x.eating for x in self.calls_zombies):
         self.time = games.current_time
         for each in self.calls_zombies:
             each.with_stop = True
     else:
         for each in self.calls_zombies:
-            each.with_stop = False   
+            each.with_stop = False
         if games.current_time - self.time >= self.move_speed:
             self.time = games.current_time
             dance_move(self, games, -1)
             for each in self.calls_zombies:
-                dance_with_move(each, games, -1)   
-        
-    
+                dance_with_move(each, games, -1)
 
 
 def dance_repause(self, games):
