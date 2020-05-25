@@ -466,6 +466,10 @@ class Root(Tk):
                         f'{current_block_zombies.count(t)}个{t}'
                         for t in current_block_zombies_types
                     ])
+                    plants_on_block = self.blocks[j][k].plants
+                    if plants_on_block:
+                        zombies_message += '\n'
+                        zombies_message += f'这上面有个{plants_on_block.name}, 当前生命值{plants_on_block.hp}'
                     self.action_text.set(zombies_message)
                 else:
                     plants_on_block = self.blocks[j][k].plants
@@ -736,6 +740,8 @@ class Root(Tk):
                 if each.status == 1:
                     if each.hp <= 0:
                         each.status = 0
+                        if each.eachtime_func:
+                            each.runs(self, num=1)                        
                         self.killed_zombies += 1
                         self.current_killed_zombies += 1
                         self.killed_zombies_text.set(

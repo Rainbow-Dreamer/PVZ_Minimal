@@ -139,7 +139,7 @@ def dance_move(self, games, columns_move=0, rows_move=0):
     if check_if_plants2:
         self.next_to_plants = True
         self.nexted_plants = check_if_plants2
-        self.adjust_col = -1        
+        self.adjust_col = 0        
         if not self.first_plant:
             calls(self, games, self.rows, self.columns)   
             self.time = games.current_time

@@ -9,16 +9,17 @@ def reset_func(self, games):
 
 
 def newspaper(self, games):
-    next_to_plant(self, games)
-    if not self.angry:
-        if self.hp <= 10:
-            random.choice(self.other_sound).play()
-            self.angry = 1
-            self.move_speed = 0.5
-            self.attack = 36
-            self.attack_speed = 100
-            self.stop = True
-            games.after(500, lambda: reset_func(self, games))
+    if self.hp >= 0:
+        next_to_plant(self, games)
+        if not self.angry:
+            if self.hp <= 10:
+                random.choice(self.other_sound).play()
+                self.angry = 1
+                self.move_speed = 0.5
+                self.attack = 36
+                self.attack_speed = 100
+                self.stop = True
+                games.after(500, lambda: reset_func(self, games))
 
 
 读报僵尸 = zombies(name='读报僵尸',
