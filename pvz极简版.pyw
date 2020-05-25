@@ -536,13 +536,34 @@ class Root(Tk):
         current_zombies.next_to_plants = False
         current_zombies.eating = False
         current_zombies.time = self.current_time
-
+    
+    def lawnmower_clear(self, obj):
+        left_zombies =  [each for each in self.whole_zombies if 
+                             each.status == 1 and each.rows == obj.rows
+                             and each.columns <= 0]
+        if left_zombies:
+            if obj.mode == 0:
+                for each in left_zombies:
+                    each.hp = 0
+                    if each.eachtime_func:
+                        each.runs(self, num=1)
+                    each.status = 0
+                    self.killed_zombies += 1
+                    self.current_killed_zombies += 1
+                    self.killed_zombies_text.set(
+                        f'杀死僵尸数: {self.killed_zombies}')
+                    self.zombie_dead_normal(each)
+            elif obj.mode == 1:
+                for each in left_zombies:
+                    each.hp -= obj.attack
+    
     def lawnmower_move(self, obj):
         if obj.columns == 0:
             lawnmower_sound.play()
         if obj.columns >= self.map_columns:
             obj.destroy()
             return
+        self.lawnmower_clear(obj)
         attack_size = [obj.columns, obj.columns + 1]
         current_zombies = [
             each for each in self.whole_zombies if each.status == 1
@@ -553,6 +574,8 @@ class Root(Tk):
             if obj.mode == 0:
                 for each in current_zombies:
                     each.hp = 0
+                    if each.eachtime_func:
+                        each.runs(self, num=1)
                     each.status = 0
                     self.killed_zombies += 1
                     self.current_killed_zombies += 1

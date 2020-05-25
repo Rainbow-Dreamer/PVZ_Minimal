@@ -4,7 +4,7 @@ import random
 def zombie_move(self, games, columns_move=0, rows_move=0):
     if self.stop or games.mode == games.PAUSE:
         return
-    if self.status == 0:
+    if self.hp <= 0 or self.status == 0:
         return
     check_if_plants = games.blocks[self.rows][self.columns].plants
     if check_if_plants is not None:
@@ -53,16 +53,17 @@ def zombie_move(self, games, columns_move=0, rows_move=0):
 
 
 def next_to_plant(self, games):
-    if not self.eating and not self.stop:
-        if games.current_time - self.time >= self.move_speed:
-            self.time = games.current_time
-            zombie_move(self, games, -1)    
-    if self.next_to_plants:
-        self.next_to_plants = False
-        self.eat_time = games.current_time
-        self.eating = True
-        games.after(self.attack_speed,
-                    lambda: zombie_eat_plants(games, self.nexted_plants, self))
+    if self.hp > 0:
+        if not self.eating and not self.stop:
+            if games.current_time - self.time >= self.move_speed:
+                self.time = games.current_time
+                zombie_move(self, games, -1)    
+        if self.next_to_plants:
+            self.next_to_plants = False
+            self.eat_time = games.current_time
+            self.eating = True
+            games.after(self.attack_speed,
+                        lambda: zombie_eat_plants(games, self.nexted_plants, self))
 
 
 def repause(self, games):
