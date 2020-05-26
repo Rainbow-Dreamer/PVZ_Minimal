@@ -5,14 +5,10 @@ from regular import *
 def pole_zombies_move(self,
                       games,
                       columns_move=0,
-                      rows_move=0,
-                      stop=False,
-                      reset=False):
-    if reset:
-        self.adjust_col = -1
-    if stop or games.mode == games.PAUSE:
+                      rows_move=0):
+    if self.stop or games.mode == games.PAUSE:
         return
-    if self.status == 0:
+    if self.hp <= 0 or self.status == 0:
         return
     check_if_plants = games.blocks[self.rows][self.columns].plants
     if check_if_plants is not None:
@@ -83,7 +79,6 @@ def pole_zombies_move(self,
         attack_bullet.bullet_sound[0].play()
         self.hp -= attack_bullet.attack
         attack_bullet.stop = True
-    games.after(self.move_speed, lambda: pole_zombies_move(self, games, -1))
 
 
 撑杆僵尸 = zombies(name='撑杆僵尸',
