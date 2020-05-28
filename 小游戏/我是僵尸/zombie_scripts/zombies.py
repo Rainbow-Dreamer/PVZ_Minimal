@@ -57,8 +57,8 @@ class zombies:
         attr_dict = vars(self)
         return '\n'.join([f'{x}: {attr_dict[x]}' for x in attr_dict])
 
-    def configure(self, attr, value):
-        self.__dict__[attr] = value
+    def configure(self, **kwargs):
+        self.__dict__.update(**kwargs)
         return self
 
     def runs(self, games, num=0):
