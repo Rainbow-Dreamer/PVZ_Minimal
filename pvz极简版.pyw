@@ -76,7 +76,7 @@ class Root(Tk):
         self.choose_stage_text = ttk.Label(self, text='请选择关卡')
         self.choose_stage_text.place(x=450, y=220)
         self.choose_stages_bar = Scrollbar(self)
-        self.choose_stages_bar.place(x=400, y=250)
+        self.choose_stages_bar.place(x=610, y=340, height=170, anchor=CENTER)
         self.choose_stages = Listbox(self,
                                      yscrollcommand=self.choose_stages_bar.set)
         for k in stage_file:
