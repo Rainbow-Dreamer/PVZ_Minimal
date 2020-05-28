@@ -15,7 +15,7 @@ def potato_detect(self, games):
         return
     attack_zombies = [
         x for x in games.whole_zombies
-        if x.status == 1 and x.rows == i and x.columns == j
+        if x.status == 1 and x.rows == i and x.columns - 1 - x.adjust_col == j
     ]
     if len(attack_zombies) != 0:
         self.bullet_sound[1].play()

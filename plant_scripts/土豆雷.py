@@ -15,7 +15,7 @@ def potato_detect(self, games):
         return
     attack_zombies = [
         x for x in games.whole_zombies
-        if x.status == 1 and x.rows == i and x.columns == j
+        if x.status == 1 and x.rows == i and x.columns - 1 - x.adjust_col == j
     ]
     if len(attack_zombies) != 0:
         self.bullet_sound[1].play()
@@ -37,10 +37,10 @@ def potato_detect(self, games):
 
 土豆雷 = plant(name='土豆雷',
             img='Potato_Mine1.png',
-            price=25,
+            price=0,
             hp=5,
-            cooling_time=30,
-            attack_interval=15,
+            cooling_time=0,
+            attack_interval=3,
             bullet_img='UnarmedPotatoMine.png',
             bullet_attack=90,
             bullet_sound=('sounds/dirt_rise.ogg', 'sounds/potato_mine.ogg'),

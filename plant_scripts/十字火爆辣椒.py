@@ -12,6 +12,7 @@ text = '''
 贵一些的了。”
 '''
 
+
 def jalapeno_check(self, games):
     if games.current_time - self.time >= self.attack_interval:
         self.status = 0
@@ -60,7 +61,7 @@ def jalapeno_explode(self, games):
                 games.current_killed_zombies += 1
                 games.killed_zombies_text.set(f'杀死僵尸数: {games.killed_zombies}')
                 each.button.configure(image=games.zombie_explode_img)
-                fire_ls_row[each.columns + 1 + each.adjust_col].destroy()
+                fire_ls_row[each.columns - 1 - each.adjust_col].destroy()
                 games.after(3000, lambda t=each: t.button.destroy())
         for each in attack_zombies_col:
             each.hp -= self.bullet_attack

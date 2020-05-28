@@ -80,12 +80,14 @@ def zombie_eat_plants(games, plants, self):
         self.time += (games.current_time - self.eat_time)
         self.next_to_plants = False
         self.eating = False
+        self.adjust_col = -1
         return
     if games.mode != games.PAUSE:
         if plants is None or plants.hp <= 0 or plants.status == 0 or self.hp <= 0:
             self.time += (games.current_time - self.eat_time)
             self.next_to_plants = False
             self.eating = False
+            self.adjust_col = -1
             return
         else:
             if type(self.attack_sound) == list:
@@ -110,6 +112,7 @@ def zombie_eat_plants(games, plants, self):
                 self.time += (games.current_time - self.eat_time)
                 self.next_to_plants = False
                 self.eating = False
+                self.adjust_col = -1
                 return
             games.after(self.attack_speed,
                         lambda: zombie_eat_plants(games, plants, self))

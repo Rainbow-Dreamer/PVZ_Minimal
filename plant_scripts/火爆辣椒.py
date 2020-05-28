@@ -33,7 +33,7 @@ def jalapeno_explode(self, games):
                 games.current_killed_zombies += 1
                 games.killed_zombies_text.set(f'杀死僵尸数: {games.killed_zombies}')
                 each.button.configure(image=games.zombie_explode_img)
-                fire_ls[each.columns + 1 + each.adjust_col].destroy()
+                fire_ls[each.columns - 1 - each.adjust_col].destroy()
                 games.after(3000, lambda t=each: t.button.destroy())
         jalapeno_blocks = games.blocks[i][j]
         jalapeno_blocks.configure(image=games.lawn_photo)
