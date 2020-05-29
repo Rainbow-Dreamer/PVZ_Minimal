@@ -166,7 +166,7 @@ class Root(Tk):
             stage_file_contents = f.read()
         exec(stage_file_contents, globals())
         self.stage_name = ttk.Label(self, text=choosed_stage)
-        self.stage_name.place(x=10, y=screen_size[1]-50)
+        self.stage_name.place(x=10, y=screen_size[1] - 50)
         global choosed_plants
         pygame.mixer.music.stop()
         bg_music = pygame.mixer.music.load(background_music)
