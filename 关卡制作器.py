@@ -420,7 +420,7 @@ class Root(Tk):
             return
         information = self.stage_info.get('1.0', END)
         if information.replace('\n', ''):
-            output_text += f"'''\n{information}\n'''\n"
+            output_text += f"'''\n{information}'''\n"
         normals = self.normals
         waves = self.waves
         whole_types = get_whole_types(self)
