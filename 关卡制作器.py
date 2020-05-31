@@ -1,12 +1,4 @@
-import os, sys
-abs_path = os.path.dirname(os.path.abspath(__file__))
-os.chdir(abs_path)
 os.chdir('stages')
-from tkinter import *
-from tkinter import ttk
-from tkinter.scrolledtext import ScrolledText
-
-
 class stage_part:
     def __init__(self,
                  types=None,
@@ -16,7 +8,8 @@ class stage_part:
                  column=None,
                  appear_time=None,
                  zombie_ls=None,
-                 config=None):
+                 config=None,
+                 probs=None):
         self.types = types
         self.names = names
         self.num = num
@@ -25,6 +18,7 @@ class stage_part:
         self.appear_time = appear_time
         self.zombie_ls = zombie_ls
         self.config = config
+        self.probs = probs
 
 
 def zombie_get(name, row, column, appear_time, config):
@@ -51,7 +45,7 @@ def get_whole_types(obj):
 class Root(Tk):
     def __init__(self):
         super(Root, self).__init__()
-        self.minsize(700, 600)
+        self.minsize(700, 800)
         self.title('关卡制作器')
         self.normals = None
         self.waves = None
@@ -157,6 +151,9 @@ class Root(Tk):
         self.config_text = ttk.Label(
             self, text='需要修改僵尸的参数请写在这里，多个参数请用英文逗号隔开，格式：参数1=值1, 参数2=值2')
         self.config_options = ttk.Entry(self, width=30)
+        self.prob_text = ttk.Label(
+           self, text='如果需要设置每种僵尸出现的概率请写在这里，用英文逗号隔开')
+        self.prob = ttk.Entry(self, width=30)
         self.each_bar = Scrollbar(self)
         self.each_list = Listbox(self,
                                  yscrollcommand=self.each_bar.set,
@@ -258,6 +255,8 @@ class Root(Tk):
         self.refresh(self.appear_times)
         self.refresh(self.config_text)
         self.refresh(self.config_options)
+        self.refresh(self.prob_text)
+        self.refresh(self.prob)
 
     def refresh_each_mode(self):
         self.refresh(self.each_bar)
@@ -279,6 +278,8 @@ class Root(Tk):
         self.appear_times.place(x=0, y=510)
         self.config_text.place(x=0, y=530)
         self.config_options.place(x=0, y=550)
+        self.prob_text.place(x=0, y=570)
+        self.prob.place(x=0, y=590)
 
     def modify(self):
         self.refresh_modify()
@@ -332,6 +333,8 @@ class Root(Tk):
                 self.config_options.delete(0, END)
                 if self.current_obj.config:
                     self.config_options.insert(END, self.current_obj.config)
+                if self.current_obj.probs:
+                    self.prob.insert(END, self.current_obj.probs)
                 self.random_mode_place()
             else:
                 current_msg = ttk.Label(self, text='您还没有设置僵尸数量')
@@ -362,11 +365,13 @@ class Root(Tk):
         appear_rows = self.random_choose_rows.get()
         appear_times = self.appear_times.get()
         config_options = self.config_options.get()
+        probs = self.prob.get()
         self.current_obj.names = current_ls
         self.current_obj.row = appear_rows
         self.current_obj.column = 'map_size[1]-1'
         self.current_obj.appear_time = appear_times
         self.current_obj.config = config_options
+        self.current_obj.probs = probs
         self.num_of_zombies_save.place(x=500, y=420)
         self.after(1000, self.num_of_zombies_save.place_forget)
 
@@ -379,11 +384,13 @@ class Root(Tk):
         for i in range(stage_num):
             current = obj[i]
             if current.types == 1:
-                names_text = random_from(current.names)
+                probs_text = current.probs
+                names_text = random_from(current.names, probs_text)
                 rows_text = get_rows(current.row)
                 column_text = current.column
                 appear_time_text = get_appear_times(current.appear_time)
                 config_text = current.config
+                
                 if config_text:
                     config_text = f'.configure({config_text})'
                 if names_text and rows_text != None and column_text != None and appear_time_text != None:
@@ -449,8 +456,10 @@ class Root(Tk):
         self.after(1000, success.place_forget)
 
 
-def random_from(ls_text):
+def random_from(ls_text, probs):
     if ls_text:
+        if probs:
+            return f'random.choices([{ls_text}], weights=[{probs}], k=1)[0]'
         return f'random.choice([{ls_text}])'
 
 
