@@ -25,6 +25,7 @@ class Root(Tk):
         self.make_label = ttk.Label
         self.make_button = ttk.Button
         self.get_zombies = get_zombies
+        self.plant_bite_sound = plant_bite_sound
         self.NULL, self.PLACE, self.REMOVE, self.PAUSE = 0, 1, 2, 3
         self.lawn_photo = Image.open(lawn_img)
         global lawn_size
@@ -450,6 +451,8 @@ class Root(Tk):
                     unset_plants_sound.play()
                     self.action_text.set(
                         f'你铲除了第{j+1}行，第{k+1}列的植物{block.plants.name}')
+                    if block.plants.away_func:
+                        block.plants.away_func(block.plants, self)
                     block.plants.status = 0
                     block.plants = None
                 else:

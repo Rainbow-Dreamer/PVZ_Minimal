@@ -16,6 +16,7 @@ class plant:
                  change_mode=0,
                  func=None,
                  bullet_func=None,
+                 away_func=None,
                  effects=None,
                  no_cooling_start=False,
                  is_bullet=True,
@@ -44,6 +45,7 @@ class plant:
         self.change_mode = change_mode
         self.func = func
         self.bullet_func = bullet_func
+        self.away_func = away_func
         self.effects = effects
         self.no_cooling_start = no_cooling_start
         self.is_bullet = is_bullet
