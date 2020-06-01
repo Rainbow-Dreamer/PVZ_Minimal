@@ -139,3 +139,6 @@ lawnmower_sound = pygame.mixer.Sound('sounds/lawnmower.ogg')
 NULL, PLACE, REMOVE, PAUSE = 0, 1, 2, 3
 show_zombies = True
 choosed_plants = []
+
+used_sounds = [sunshine_not_enough, choose_plants_sound, set_plants_sound, unset_plants_sound, pick_shovel_sound, get_sunshine_sound, plant_bite_sound, 
+               *reset_sound, pause_sound, lose_sound, choose_plant_sound, zombies_coming_sound, huge_wave_sound, lawnmower_sound]

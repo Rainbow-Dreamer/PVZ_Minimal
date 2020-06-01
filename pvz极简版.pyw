@@ -22,6 +22,8 @@ class Root(Tk):
         self.wm_iconbitmap(icon_name)
         self.title(title_name)
         self.minsize(*screen_size)
+        self.configs = ttk.Button(self, text='设置',command=self.make_config_window)
+        self.configs.place(x=screen_size[0]-100, y=0)
         self.make_label = ttk.Label
         self.make_button = ttk.Button
         self.get_zombies = get_zombies
@@ -84,7 +86,26 @@ class Root(Tk):
             self.choose_stages.insert(END, k)
         self.choose_stages.place(x=450, y=250)
         self.choose_stages_bar.config(command=self.choose_stages.yview)
-
+    
+    
+    def make_config_window(self):
+        config_window = Toplevel(self)
+        config_window.title('设置')
+        config_window.minsize(500, 300)
+        config_window.bg_volume_text = ttk.Label(config_window, text='背景音乐音量')
+        config_window.bg_volume = Scale(config_window, from_=0, to=100, orient=HORIZONTAL, resolution=5, length=200, command=lambda e: self.change_bg_volume(config_window))
+        config_window.bg_volume.set(int(pygame.mixer.music.get_volume()*100))
+        config_window.bg_volume_text.place(x=0, y=20)
+        config_window.bg_volume.place(x=100, y=0)
+    
+    def change_bg_volume(self, config_window):
+        new_volume = config_window.bg_volume.get()
+        if new_volume != int(pygame.mixer.music.get_volume()*100):
+            pygame.mixer.music.set_volume(new_volume/100)
+            global background_volume
+            background_volume = new_volume/100
+    
+    
     def make_img(self, each, resize_num=1):
         current_img = Image.open(each.img)
         if each.img_transparent:
