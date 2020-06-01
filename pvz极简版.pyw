@@ -30,10 +30,11 @@ class Root(Tk):
         self.wm_iconbitmap(icon_name)
         self.title(title_name)
         self.minsize(*screen_size)
+        self.sound_volume = 1
         self.last_place = last_place
         self.music_flag = 0
         self.configs = ttk.Button(self, text='设置',command=self.make_config_window)
-        self.configs.place(x=screen_size[0]-100, y=0)
+        self.configs.place(x=screen_size[0]-100, y=screen_size[1]-60)
         self.make_label = ttk.Label
         self.make_button = ttk.Button
         self.get_zombies = get_zombies
@@ -55,7 +56,7 @@ class Root(Tk):
         self.action_text_show.place(x=action_text_place_x,
                                     y=self.action_text_place_y,
                                     anchor='center')
-
+        pygame.mixer.music.load(choose_plants_music)
         pygame.mixer.music.set_volume(choose_seed_volume)
         pygame.mixer.music.play(loops=-1)
         self.plants_already_choosed = ttk.LabelFrame(self, height=200)
@@ -110,11 +111,18 @@ class Root(Tk):
         config_window.bg_text = ttk.Label(config_window, text='背景音乐')
         config_window.bg = Text(config_window, width=55, height=5)
         config_window.bg_button = ttk.Button(config_window, text='更改', command=lambda: self.change_bg(config_window))
-        config_window.bg.insert(END, background_music)
+        if self.music_flag == 1:
+            config_window.bg.insert(END, background_music)
+        elif self.music_flag == 0:
+            config_window.bg.insert(END, choose_plants_music)
         config_window.bg_text.place(x=0, y=60)
         config_window.bg.place(x=0, y=80)
         config_window.bg_button.place(x=400, y=80)
-    
+        config_window.sound_volume_text = ttk.Label(config_window, text='音效音量')
+        config_window.sound_volume = Scale(config_window, from_=0, to=100, orient=HORIZONTAL, resolution=5, length=200, command=lambda e: self.change_sound_volume(config_window))
+        config_window.sound_volume.set(int(self.sound_volume*100))
+        config_window.sound_volume_text.place(x=0, y=180)
+        config_window.sound_volume.place(x=100, y=160)
     def change_bg(self, config_window):
         filename = filedialog.askopenfilename(
             initialdir=self.last_place,
@@ -124,14 +132,24 @@ class Root(Tk):
             self.last_place = os.path.dirname(filename)
             with open('../memory.txt','w') as f:
                 f.write(self.last_place)
-            global background_music
-            background_music = filename         
+                 
             if self.music_flag == 1:
+                global background_music
+                background_music = filename                   
                 pygame.mixer.music.stop()
                 pygame.mixer.music.load(background_music)
                 pygame.mixer.music.play(loops=-1)
-            config_window.bg.delete('1.0', END)
-            config_window.bg.insert(END, background_music)
+                config_window.bg.delete('1.0', END)
+                config_window.bg.insert(END, background_music)                
+            elif self.music_flag == 0:
+                global choose_plants_music
+                choose_plants_music = filename
+                pygame.mixer.music.stop()
+                pygame.mixer.music.load(choose_plants_music)
+                pygame.mixer.music.play(loops=-1)    
+                config_window.bg.delete('1.0', END)
+                config_window.bg.insert(END, choose_plants_music)                
+            
     
     def change_bg_volume(self, config_window):
         new_volume = config_window.bg_volume.get()
@@ -139,7 +157,17 @@ class Root(Tk):
             pygame.mixer.music.set_volume(new_volume/100)
             global background_volume
             background_volume = new_volume/100
-    
+    def change_sound_volume(self, config_window):
+        new_volume = config_window.sound_volume.get()
+        if new_volume != int(self.sound_volume*100):
+            new_set_volume = new_volume/100
+            for each in whole_sounds:
+                if type(each) == list:
+                    for i in each:
+                        i.set_volume(new_set_volume)
+                else:
+                    each.set_volume(new_set_volume)
+            self.sound_volume = new_set_volume
     
     def make_img(self, each, resize_num=1):
         current_img = Image.open(each.img)
@@ -477,6 +505,13 @@ class Root(Tk):
                     current_time = self.current_time
                     choose_plant = self.plants_generate[self.choosed_plant]
                     current.plants = get_plant(choose_plant, j, k)
+                    if current.plants.bullet_sound:
+                        for each in current.plants.bullet_sound:
+                            if type(each) == list:
+                                for j in each:
+                                    j.set_volume(self.sound_volume)
+                            else:
+                                each.set_volume(self.sound_volume)
                     self.make_img(current.plants)
                     if current.plants.use_bullet_img_first:
                         current.configure(image=current.plants.bullet_img)
@@ -570,14 +605,27 @@ class Root(Tk):
         current_zombies.attack_sound = [
             pygame.mixer.Sound(j) for j in current_zombies.attack_sound
         ]
+        for each in current_zombies.attack_sound:
+            each.set_volume(self.sound_volume)
+        whole_sounds.extend(current_zombies.attack_sound)
         current_zombies.dead_sound = [
             pygame.mixer.Sound(j)
             if type(j) != list else [pygame.mixer.Sound(k) for k in j]
             for j in current_zombies.dead_sound
         ]
+        for each in current_zombies.dead_sound:
+            if type(each) != list:
+                each.set_volume(self.sound_volume)  
+            else:
+                for i in each:
+                    i.set_volume(self.sound_volume)
+        whole_sounds.extend(current_zombies.dead_sound)
         current_zombies.hit_sound = [
             pygame.mixer.Sound(j) for j in current_zombies.hit_sound
         ]
+        for each in current_zombies.hit_sound:
+            each.set_volume(self.sound_volume)        
+        whole_sounds.extend(current_zombies.hit_sound)
         if current_zombies.hit_sound_ls:
             for k in range(len(current_zombies.hit_sound_ls)):
                 current = current_zombies.hit_sound_ls[k][1]
@@ -585,10 +633,20 @@ class Root(Tk):
                     current) if type(current) != list else [
                         pygame.mixer.Sound(y) for y in current
                     ]
+            for each in current_zombies.hit_sound_ls:
+                if type(each[1]) != list:
+                    each[1].set_volume(self.sound_volume)  
+                else:
+                    for i in each[1]:
+                        i.set_volume(self.sound_volume)
+            whole_sounds.extend([i[1] for i in current_zombies.hit_sound_ls])
         if current_zombies.other_sound:
             current_zombies.other_sound = [
                 pygame.mixer.Sound(k) for k in current_zombies.other_sound
             ]
+            for each in current_zombies.other_sound:
+                each.set_volume(self.sound_volume)                    
+            whole_sounds.extend(current_zombies.other_sound)
         self.make_img(current_zombies)
         current_zombies_button = ttk.Button(
             self.maps,
