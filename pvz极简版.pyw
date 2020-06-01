@@ -1,6 +1,7 @@
 import os, sys, importlib, pygame
 from tkinter import *
 from tkinter import ttk
+from tkinter import filedialog
 from PIL import Image, ImageTk
 import datetime, time, random, keyboard
 import time, random, os
@@ -16,12 +17,21 @@ whole_plants_img = [x[1] for x in whole_plants]
 whole_plants = [[x[0], 0] for x in whole_plants]
 
 
+try:
+    with open('../memory.txt') as f:
+        last_place = f.read()
+except:
+    last_place = '.'
+
+
 class Root(Tk):
     def __init__(self):
         super(Root, self).__init__()
         self.wm_iconbitmap(icon_name)
         self.title(title_name)
         self.minsize(*screen_size)
+        self.last_place = last_place
+        self.music_flag = 0
         self.configs = ttk.Button(self, text='设置',command=self.make_config_window)
         self.configs.place(x=screen_size[0]-100, y=0)
         self.make_label = ttk.Label
@@ -97,6 +107,31 @@ class Root(Tk):
         config_window.bg_volume.set(int(pygame.mixer.music.get_volume()*100))
         config_window.bg_volume_text.place(x=0, y=20)
         config_window.bg_volume.place(x=100, y=0)
+        config_window.bg_text = ttk.Label(config_window, text='背景音乐')
+        config_window.bg = Text(config_window, width=55, height=5)
+        config_window.bg_button = ttk.Button(config_window, text='更改', command=lambda: self.change_bg(config_window))
+        config_window.bg.insert(END, background_music)
+        config_window.bg_text.place(x=0, y=60)
+        config_window.bg.place(x=0, y=80)
+        config_window.bg_button.place(x=400, y=80)
+    
+    def change_bg(self, config_window):
+        filename = filedialog.askopenfilename(
+            initialdir=self.last_place,
+            title="选择你想播放的背景音乐",
+            filetype=(("音乐文件", "*.mp3;*.ogg;*.wav"), ("所有文件", "*.*")))
+        if filename:
+            self.last_place = os.path.dirname(filename)
+            with open('../memory.txt','w') as f:
+                f.write(self.last_place)
+            global background_music
+            background_music = filename         
+            if self.music_flag == 1:
+                pygame.mixer.music.stop()
+                pygame.mixer.music.load(background_music)
+                pygame.mixer.music.play(loops=-1)
+            config_window.bg.delete('1.0', END)
+            config_window.bg.insert(END, background_music)
     
     def change_bg_volume(self, config_window):
         new_volume = config_window.bg_volume.get()
@@ -194,6 +229,7 @@ class Root(Tk):
         bg_music = pygame.mixer.music.load(background_music)
         pygame.mixer.music.set_volume(background_volume)
         pygame.mixer.music.play(loops=-1)
+        self.music_flag = 1
         self.plants_already_choosed.destroy()
         self.choose_plants_screen.destroy()
         self.start_game.destroy()
