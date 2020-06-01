@@ -1,6 +1,15 @@
 from plant import plant
 from copy import deepcopy
 
+
+info = '''
+坚果小队
+
+特性：占据地图的一整个竖排，在自己被吃光之前，所有列上的僵尸都过不来。
+所有列的僵尸都可以啃咬坚果小队，整个坚果小队的生命值是共享的，
+每一列的僵尸的啃咬都会影响这个生命值。
+'''
+
 def start_plant_wallnut(self, games):
     i, j = self.rows, self.columns
     other_rows = list(range(games.map_rows))
@@ -69,5 +78,6 @@ def away(self, games):
             func=start_plant_wallnut,
             away_func=away,
             dead_normal=False,
+            information=info,
             hp_img=((2 / 3, 'long_wallnut_crack1.png'), (1 / 3,
                                                       'long_wallnut_crack2.png')))

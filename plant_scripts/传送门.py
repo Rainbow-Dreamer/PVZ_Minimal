@@ -3,6 +3,12 @@ from plant import plant
 
 SET_MODE = 'portal'
 
+info = '''
+传送门
+
+特性：可以自己设置入口和出口的传送门，僵尸进入入口会从出口出来，
+植物的子弹经过入口会从出口出来。
+'''
 
 def set_portal(self, i, j, games):
     if games.mode == SET_MODE:
@@ -73,5 +79,6 @@ def portal_away(self, games):
             cooling_time=7.5,
             func=transport_set,
             away_func=portal_away,
+            information=info,
             other_img=[['Portal2.jpg',1]],
             effects={'bullet':transport_bullet})
