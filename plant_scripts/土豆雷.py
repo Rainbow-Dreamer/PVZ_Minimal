@@ -37,9 +37,9 @@ def potato_detect(self, games):
 
 土豆雷 = plant(name='土豆雷',
             img='Potato_Mine1.png',
-            price=0,
+            price=25,
             hp=5,
-            cooling_time=0,
+            cooling_time=30,
             attack_interval=3,
             bullet_img='UnarmedPotatoMine.png',
             bullet_attack=90,
