@@ -16,7 +16,6 @@ with open(config_path, encoding='utf-8') as f:
 whole_plants_img = [x[1] for x in whole_plants]
 whole_plants = [[x[0], 0] for x in whole_plants]
 
-
 try:
     with open('../memory.txt') as f:
         last_place = f.read()
@@ -33,8 +32,10 @@ class Root(Tk):
         self.sound_volume = 1
         self.last_place = last_place
         self.music_flag = 0
-        self.configs = ttk.Button(self, text='设置',command=self.make_config_window)
-        self.configs.place(x=screen_size[0]-100, y=screen_size[1]-60)
+        self.configs = ttk.Button(self,
+                                  text='设置',
+                                  command=self.make_config_window)
+        self.configs.place(x=screen_size[0] - 100, y=screen_size[1] - 60)
         self.make_label = ttk.Label
         self.make_button = ttk.Button
         self.get_zombies = get_zombies
@@ -97,20 +98,29 @@ class Root(Tk):
             self.choose_stages.insert(END, k)
         self.choose_stages.place(x=450, y=250)
         self.choose_stages_bar.config(command=self.choose_stages.yview)
-    
-    
+
     def make_config_window(self):
         config_window = Toplevel(self)
         config_window.title('设置')
         config_window.minsize(500, 300)
         config_window.bg_volume_text = ttk.Label(config_window, text='背景音乐音量')
-        config_window.bg_volume = Scale(config_window, from_=0, to=100, orient=HORIZONTAL, resolution=5, length=200, command=lambda e: self.change_bg_volume(config_window))
-        config_window.bg_volume.set(int(pygame.mixer.music.get_volume()*100))
+        config_window.bg_volume = Scale(
+            config_window,
+            from_=0,
+            to=100,
+            orient=HORIZONTAL,
+            resolution=5,
+            length=200,
+            command=lambda e: self.change_bg_volume(config_window))
+        config_window.bg_volume.set(int(pygame.mixer.music.get_volume() * 100))
         config_window.bg_volume_text.place(x=0, y=20)
         config_window.bg_volume.place(x=100, y=0)
         config_window.bg_text = ttk.Label(config_window, text='背景音乐')
         config_window.bg = Text(config_window, width=55, height=5)
-        config_window.bg_button = ttk.Button(config_window, text='更改', command=lambda: self.change_bg(config_window))
+        config_window.bg_button = ttk.Button(
+            config_window,
+            text='更改',
+            command=lambda: self.change_bg(config_window))
         if self.music_flag == 1:
             config_window.bg.insert(END, background_music)
         elif self.music_flag == 0:
@@ -119,48 +129,57 @@ class Root(Tk):
         config_window.bg.place(x=0, y=80)
         config_window.bg_button.place(x=400, y=80)
         config_window.sound_volume_text = ttk.Label(config_window, text='音效音量')
-        config_window.sound_volume = Scale(config_window, from_=0, to=100, orient=HORIZONTAL, resolution=5, length=200, command=lambda e: self.change_sound_volume(config_window))
-        config_window.sound_volume.set(int(self.sound_volume*100))
+        config_window.sound_volume = Scale(
+            config_window,
+            from_=0,
+            to=100,
+            orient=HORIZONTAL,
+            resolution=5,
+            length=200,
+            command=lambda e: self.change_sound_volume(config_window))
+        config_window.sound_volume.set(int(self.sound_volume * 100))
         config_window.sound_volume_text.place(x=0, y=180)
         config_window.sound_volume.place(x=100, y=160)
+
     def change_bg(self, config_window):
-        filename = filedialog.askopenfilename(
-            initialdir=self.last_place,
-            title="选择你想播放的背景音乐",
-            filetype=(("音乐文件", "*.mp3;*.ogg;*.wav"), ("所有文件", "*.*")))
+        filename = filedialog.askopenfilename(initialdir=self.last_place,
+                                              title="选择你想播放的背景音乐",
+                                              filetype=(("音乐文件",
+                                                         "*.mp3;*.ogg;*.wav"),
+                                                        ("所有文件", "*.*")))
         if filename:
             self.last_place = os.path.dirname(filename)
-            with open('../memory.txt','w') as f:
+            with open('../memory.txt', 'w') as f:
                 f.write(self.last_place)
-                 
+
             if self.music_flag == 1:
                 global background_music
-                background_music = filename                   
+                background_music = filename
                 pygame.mixer.music.stop()
                 pygame.mixer.music.load(background_music)
                 pygame.mixer.music.play(loops=-1)
                 config_window.bg.delete('1.0', END)
-                config_window.bg.insert(END, background_music)                
+                config_window.bg.insert(END, background_music)
             elif self.music_flag == 0:
                 global choose_plants_music
                 choose_plants_music = filename
                 pygame.mixer.music.stop()
                 pygame.mixer.music.load(choose_plants_music)
-                pygame.mixer.music.play(loops=-1)    
+                pygame.mixer.music.play(loops=-1)
                 config_window.bg.delete('1.0', END)
-                config_window.bg.insert(END, choose_plants_music)                
-            
-    
+                config_window.bg.insert(END, choose_plants_music)
+
     def change_bg_volume(self, config_window):
         new_volume = config_window.bg_volume.get()
-        if new_volume != int(pygame.mixer.music.get_volume()*100):
-            pygame.mixer.music.set_volume(new_volume/100)
+        if new_volume != int(pygame.mixer.music.get_volume() * 100):
+            pygame.mixer.music.set_volume(new_volume / 100)
             global background_volume
-            background_volume = new_volume/100
+            background_volume = new_volume / 100
+
     def change_sound_volume(self, config_window):
         new_volume = config_window.sound_volume.get()
-        if new_volume != int(self.sound_volume*100):
-            new_set_volume = new_volume/100
+        if new_volume != int(self.sound_volume * 100):
+            new_set_volume = new_volume / 100
             for each in whole_sounds:
                 if type(each) == list:
                     for i in each:
@@ -168,7 +187,7 @@ class Root(Tk):
                 else:
                     each.set_volume(new_set_volume)
             self.sound_volume = new_set_volume
-    
+
     def make_img(self, each, resize_num=1):
         current_img = Image.open(each.img)
         if each.img_transparent:
@@ -615,7 +634,7 @@ class Root(Tk):
         ]
         for each in current_zombies.dead_sound:
             if type(each) != list:
-                each.set_volume(self.sound_volume)  
+                each.set_volume(self.sound_volume)
             else:
                 for i in each:
                     i.set_volume(self.sound_volume)
@@ -624,7 +643,7 @@ class Root(Tk):
             pygame.mixer.Sound(j) for j in current_zombies.hit_sound
         ]
         for each in current_zombies.hit_sound:
-            each.set_volume(self.sound_volume)        
+            each.set_volume(self.sound_volume)
         whole_sounds.extend(current_zombies.hit_sound)
         if current_zombies.hit_sound_ls:
             for k in range(len(current_zombies.hit_sound_ls)):
@@ -635,7 +654,7 @@ class Root(Tk):
                     ]
             for each in current_zombies.hit_sound_ls:
                 if type(each[1]) != list:
-                    each[1].set_volume(self.sound_volume)  
+                    each[1].set_volume(self.sound_volume)
                 else:
                     for i in each[1]:
                         i.set_volume(self.sound_volume)
@@ -645,7 +664,7 @@ class Root(Tk):
                 pygame.mixer.Sound(k) for k in current_zombies.other_sound
             ]
             for each in current_zombies.other_sound:
-                each.set_volume(self.sound_volume)                    
+                each.set_volume(self.sound_volume)
             whole_sounds.extend(current_zombies.other_sound)
         self.make_img(current_zombies)
         current_zombies_button = ttk.Button(

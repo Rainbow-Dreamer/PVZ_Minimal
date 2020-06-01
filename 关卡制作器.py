@@ -1,4 +1,6 @@
 os.chdir('stages')
+
+
 class stage_part:
     def __init__(self,
                  types=None,
@@ -151,8 +153,7 @@ class Root(Tk):
         self.config_text = ttk.Label(
             self, text='需要修改僵尸的参数请写在这里，多个参数请用英文逗号隔开，格式：参数1=值1, 参数2=值2')
         self.config_options = ttk.Entry(self, width=30)
-        self.prob_text = ttk.Label(
-           self, text='如果需要设置每种僵尸出现的概率请写在这里，用英文逗号隔开')
+        self.prob_text = ttk.Label(self, text='如果需要设置每种僵尸出现的概率请写在这里，用英文逗号隔开')
         self.prob = ttk.Entry(self, width=30)
         self.each_bar = Scrollbar(self)
         self.each_list = Listbox(self,
@@ -390,7 +391,7 @@ class Root(Tk):
                 column_text = current.column
                 appear_time_text = get_appear_times(current.appear_time)
                 config_text = current.config
-                
+
                 if config_text:
                     config_text = f'.configure({config_text})'
                 if names_text and rows_text != None and column_text != None and appear_time_text != None:
