@@ -83,7 +83,7 @@ class Root(Tk):
                 image=current_img,
                 command=lambda i=i: self.append_plants(i))
             current_button.image = current_img
-            current_button.grid(row=i // 5, column=i % 5)
+            current_button.grid(row=i // 6, column=i % 6)
             self.choose_buttons.append(current_button)
         self.choose_plants_screen.place(x=0, y=200)
         self.start_game = ttk.Button(text='开始游戏', command=self.start_init)
@@ -262,7 +262,7 @@ class Root(Tk):
         self.action_text.set(f'你取消选择了{whole_plants[x][0]}')
         del choosed_plants[q]
         self.draw_choosed_plants()
-        self.choose_buttons[x].grid(row=x // 5, column=x % 5)
+        self.choose_buttons[x].grid(row=x // 6, column=x % 6)
 
     def start_init(self):
         choosed_stage = self.choose_stages.get(ACTIVE)
