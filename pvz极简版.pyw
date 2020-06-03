@@ -173,8 +173,12 @@ class Root(Tk):
         new_volume = config_window.bg_volume.get()
         if new_volume != int(pygame.mixer.music.get_volume() * 100):
             pygame.mixer.music.set_volume(new_volume / 100)
-            global background_volume
-            background_volume = new_volume / 100
+            if self.music_flag == 1:
+                global background_volume
+                background_volume = new_volume / 100
+            elif self.music_flag == 0:
+                global choose_seed_volume
+                choose_seed_volume = new_volume / 100                
 
     def change_sound_volume(self, config_window):
         new_volume = config_window.sound_volume.get()
@@ -530,8 +534,8 @@ class Root(Tk):
                     if current.plants.bullet_sound:
                         for each in current.plants.bullet_sound:
                             if type(each) == list:
-                                for j in each:
-                                    j.set_volume(self.sound_volume)
+                                for each_sound in each:
+                                    each_sound.set_volume(self.sound_volume)
                             else:
                                 each.set_volume(self.sound_volume)
                     self.make_img(current.plants)
@@ -740,6 +744,8 @@ class Root(Tk):
         self.after(2000, lambda: random.choice(obj.dead_sound[1]).play())
 
     def check_plants(self):
+        if self.mode == 'stop':
+            return
         if self.mode == PAUSE:
             if keyboard.is_pressed('p'):
                 self.mode = NULL
@@ -820,7 +826,8 @@ class Root(Tk):
         self.after(1, self.check_plants)
 
     def check_zombies(self):
-
+        if self.mode == 'stop':
+            return        
         if self.mode != PAUSE:
             current_time = self.current_time
             if self.normal_or_wave == 0:
@@ -843,7 +850,7 @@ class Root(Tk):
                     self.normal_or_wave = 1
                     if self.normal_zombies_num == current_stage.num_of_waves:
                         self.action_text.set('你赢了！')
-                        self.mode = PAUSE
+                        #self.mode = PAUSE
                         self.win()
                         return
                     self.normal_zombies_num += 1
@@ -940,7 +947,89 @@ class Root(Tk):
         self.after(7000, quit)
 
     def win(self):
-        self.after(7000, quit)
+        pygame.mixer.music.stop()
+        win_sound.play()
+        self.after(5000, self.ask_if_continue)
+    
+    
+    def go_back(self, obj):
+        '''
+        self.plants_already_choosed.destroy()
+        self.choose_plants_screen.destroy()
+        self.start_game.destroy()
+        self.choose_stages.destroy()
+        self.choose_stages_bar.destroy()
+        '''
+        global choosed_plants
+        choosed_plants = []
+        obj.destroy()
+        self.choose.destroy()
+        self.whole_map.destroy()
+        self.maps.destroy()
+        self.zombie_bar.destroy()
+        self.action_text.set('')
+        self.killed_zombies_text.set('')
+        self.music_flag = 0
+        pygame.mixer.music.load(choose_plants_music)
+        pygame.mixer.music.set_volume(choose_seed_volume)
+        pygame.mixer.music.play(loops=-1)
+        self.plants_already_choosed = ttk.LabelFrame(self, height=200)
+        self.plants_already_choosed.grid(sticky='w')
+        self.choose_plants_screen = ttk.LabelFrame(self)
+        self.choose_plants_screen.place(x=0, y=200)
+        self.choose_buttons = []
+        self.num_plants = len(whole_plants)
+        average_height = 200 / (self.num_plants / 5)
+        if lawn_size <= average_height:
+            average_height = lawn_size
+        for i in range(self.num_plants):
+            current_plant = whole_plants[i]
+            current_plant_img = whole_plants_img[i]
+            current_plant[1] = i
+            current_img = Image.open(current_plant_img)
+            ratio = average_height / current_img.height
+            current_img = current_img.resize((int(
+                current_img.width * ratio), int(current_img.height * ratio)),
+                                             Image.ANTIALIAS)
+            current_img = ImageTk.PhotoImage(current_img)
+            current_button = ttk.Button(
+                self.choose_plants_screen,
+                image=current_img,
+                command=lambda i=i: self.append_plants(i))
+            current_button.image = current_img
+            current_button.grid(row=i // 6, column=i % 6)
+            self.choose_buttons.append(current_button)        
+        self.start_game = ttk.Button(text='开始游戏', command=self.start_init)
+        self.start_game.place(x=0, y=500)
+        self.choose_stage_text = ttk.Label(self, text='请选择关卡')
+        self.choose_stage_text.place(x=450, y=220)
+        self.choose_stages_bar = Scrollbar(self)
+        self.choose_stages_bar.place(x=610, y=340, height=170, anchor=CENTER)
+        self.choose_stages = Listbox(self,
+                                     yscrollcommand=self.choose_stages_bar.set)
+        for k in stage_file:
+            self.choose_stages.insert(END, k)
+        self.choose_stages.place(x=450, y=250)
+        self.choose_stages_bar.config(command=self.choose_stages.yview) 
+    
+    def ask_if_continue(self):
+        self.mode = 'stop'
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+        x, y = self.winfo_x(), self.winfo_y()
+        ask_window = Toplevel(self)
+        ask_window.title('继续游戏')
+        ask_window.minsize(300, 200)
+        ask_window.update()
+        ask_window.geometry('%dx%d+%d+%d' % (300, 200, x, y))        
+        ask_window.ask_text = ttk.Label(ask_window, text='请问要返回选择植物和关卡的界面还是退出游戏？')
+        ask_window.ask_text.place(x=0, y=0)
+        ask_window.back_button = ttk.Button(ask_window, text='返回主界面', command=lambda: self.go_back(ask_window))
+        ask_window.quit_button = ttk.Button(ask_window, text='退出', command=quit)
+        ask_window.back_button.place(x=0, y=30)
+        ask_window.quit_button.place(x=100, y=30)
+    
+    
 
 
 root = Root()

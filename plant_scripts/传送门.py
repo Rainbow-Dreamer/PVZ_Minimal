@@ -7,7 +7,8 @@ info = '''
 传送门
 
 特性：可以自己设置入口和出口的传送门，僵尸进入入口会从出口出来，
-植物的子弹经过入口会从出口出来。
+植物的子弹经过入口会从出口出来。每个传送门维持限时150秒，
+放置150秒之后传送门会自己消失。
 '''
 
 def set_portal(self, i, j, games):
@@ -21,6 +22,7 @@ def set_portal(self, i, j, games):
             for j in range(games.map_columns):
                 games.blocks[i][j].configure(command=lambda i=i, j=j: games.block_action(i, j)) 
         games.bind("<Button-3>", lambda e: games.reset())
+        self.place_time = games.current_time
         self.func = transport
 
 def portal_reset(self, games):
@@ -47,6 +49,13 @@ def transport_set(self, games):
 
 def transport(self, games):
     i, j = self.rows, self.columns
+    if games.current_time - self.place_time >= 150:
+        block = games.blocks[i][j]
+        block.configure(image=games.lawn_photo)
+        block.plants.away_func(block.plants, games)
+        block.plants.status = 0
+        block.plants = None
+        return
     affect_zombies = [each for each in games.whole_zombies if each.status == 1 and each.rows == i and each.columns - 1 - each.adjust_col == j]
     if affect_zombies:
         trans = self.places[1]

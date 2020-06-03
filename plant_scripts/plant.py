@@ -1,10 +1,11 @@
+from copy import deepcopy
 class plant:
     def __init__(self,
-                 name,
-                 img,
-                 price,
-                 hp,
-                 cooling_time,
+                 name=None,
+                 img=None,
+                 price=None,
+                 hp=None,
+                 cooling_time=None,
                  hp_img=None,
                  attack_interval=None,
                  bullet_img=None,
@@ -29,6 +30,7 @@ class plant:
                  columns=None):
         self.name = name
         self.img = img
+        self.img_name = deepcopy(img)
         self.price = price
         self.hp = hp
         self.full_hp = hp
@@ -36,7 +38,7 @@ class plant:
         self.hp_img = hp_img
         self.attack_interval = attack_interval
         self.bullet_img = bullet_img
-        self.bullet_img_name = bullet_img
+        self.bullet_img_name = deepcopy(bullet_img)
         self.bullet_speed = bullet_speed
         self.bullet_attack = bullet_attack
         self.bullet_sound = bullet_sound
@@ -53,6 +55,10 @@ class plant:
         self.img_transparent = img_transparent
         self.use_bullet_img_first = use_bullet_img_first
         self.other_img = other_img
+        if other_img:
+            self.other_img_name = [deepcopy(t) for t in other_img]
+        else:
+            self.other_img_name = None
         self.information = information
         self.rows = rows
         self.columns = columns
@@ -61,6 +67,19 @@ class plant:
     def __repr__(self):
         attr_dict = vars(self)
         return '\n'.join([f'{x}: {attr_dict[x]}' for x in attr_dict])
-
+    
+    def __deepcopy__(self, memo):
+        if type(self.img) != str:
+            self.img = deepcopy(self.img_name)
+            self.bullet_img = deepcopy(self.bullet_img_name)
+            if self.other_img:
+                self.other_img = deepcopy(self.other_img_name)
+            del self.button
+        result = plant()
+        memo[id(self)] = result
+        for k, v in self.__dict__.items():
+            setattr(result, k, deepcopy(v, memo))
+        return result
+    
     def runs(self, games):
         self.func(self, games)
