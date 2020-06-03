@@ -953,13 +953,6 @@ class Root(Tk):
     
     
     def go_back(self, obj):
-        '''
-        self.plants_already_choosed.destroy()
-        self.choose_plants_screen.destroy()
-        self.start_game.destroy()
-        self.choose_stages.destroy()
-        self.choose_stages_bar.destroy()
-        '''
         global choosed_plants
         choosed_plants = []
         obj.destroy()
@@ -969,6 +962,7 @@ class Root(Tk):
         self.zombie_bar.destroy()
         self.action_text.set('')
         self.killed_zombies_text.set('')
+        self.stage_name.destroy()
         self.music_flag = 0
         pygame.mixer.music.load(choose_plants_music)
         pygame.mixer.music.set_volume(choose_seed_volume)
