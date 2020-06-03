@@ -161,4 +161,4 @@ def moving(games, obj, target, columns_move=0, rows_move=0):
              bullet_sound=('sounds/throw.ogg', ),
              func=cat_check,
              bullet_func=moving,
-             other_img = [[f'thron{k}.png', 2, True] for k in [4, 2, 6, 1, 3, 7, 5]])
+             other_img = [[f'thron{k}.png', 3, True] for k in [4, 2, 6, 1, 3, 7, 5]])

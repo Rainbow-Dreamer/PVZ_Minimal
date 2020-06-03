@@ -191,7 +191,7 @@ class Root(Tk):
     def make_img(self, each, resize_num=1):
         current_img = Image.open(each.img)
         if each.img_transparent:
-            ratio = self.lawn_height / current_img.height
+            ratio = min(self.lawn_height / current_img.height, self.lawn_width / current_img.width)
             current_img = current_img.resize(
                 (int(current_img.width * ratio / resize_num),
                  int(current_img.height * ratio / resize_num)),
@@ -214,9 +214,11 @@ class Root(Tk):
                         (self.lawn_width, self.lawn_height), Image.ANTIALIAS)
                     each.bullet_img = ImageTk.PhotoImage(current_img)
                 else:
+                    each.bullet_img = Image.open(each.bullet_img)
+                    ratio = min((self.lawn_height/3) / each.bullet_img.height, (self.lawn_width/3) / each.bullet_img.width)
                     each.bullet_img = ImageTk.PhotoImage(
-                        Image.open(each.bullet_img).resize(
-                            (self.lawn_width // 3, self.lawn_height // 3),
+                        each.bullet_img.resize(
+                            (int(each.bullet_img.width*ratio), int(each.bullet_img.height*ratio)),
                             Image.ANTIALIAS))
             if each.other_img:
                 for j in range(len(each.other_img)):
@@ -228,9 +230,10 @@ class Root(Tk):
                     elif current_len == 3:
                         img_name, resize_num, as_bullet = current_other_img_ls
                     current_other_img = Image.open(img_name)
+                    ratio = min((self.lawn_height/resize_num) / current_other_img.height, (self.lawn_width/resize_num) / current_other_img.width)
                     current_other_img = current_other_img.resize(
-                        (int(self.lawn_width / resize_num),
-                         int(self.lawn_height / resize_num)), Image.ANTIALIAS)
+                        (int(current_other_img.width*ratio),
+                         int(current_other_img.height*ratio)), Image.ANTIALIAS)
                     current_other_img_ls[1] = img_name
                     current_other_img_ls[0] = ImageTk.PhotoImage(
                         current_other_img)
