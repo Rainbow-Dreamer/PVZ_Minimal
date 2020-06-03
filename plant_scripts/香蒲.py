@@ -18,7 +18,7 @@ def cat_check(self, games):
 def shoot(self, games, target):
     i, j = self.rows, self.columns
     new_thron = games.make_label(games.maps, image=self.bullet_img)
-    new_thron.image = self.bullet_img
+    new_thron.image = [self.bullet_img] + [k[0] for k in self.other_img]
     new_thron.bullet_img_name = self.bullet_img_name
     new_thron.bullet_speed = self.bullet_speed
     new_thron.attack = self.bullet_attack
@@ -28,10 +28,22 @@ def shoot(self, games, target):
     new_thron.attributes = 0
     new_thron.stop = False
     new_thron.func = self.bullet_func
+    new_thron.direction = 0
     self.bullet_sound[0].play()
     moving(games, new_thron, target)    
 
 def moving(games, obj, target, columns_move=0, rows_move=0):
+    '''
+    direction:
+    0: right
+    1: left
+    2: up
+    3: down
+    4: rightup
+    5: leftup
+    6: rightdown
+    7: leftdown
+    '''    
     if games.mode != games.PAUSE:
         if obj.stop:
             obj.destroy()
@@ -75,14 +87,18 @@ def moving(games, obj, target, columns_move=0, rows_move=0):
                     rows_move = 0 
                     if col_diff >= 0:
                         columns_move = 1
+                        direction = 0
                     else:
                         columns_move = -1
+                        direction = 1
                 else:
                     columns_move = 0
                     if row_diff >= 0:
                         rows_move = 1
+                        direction = 3
                     else:
                         rows_move = -1
+                        direction = 2
             else:
                 if row_diff >= 0:
                     rows_move = 1
@@ -91,7 +107,18 @@ def moving(games, obj, target, columns_move=0, rows_move=0):
                 if col_diff >= 0:
                     columns_move = 1
                 else:
-                    columns_move = -1     
+                    columns_move = -1 
+                if rows_move == 1 and columns_move == 1:
+                    direction = 6
+                elif rows_move == 1 and columns_move == -1:
+                    direction = 7
+                elif rows_move == -1 and columns_move == 1:
+                    direction = 4
+                elif rows_move == -1 and columns_move == -1:
+                    direction = 5   
+            if direction != obj.direction:
+                obj.direction = direction
+                obj.configure(image=obj.image[direction])
         else:
             affect_zombies = [x for x in games.whole_zombies
                     if x.status == 1 and x.rows == i and x.columns == j]
@@ -124,13 +151,14 @@ def moving(games, obj, target, columns_move=0, rows_move=0):
 
 香蒲 = plant(name='香蒲',
              img='Cattail1.png',
-             price=0,
+             price=225,
              hp=5,
-             cooling_time=0,
+             cooling_time=30,
              attack_interval=1.4,
              bullet_img='thron.png',
              bullet_speed=200,
              bullet_attack=1,
              bullet_sound=('sounds/throw.ogg', ),
              func=cat_check,
-             bullet_func=moving)
+             bullet_func=moving,
+             other_img = [[f'thron{k}.png', 2, True] for k in [4, 2, 6, 1, 3, 7, 5]])
