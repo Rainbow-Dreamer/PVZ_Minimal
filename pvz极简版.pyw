@@ -140,6 +140,9 @@ class Root(Tk):
         config_window.sound_volume.set(int(self.sound_volume * 100))
         config_window.sound_volume_text.place(x=0, y=180)
         config_window.sound_volume.place(x=100, y=160)
+        if self.music_flag == 1:
+            config_window.go_back_button = ttk.Button(config_window, text='返回主界面', command=lambda: self.go_back(config_window))
+            config_window.go_back_button.place(x=400, y=20)
 
     def change_bg(self, config_window):
         filename = filedialog.askopenfilename(initialdir=self.last_place,
@@ -407,8 +410,8 @@ class Root(Tk):
         self.current_ind = -1
         self.current_zombies_num = len(self.whole_zombies)
         self.current_killed_zombies = 0
-        self.after(int(start_time * 1000), zombies_coming_sound.play)
-        self.after(int(start_time * 1000), self.check_zombies)
+        self._zombie1 = self.after(int(start_time * 1000), zombies_coming_sound.play)
+        self._zombie2 = self.after(int(start_time * 1000), self.check_zombies)
 
     def pause(self):
         if self.mode != PAUSE:
@@ -953,6 +956,11 @@ class Root(Tk):
     
     
     def go_back(self, obj):
+        self.mode = 'stop'
+        if self._zombie1:
+            self.after_cancel(self._zombie1)
+        if self._zombie2:
+            self.after_cancel(self._zombie2)
         global choosed_plants
         choosed_plants = []
         obj.destroy()
