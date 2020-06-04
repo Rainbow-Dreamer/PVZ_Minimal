@@ -969,6 +969,8 @@ class Root(Tk):
             self.after_cancel(self._zombie1)
         if self._zombie2:
             self.after_cancel(self._zombie2)
+        global map_content
+        map_content = deepcopy(default_map_content)
         global choosed_plants
         choosed_plants = []
         obj.destroy()
