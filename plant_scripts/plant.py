@@ -1,4 +1,11 @@
 from copy import deepcopy
+
+def day_check(games, block):
+    if block.types != 'day':
+        games.action_text.set('这个植物需要种植在草地上')
+        return False
+    return True
+
 class plant:
     def __init__(self,
                  name=None,
@@ -26,6 +33,8 @@ class plant:
                  use_bullet_img_first=False,
                  other_img=None,
                  information=None,
+                 plant_normal=True,
+                 plant_range=[day_check],
                  rows=None,
                  columns=None):
         self.name = name
@@ -60,6 +69,8 @@ class plant:
         else:
             self.other_img_name = None
         self.information = information
+        self.plant_normal = plant_normal
+        self.plant_range = plant_range
         self.rows = rows
         self.columns = columns
         self.status = 1

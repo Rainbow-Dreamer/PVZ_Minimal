@@ -28,3 +28,8 @@ big_wave2 = [
 current_stage = Stage(2)
 current_stage.set_normal_all(part1, part2, part3)
 current_stage.set_waves_all(big_wave1, big_wave2)
+map_content = [['day' for i in range(map_size[1])] for j in range(map_size[0])]
+#以下几行可以把当前关卡的地图的第2到第3行变成水池
+#for i in range(1, 3):
+    #for j in range(map_size[1]):
+        #map_content[i][j] = 'pool'

@@ -2,6 +2,12 @@ from plant import plant
 import random, time
 
 
+def pool_check(games, block):
+    if block.types != 'pool':
+        games.action_text.set('香蒲需要种植在水面上')
+        return False
+    return True
+
 def cat_check(self, games):
     if any(x.status == 1 for x in games.whole_zombies):
         if games.current_time - self.time >= self.attack_interval:
@@ -161,4 +167,5 @@ def moving(games, obj, target, columns_move=0, rows_move=0):
              bullet_sound=('sounds/throw.ogg', ),
              func=cat_check,
              bullet_func=moving,
+             plant_range=[pool_check],
              other_img = [[f'thron{k}.png', 3, True] for k in [4, 2, 6, 1, 3, 7, 5]])

@@ -41,13 +41,13 @@ class Root(Tk):
         self.get_zombies = get_zombies
         self.plant_bite_sound = plant_bite_sound
         self.NULL, self.PLACE, self.REMOVE, self.PAUSE = 0, 1, 2, 3
-        self.lawn_photo = Image.open(lawn_img)
+        self.map_img_dict = map_img_dict
         global lawn_size
         if not lawn_size:
             lawn_size = 250 // map_size[0]
-        self.lawn_photo = self.lawn_photo.resize((lawn_size, lawn_size),
-                                                 Image.ANTIALIAS)
-        self.background_img = self.lawn_photo.copy()
+        self.lawn_photo = Image.open(lawn_photo)
+        self.lawn_photo = self.lawn_photo.resize((lawn_size, lawn_size),Image.ANTIALIAS)
+        self.background_img = self.lawn_photo.copy() 
         self.lawn_photo = ImageTk.PhotoImage(self.lawn_photo)
         self.lawn_width, self.lawn_height = self.lawn_photo.width(
         ), self.lawn_photo.height()
@@ -341,7 +341,7 @@ class Root(Tk):
                 current_mower.show.grid(row=k, column=0, sticky='W')
                 self.lawnmowers[k] = current_mower
 
-        self.init_map(*map_size)
+        self.init_map()
         self.lawnmower_frame.grid(row=0, column=0, sticky='W')
         self.maps.grid(row=0, column=1, sticky='W')
         self.choosed_plant = None
@@ -412,6 +412,8 @@ class Root(Tk):
         self.current_killed_zombies = 0
         self._zombie1 = self.after(int(start_time * 1000), zombies_coming_sound.play)
         self._zombie2 = self.after(int(start_time * 1000), self.check_zombies)
+        global first_time
+        first_time = False        
 
     def pause(self):
         if self.mode != PAUSE:
@@ -483,21 +485,26 @@ class Root(Tk):
         self.shovel_button.image = shovel_photo
         self.shovel_button.grid(row=0, column=self.plants_num + 1)
 
-    def init_map(self, rows, columns):
-        lawn_photo = self.lawn_photo
+    def init_map(self):
+        if first_time:
+            for each_type in self.map_img_dict:
+                self.map_img_dict[each_type] = ImageTk.PhotoImage(Image.open(self.map_img_dict[each_type]).resize((lawn_size, lawn_size),Image.ANTIALIAS))        
+        rows, columns = len(map_content), len(map_content[0])
         for j in range(rows):
             block_row = []
             for k in range(columns):
+                current_type = map_content[j][k]
+                lawn_photo = self.map_img_dict[current_type]
                 current_block = ttk.Button(
                     self.maps,
                     image=lawn_photo,
                     command=lambda j=j, k=k: self.block_action(j, k))
                 current_block.plants = None
+                current_block.types = current_type
                 current_block.image = lawn_photo
                 current_block.grid(row=j, column=k)
                 block_row.append(current_block)
             self.blocks.append(block_row)
-        self.lawn_photo = lawn_photo
 
     def change_mode(self, num, plant=None):
         if self.mode != PAUSE:
@@ -530,38 +537,39 @@ class Root(Tk):
                 j, k = dim
             if self.mode == PLACE:
                 current = self.blocks[j][k]
-                if current.plants is None:
-                    current_time = self.current_time
-                    choose_plant = self.plants_generate[self.choosed_plant]
-                    current.plants = get_plant(choose_plant, j, k)
-                    if current.plants.bullet_sound:
-                        for each in current.plants.bullet_sound:
-                            if type(each) == list:
-                                for each_sound in each:
-                                    each_sound.set_volume(self.sound_volume)
-                            else:
-                                each.set_volume(self.sound_volume)
-                    self.make_img(current.plants)
-                    if current.plants.use_bullet_img_first:
-                        current.configure(image=current.plants.bullet_img)
-                    else:
-                        current.configure(image=current.plants.img)
-
-                    current.plants.time = current_time
-                    current_plant_name = current.plants.name
-                    current_choosed_plants = choosed_plants[self.choosed_plant]
-                    current.plants.button = current_choosed_plants.button
-                    set_plants_sound.play()
-                    self.action_text.set(
-                        f'你成功放置了{current_plant_name}在第{j+1}行，第{k+1}列')
-                    current.plants.button.textvariable.set(
-                        f'${current.plants.price} 冷却中')
-                    current_choosed_plants.counter = current_time
-                    current_choosed_plants.enable = 0
-                    self.sunshine -= current.plants.price
-                    self.sunshine_text.set(self.sunshine)
-                    self.choosed_plant = None
-                    self.mode = NULL
+                choose_plant = self.plants_generate[self.choosed_plant]
+                if current.plants is None or (not choose_plant.plant_normal):
+                    if any(cond(self, current) if callable(cond) else current.types == cond for cond in choose_plant.plant_range):
+                        current_time = self.current_time
+                        current.plants = get_plant(choose_plant, j, k)
+                        if current.plants.bullet_sound:
+                            for each in current.plants.bullet_sound:
+                                if type(each) == list:
+                                    for each_sound in each:
+                                        each_sound.set_volume(self.sound_volume)
+                                else:
+                                    each.set_volume(self.sound_volume)
+                        self.make_img(current.plants)
+                        if current.plants.use_bullet_img_first:
+                            current.configure(image=current.plants.bullet_img)
+                        else:
+                            current.configure(image=current.plants.img)
+    
+                        current.plants.time = current_time
+                        current_plant_name = current.plants.name
+                        current_choosed_plants = choosed_plants[self.choosed_plant]
+                        current.plants.button = current_choosed_plants.button
+                        set_plants_sound.play()
+                        self.action_text.set(
+                            f'你成功放置了{current_plant_name}在第{j+1}行，第{k+1}列')
+                        current.plants.button.textvariable.set(
+                            f'${current.plants.price} 冷却中')
+                        current_choosed_plants.counter = current_time
+                        current_choosed_plants.enable = 0
+                        self.sunshine -= current.plants.price
+                        self.sunshine_text.set(self.sunshine)
+                        self.choosed_plant = None
+                        self.mode = NULL
                 else:
                     self.action_text.set('这里已经有植物了，要种的话请先铲掉')
 
