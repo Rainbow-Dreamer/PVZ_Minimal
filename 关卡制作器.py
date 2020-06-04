@@ -1,12 +1,3 @@
-
-import os, sys
-from tkinter import *
-from tkinter import ttk
-from tkinter.scrolledtext import ScrolledText
-abs_path = os.path.dirname(os.path.abspath(__file__))
-os.chdir(abs_path)
-
-
 os.chdir('stages')
 
 
