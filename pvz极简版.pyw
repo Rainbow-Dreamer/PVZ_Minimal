@@ -290,6 +290,7 @@ class Root(Tk):
         self.plants_already_choosed.destroy()
         self.choose_plants_screen.destroy()
         self.start_game.destroy()
+        self.choose_stage_text.destroy()
         self.choose_stages.destroy()
         self.choose_stages_bar.destroy()
         self.game_start_time = time.time()
@@ -969,8 +970,12 @@ class Root(Tk):
             self.after_cancel(self._zombie1)
         if self._zombie2:
             self.after_cancel(self._zombie2)
+        global map_size
+        map_size = default_map_size
         global map_content
         map_content = deepcopy(default_map_content)
+        global lawnmower_rows
+        lawnmower_rows = deepcopy(default_lawnmower_rows)
         global choosed_plants
         choosed_plants = []
         obj.destroy()

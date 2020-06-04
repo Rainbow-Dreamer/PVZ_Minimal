@@ -1,3 +1,12 @@
+
+import os, sys
+from tkinter import *
+from tkinter import ttk
+from tkinter.scrolledtext import ScrolledText
+abs_path = os.path.dirname(os.path.abspath(__file__))
+os.chdir(abs_path)
+
+
 os.chdir('stages')
 
 
@@ -83,6 +92,53 @@ class Root(Tk):
         self.generate_stages = ttk.Button(self,
                                           text='产生关卡列表',
                                           command=self.generate)
+        self.make_maps_button = ttk.Button(self, text='定制地图', command=self.make_maps)
+        self.make_maps_button.place(x=120, y=10)
+        self.new_map_size = None
+        self.read_new_map_size = None
+        self.new_map = None
+        self.new_map_show = None
+    
+    
+    def make_maps(self):
+        make_map_window = Toplevel(self)
+        make_map_window.title('定制地图')
+        make_map_window.minsize(500, 300)
+        make_map_window.ask_map_size_text = ttk.Label(make_map_window, text='地图尺寸(格式：行数, 列数)')
+        make_map_window.ask_map_size = ttk.Entry(make_map_window)
+        if self.new_map_size:
+            make_map_window.ask_map_size.insert(END, self.new_map_size)
+        make_map_window.ask_map_size_text.place(x=0, y=0)
+        make_map_window.ask_map_size.place(x=160, y=0)
+        make_map_window.confirm = ttk.Button(make_map_window, text='保存', command=lambda: self.make_maps_confirm(make_map_window))
+        make_map_window.confirm.place(x=0, y=250) 
+        make_map_window.new_map_content = Text(make_map_window, width=70, height=15)
+        if self.new_map_show:
+            make_map_window.new_map_content.insert(END, self.new_map_show)            
+        make_map_window.new_map_content.place(x=0, y=30)
+    
+    def make_maps_confirm(self, obj):
+        self.new_map_size = obj.ask_map_size.get()
+        if self.new_map_size:
+            new_map_size = self.new_map_size.replace(' ', '').split(',')
+            if len(new_map_size) == 2:
+                if new_map_size[0].isdigit() and new_map_size[1].isdigit():
+                    rows, columns = int(new_map_size[0]), int(new_map_size[1])
+                    if (not self.read_new_map_size) or (self.read_new_map_size and (rows, columns) != self.read_new_map_size):
+                        self.read_new_map_size = rows, columns
+                        self.new_map = [['day' for i in range(columns)] for j in range(rows)]
+                        obj.new_map_content.delete('1.0', END)
+                        enter_char = ',\n'
+                        self.new_map_show = f"[{enter_char.join([str(x) for x in self.new_map])}]"
+                        obj.new_map_content.insert(END, self.new_map_show)
+        new_map_show = obj.new_map_content.get('1.0', END)
+        if self.new_map_show != new_map_show:
+            self.new_map_show = new_map_show
+        
+    
+    def edit_map(self, obj):
+        pass
+        
 
     def read_num(self):
         self.stage_num = self.choose_num_label.get()
@@ -437,6 +493,11 @@ class Root(Tk):
     exec(f.read(), globals())
 '''
         output_text += f'start_time = {start_time}\n'
+        if self.new_map_size:
+            output_text += f'map_size = {self.new_map_size}\n'
+            output_text += 'lawnmower_rows = [i for i in range(map_size[0])]\n'
+        if self.new_map_show:
+            output_text += f'map_content = {self.new_map_show}\n'
         stage_num = self.stage_num
         available_normals = []
         available_waves = []

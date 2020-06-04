@@ -88,6 +88,7 @@ stage_file = [x[:-3] for x in stage_file]
 os.chdir('resource/')
 
 lawnmower_rows = [0, 1, 2, 3, 4]
+default_lawnmower_rows = deepcopy(lawnmower_rows)
 lawnmower_mode = 0
 lawnmower_speed = 200
 lawnmower_atack = None
@@ -105,6 +106,7 @@ fall_sunshine_img = 'Sun_PvZ2.png'
 shovel_img = 'Shovel.png'
 paused_img = 'paused.png'
 map_size = 5, 9
+default_map_size = deepcopy(map_size)
 first_time = True
 lawn_photo = 'Almanac_GroundDay.png'
 map_img_dict = {'day': 'Almanac_GroundDay.png', 'pool': 'Almanac_GroundPool.jpg', 'empty': 'empty.png'}
