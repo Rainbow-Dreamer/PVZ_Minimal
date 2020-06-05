@@ -1,10 +1,5 @@
-import os, sys, random
-from tkinter import *
-from tkinter import ttk
-from PIL import Image, ImageTk
-import pygame
 with open('wiki_config.py', encoding='utf-8') as f:
-    exec(f.read())
+    exec(f.read(), globals())
 pygame.mixer.init()
 paper_sound = [
     pygame.mixer.Sound('resource/sounds/paper.ogg'),
@@ -22,7 +17,7 @@ for each in remove_ls:
 plants_name = [x[:-3] for x in filename]
 for k in filename:
     with open(k, encoding='utf-8') as f:
-        exec(f.read())
+        exec(f.read(), globals())
 plants_ls = [eval(i) for i in plants_name]
 os.chdir('../zombie_scripts')
 sys.path.append('.')
@@ -34,14 +29,14 @@ for each in remove_ls:
 zombies_name = [x[:-3] for x in filename]
 for k in filename:
     with open(k, encoding='utf-8') as f:
-        exec(f.read())
+        exec(f.read(), globals())
 zombies_ls = [eval(i) for i in zombies_name]
 os.chdir('../resource')
 
 
-class Root(Tk):
+class Root2(Toplevel):
     def __init__(self):
-        super(Root, self).__init__()
+        super(Root2, self).__init__()
         self.minsize(*screen_size)
         self.title('图鉴')
         self.plants_frame = ttk.LabelFrame(self)
@@ -183,6 +178,4 @@ class Root(Tk):
             self.current_page = page_num
 
 
-root = Root()
-
-root.mainloop()
+wiki_window = Root2()

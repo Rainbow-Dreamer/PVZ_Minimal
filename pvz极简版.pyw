@@ -1,10 +1,9 @@
-import os, sys, importlib, pygame
+import os, sys, importlib, pygame, time, random, keyboard
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
+from tkinter.scrolledtext import ScrolledText
 from PIL import Image, ImageTk
-import datetime, time, random, keyboard
-import time, random, os
 from copy import deepcopy
 pygame.mixer.init()
 sys.path.append(os.path.dirname(__file__))
@@ -32,6 +31,13 @@ class Root(Tk):
         self.sound_volume = 1
         self.last_place = last_place
         self.music_flag = 0
+        
+        self.wiki = ttk.Button(self, text='图鉴', command=self.open_wiki)
+        self.wiki.place(x=screen_size[0]-100, y=0)
+        
+        self.make_stage = ttk.Button(self, text='制作关卡', command=self.open_make_stage)
+        self.make_stage.place(x=screen_size[0]-100, y=30)
+        
         self.configs = ttk.Button(self,
                                   text='设置',
                                   command=self.make_config_window)
@@ -98,7 +104,18 @@ class Root(Tk):
             self.choose_stages.insert(END, k)
         self.choose_stages.place(x=450, y=250)
         self.choose_stages_bar.config(command=self.choose_stages.yview)
-
+    
+    
+    def open_wiki(self):
+        os.chdir('..')
+        with open('图鉴.pyw', encoding='utf-8') as f:
+            exec(f.read(), globals())
+    
+    def open_make_stage(self):
+        with open('../关卡制作器.pyw', encoding='utf-8') as f:
+            exec(f.read(), globals())
+    
+    
     def make_config_window(self):
         config_window = Toplevel(self)
         config_window.title('设置')
