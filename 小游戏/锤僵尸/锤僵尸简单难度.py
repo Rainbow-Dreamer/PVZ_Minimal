@@ -3,7 +3,7 @@ zombies_names = ['普通僵尸', '路障僵尸', '读报僵尸', '铁桶僵尸']
 with open('common.py', encoding='utf-8') as f:
     exec(f.read())
 for each in [普通僵尸, 路障僵尸, 读报僵尸, 铁桶僵尸]:
-    each.move_speed = 2000
+    each.move_speed = 2
 读报僵尸.hp = 30
 start_time = 5
 part1 = [

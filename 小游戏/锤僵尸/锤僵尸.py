@@ -31,7 +31,8 @@ class Root(Tk):
         bg_music = pygame.mixer.music.load(background_music)
         pygame.mixer.music.set_volume(background_volume)
         pygame.mixer.music.play(loops=-1)
-        self.game_start_time = time.time()
+        game_start_time = time.time()
+        self.game_start_time = game_start_time
         self.mode = NULL
         self.blocks = []
         self.moving_bullets = []
@@ -248,6 +249,8 @@ class Root(Tk):
         current_zombies_button.image = zombie_img
         current_zombies.button = current_zombies_button
         current_zombies.next_to_plants = False
+        current_zombies.eating = False
+        current_zombies.time = self.current_time
 
     def lawnmower_move(self, obj):
         if obj.columns == 0:
@@ -286,7 +289,7 @@ class Root(Tk):
     def check_zombies(self):
 
         if self.mode != PAUSE:
-            current_time = time.time()
+            self.current_time = time.time()
             if self.normal_or_wave == 0:
                 new_ind = int(self.current_killed_zombies /
                               (self.current_zombies_num * 0.2))
@@ -302,7 +305,7 @@ class Root(Tk):
             if self.current_killed_zombies == self.current_zombies_num:
                 self.current_ind = -1
                 self.current_killed_zombies = 0
-                self.zombie_time = current_time
+                self.zombie_time = self.current_time
                 if self.normal_or_wave == 0:
                     self.normal_or_wave = 1
                     if self.normal_zombies_num == current_stage.num_of_waves:
@@ -340,7 +343,7 @@ class Root(Tk):
                         self.normal_zombies_num)
                     self.current_zombies_num = len(self.whole_zombies)
 
-            passed_time = current_time - self.zombie_time
+            passed_time = self.current_time - self.zombie_time
             for each in self.whole_zombies:
                 if each.status == 1:
                     if each.hp <= 0:
