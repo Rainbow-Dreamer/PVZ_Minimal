@@ -71,7 +71,7 @@ def away(self, games):
         current.configure(image=games.lawn_photo)    
 
 坚果小队 = plant(name='坚果小队',
-            img='long_wallnut.png',
+            img='坚果小队.png',
             price=250,
             hp=400,
             cooling_time=30,

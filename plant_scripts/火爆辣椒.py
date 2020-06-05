@@ -41,7 +41,7 @@ def jalapeno_explode(self, games):
 
 
 火爆辣椒 = plant(name='火爆辣椒',
-             img='Jalapeno1.png',
+             img='火爆辣椒.png',
              price=125,
              hp=5,
              cooling_time=50,

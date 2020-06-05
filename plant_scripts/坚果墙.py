@@ -1,6 +1,6 @@
 from plant import plant
 坚果墙 = plant(name='坚果墙',
-            img='Wall-nut1.png',
+            img='坚果墙.png',
             price=50,
             hp=72,
             cooling_time=30,

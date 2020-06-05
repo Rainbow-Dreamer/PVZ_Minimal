@@ -63,7 +63,7 @@ def squash_attack(self, games):
 
 
 窝瓜 = plant(name='窝瓜',
-           img='Squash1.png',
+           img='窝瓜.png',
            price=50,
            hp=5,
            cooling_time=30,

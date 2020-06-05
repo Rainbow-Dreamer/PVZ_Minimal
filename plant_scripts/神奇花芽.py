@@ -41,7 +41,7 @@ def random_choose(self, games):
 
 
 神奇花芽 = plant(name='神奇花芽',
-             img='Sprout1.png',
+             img='神奇花芽.png',
              price=100,
              hp=5,
              cooling_time=7.5,

@@ -38,7 +38,7 @@ def wallnut_explode(self, games):
 
 
 爆炸坚果 = plant(name='爆炸坚果',
-             img='Explode-o-nut1.png',
+             img='爆炸坚果.png',
              price=100,
              hp=72,
              bullet_attack=90,

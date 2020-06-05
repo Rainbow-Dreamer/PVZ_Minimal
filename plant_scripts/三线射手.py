@@ -78,7 +78,7 @@ def moving(games, obj, columns_move=0, rows_move=0):
 
 
 三线射手 = plant(name='三线射手',
-             img='Threepeater1.png',
+             img='三线射手.png',
              price=325,
              hp=5,
              cooling_time=7.5,

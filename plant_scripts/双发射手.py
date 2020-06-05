@@ -77,7 +77,7 @@ def moving(games, obj, columns_move=0, rows_move=0):
 
 
 双发射手 = plant(name='双发射手',
-             img='Repeater1.png',
+             img='双发射手.png',
              price=200,
              hp=5,
              cooling_time=7.5,

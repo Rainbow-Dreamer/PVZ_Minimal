@@ -14,7 +14,7 @@ def sunflower_check(self, games):
 
 
 向日葵 = plant(name='向日葵',
-            img='Sunflower1.png',
+            img='向日葵.png',
             price=50,
             hp=5,
             cooling_time=7.5,

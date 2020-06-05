@@ -1,6 +1,6 @@
 from plant import plant
 火炬树桩 = plant(name='火炬树桩',
-             img='Torchwood1.png',
+             img='火炬树桩.png',
              price=175,
              hp=5,
              cooling_time=7.5,

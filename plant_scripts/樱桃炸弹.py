@@ -35,7 +35,7 @@ def cherry_explode(self, games):
 
 
 樱桃炸弹 = plant(name='樱桃炸弹',
-             img='Cherry_Bomb1.png',
+             img='樱桃炸弹.png',
              price=150,
              hp=5,
              cooling_time=30,

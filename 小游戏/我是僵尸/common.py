@@ -1,6 +1,6 @@
 sys.path.append('.')
 for x in zombies_names:
-    exec(f'from zombie_scripts.{x} import {x}')
+    exec(f'from zombie_scripts_I_am_zombie.{x} import {x}')
 zombies_sample = [eval(j) for j in zombies_names]
 for each in zombies_sample:
     each.move_speed /= 1.4

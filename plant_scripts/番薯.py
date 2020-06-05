@@ -33,7 +33,7 @@ def attract(self, games):
 
 
 番薯 = plant(name='番薯',
-           img='HDSweetPotato.png',
+           img='番薯.png',
            price=150,
            hp=40,
            cooling_time=20,

@@ -76,10 +76,7 @@ if whole_plants_name is None:
         if each in whole_plants_name:
             whole_plants_name.remove(each)
     whole_plants_name = [x[:-3] for x in whole_plants_name]
-whole_plants = [(
-    x,
-    eval(f"__import__('plant_scripts.{x}', fromlist=['plant_scripts']).{x}.img"
-         )) for x in whole_plants_name]
+whole_plants = [(x, f"{x}.png") for x in whole_plants_name]
 modified_file = None
 stage_file = os.listdir('stages')
 stage_file.remove('__init__.py')

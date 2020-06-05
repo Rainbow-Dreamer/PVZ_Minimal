@@ -23,7 +23,7 @@ def goto_another_row(self, obj, games):
         return
         
 大蒜 = plant(name='大蒜',
-             img='Garlic1.png',
+             img='大蒜.png',
              price=50,
              hp=21,
              cooling_time=7.5,

@@ -156,7 +156,7 @@ def moving(games, obj, target, columns_move=0, rows_move=0):
 
 
 香蒲 = plant(name='香蒲',
-             img='Cattail1.png',
+             img='香蒲.png',
              price=225,
              hp=5,
              cooling_time=30,

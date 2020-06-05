@@ -41,6 +41,9 @@ class Root(Tk):
         self.configs = ttk.Button(self,
                                   text='设置',
                                   command=self.make_config_window)
+        self.little_game = ttk.Button(self, text='小游戏', command=self.open_little_game)
+        self.little_game.place(x=screen_size[0]-100, y=60)
+        
         self.configs.place(x=screen_size[0] - 100, y=screen_size[1] - 60)
         self.make_label = ttk.Label
         self.make_button = ttk.Button
@@ -58,7 +61,7 @@ class Root(Tk):
         self.lawn_width, self.lawn_height = self.lawn_photo.width(
         ), self.lawn_photo.height()
         self.action_text = StringVar()
-        self.action_text_show = ttk.Label(textvariable=self.action_text)
+        self.action_text_show = ttk.Label(self, textvariable=self.action_text)
         self.action_text_place_y = map_size[0] * (self.lawn_height + 10) + 150
         self.action_text_show.place(x=action_text_place_x,
                                     y=self.action_text_place_y,
@@ -115,6 +118,16 @@ class Root(Tk):
         with open('../关卡制作器.pyw', encoding='utf-8') as f:
             exec(f.read(), globals())
     
+    
+    def open_little_game(self):
+        filename = filedialog.askopenfilename(initialdir='../小游戏',
+                                              title="选择游戏脚本文件",
+                                              filetype=(("游戏脚本文件",
+                                                         "*.pzg;"),
+                                                        ("所有文件", "*.*")))
+        if filename:
+            quit()
+            read_little_games(filename)
     
     def make_config_window(self):
         config_window = Toplevel(self)
@@ -316,10 +329,12 @@ class Root(Tk):
         self.moving_bullets = []
         self.sunshine_time = self.game_start_time
         choosed_plants = [x[0] for x in choosed_plants]
+        os.chdir('..')
         choosed_plants = [
             eval(f'importlib.import_module("plant_scripts.{x}").{x}')
             for x in choosed_plants
         ]
+        os.chdir('resource')
         if modified_file:
             with open(modified_file, encoding='utf-8') as f:
                 exec(f.read())
@@ -1073,6 +1088,11 @@ def quit():
     pygame.mixer.quit()
     root.destroy()
 
+
+def read_little_games(filename):
+    os.chdir('../小游戏')
+    with open(filename, encoding='utf-8') as f:
+        exec(f.read(), globals())
 
 root.protocol('WM_DELETE_WINDOW', quit)
 root.mainloop()

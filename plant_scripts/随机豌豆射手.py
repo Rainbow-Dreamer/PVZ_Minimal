@@ -74,7 +74,7 @@ text = '''
 '''
 
 随机豌豆射手 = plant(name='随机豌豆射手',
-             img='random_peashooter.png',
+             img='随机豌豆射手.png',
              price=200,
              hp=5,
              cooling_time=7.5,

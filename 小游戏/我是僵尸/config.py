@@ -1,7 +1,7 @@
 whole_plants_name = None
 if whole_plants_name is None:
-    whole_plants_name = os.listdir('plant_scripts')
-    except_ls = ['__pycache__', '__init__.py', 'plant.py', 'bullets.py']
+    whole_plants_name = os.listdir('plant_scripts_I_am_zombie')
+    except_ls = ['__pycache__', '__init__.py', 'plant2.py', 'bullets.py']
     for each in except_ls:
         if each in whole_plants_name:
             whole_plants_name.remove(each)
@@ -137,9 +137,9 @@ lawnmower_sound = pygame.mixer.Sound('sounds/lawnmower.ogg')
 plant_line = 5
 NULL, PLACE, REMOVE, PAUSE = 0, 1, 2, 3
 choosed_plants = []
-os.chdir(abs_path+'\\我是僵尸')
+os.chdir('../小游戏/我是僵尸')
 sys.path.append('.')
-whole_plants = [eval(f'__import__("plant_scripts.{x}", fromlist=["plant_scripts"]).{x}') for x in whole_plants_name]
+whole_plants = [eval(f'__import__("plant_scripts_I_am_zombie.{x}", fromlist=["plant_scripts_I_am_zombie"]).{x}') for x in whole_plants_name]
 plants_num = len(whole_plants)
 stage_file = '我是僵尸关卡.py'
 with open(stage_file, encoding='utf-8') as f:

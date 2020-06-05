@@ -82,7 +82,7 @@ def portal_away(self, games):
 
 
 传送门 = plant(name='传送门',
-            img='Portal1.jpg',
+            img='传送门.png',
             price=200,
             hp=5,
             cooling_time=7.5,
