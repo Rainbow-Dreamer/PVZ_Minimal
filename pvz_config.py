@@ -136,7 +136,7 @@ reset_sound = [
 ]
 pause_sound = pygame.mixer.Sound('sounds/pause.ogg')
 lose_sound = pygame.mixer.Sound('sounds/losemusic.ogg')
-choose_plants_music = 'sounds/Laura Shigihara - Choose Your Seeds IN-GAME.mp3'
+choose_plants_music = 'sounds/Laura Shigihara - Choose Your Seeds IN-GAME.ogg'
 choose_plant_sound = pygame.mixer.Sound('sounds/seedlift.ogg')
 zombies_coming_sound = pygame.mixer.Sound('sounds/awooga.ogg')
 huge_wave_sound = pygame.mixer.Sound('sounds/hugewave.ogg')
