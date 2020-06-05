@@ -9,8 +9,10 @@ text = '''
 '''
 
 
-def move_here(each, i):
-    each.rows = i
+def move_here(each, i, games):
+    each.stop = False
+    each.time = games.current_time
+    each.runs(games)
     if each.button.winfo_exists():
         each.button.grid(row=i, column=each.columns)
 
@@ -24,7 +26,10 @@ def attract(self, games):
         x.adjust_col == j + 1 and x.rows in adjacent_rows
     ]
     for each in adjacent_zombies:
-        games.after(2000, lambda each=each: move_here(each, i))
+        if not (hasattr(each, 'stick_butter') and each.stick_butter > 0):
+            each.stop = True
+            each.rows = i
+            games.after(2000, lambda each=each: move_here(each, i, games))
 
 
 番薯 = plant(name='番薯',

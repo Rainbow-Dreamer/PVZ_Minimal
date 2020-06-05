@@ -2,6 +2,7 @@ from plant import plant
 import random
 def garlic_check(self, obj, games):
     obj.stop = True
+    obj.nexted_plants = None
     self.start_time = games.current_time
     random.choice(self.bullet_sound).play()
     goto_another_row(self, obj, games)

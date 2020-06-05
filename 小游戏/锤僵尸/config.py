@@ -65,7 +65,7 @@ lawnmower_atack = None
 lawnmower_img = 'Lawn_mower_2.PNG.png'
 no_lawnmower_img = 'no_lawnmower.png'
 
-background_music = 'sounds/Laura Shigihara - Loonboon.mp3'
+background_music = 'sounds/Laura Shigihara - Loonboon.ogg'
 action_text_place_x = 270
 
 icon_name = 'pvz.ico'

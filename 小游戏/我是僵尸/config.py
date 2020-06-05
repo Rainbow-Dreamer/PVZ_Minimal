@@ -94,7 +94,7 @@ lawnmower_atack = None
 lawnmower_img = 'Lawn_mower_2.PNG.png'
 no_lawnmower_img = 'no_lawnmower.png'
 
-background_music = 'sounds/Laura Shigihara - Cerebrawl.mp3'
+background_music = 'sounds/Laura Shigihara - Cerebrawl.ogg'
 action_text_place_x = 270
 
 icon_name = 'pvz.ico'
