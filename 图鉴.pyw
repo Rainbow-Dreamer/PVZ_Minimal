@@ -157,7 +157,7 @@ class Root2(Toplevel):
         elif self.mode == 1:
             current_info = [
                 choose_obj.name, f'生命值：{choose_obj.hp}',
-                f'移动速度：每{choose_obj.move_speed//1000}秒一格',
+                f'移动速度：每{choose_obj.move_speed}秒一格',
                 f'攻击力：{choose_obj.attack}',
                 choose_obj.information if choose_obj.information else ''
             ]
