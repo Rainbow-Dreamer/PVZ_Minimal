@@ -36,25 +36,25 @@ def corn_check(self, games):
 
 def moving(games, obj, columns_move=0, rows_move=0):
     if games.mode != games.PAUSE:
-        if obj.stop:
-            obj.destroy()
-            return
         if obj.waiting:
             if obj.hit_zombies.hp <= 0:
                 for k in obj.hit_zombies.butter_obj:
                     k.destroy()
+                if obj.winfo_exists():
+                    obj.destroy()
                 return
             if games.current_time - obj.time >= 5:
-                if obj.hit_zombies.stick_butter == 1:
-                    obj.hit_zombies.stick_butter = 0
-                    obj.hit_zombies.time = games.current_time - obj.hit_zombies.remain_time
+                obj.hit_zombies.stick_butter -= 1
+                obj.hit_zombies.butter_obj.remove(obj)
+                if obj.hit_zombies.stick_butter == 0:
                     obj.hit_zombies.stop = False
+                    obj.hit_zombies.time = games.current_time - obj.hit_zombies.remain_time
+                    obj.hit_zombies.runs(games)
                     for k in obj.hit_zombies.butter_obj:
                         k.destroy()
                     obj.hit_zombies.butter_obj = []
-                    obj.hit_zombies.start_func(obj.hit_zombies, games)
-                else:
-                    obj.hit_zombies.stick_butter -= 1
+                if obj.winfo_exists():
+                    obj.destroy()
                 return
             else:
                 games.after(10, lambda: moving(games, obj))

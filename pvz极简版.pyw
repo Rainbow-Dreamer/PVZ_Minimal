@@ -33,16 +33,16 @@ class Root(Tk):
         self.music_flag = 0
         
         self.wiki = ttk.Button(self, text='图鉴', command=self.open_wiki)
-        self.wiki.place(x=screen_size[0]-100, y=0)
+        self.wiki.place(x=screen_size[0]-100, y=screen_size[1]-180)
         
         self.make_stage = ttk.Button(self, text='制作关卡', command=self.open_make_stage)
-        self.make_stage.place(x=screen_size[0]-100, y=30)
+        self.make_stage.place(x=screen_size[0]-100, y=screen_size[1]-140)
         
         self.configs = ttk.Button(self,
                                   text='设置',
                                   command=self.make_config_window)
         self.little_game = ttk.Button(self, text='小游戏', command=self.open_little_game)
-        self.little_game.place(x=screen_size[0]-100, y=60)
+        self.little_game.place(x=screen_size[0]-100, y=screen_size[1]-100)
         
         self.configs.place(x=screen_size[0] - 100, y=screen_size[1] - 60)
         self.make_label = ttk.Label
