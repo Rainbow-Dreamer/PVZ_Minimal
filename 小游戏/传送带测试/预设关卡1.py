@@ -33,6 +33,4 @@ map_content = [['day' for i in range(map_size[1])] for j in range(map_size[0])]
 #for i in range(1, 3):
     #for j in range(map_size[1]):
         #map_content[i][j] = 'pool'
-belt_place = 100, 40
-belt_resize = 2.5
 current_belt = belt([豌豆射手,坚果墙,三线射手,爆炸坚果,寒冰射手])

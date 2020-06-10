@@ -46,22 +46,25 @@ class Root(Tk):
         self.current_belt.imgs = []
         for each in self.current_belt.plants_base:
             current_img = Image.open(each.img)
+            resize_num = self.current_belt.resize_num
             current_img = current_img.resize(
-                (int(self.lawn_width),
-                 int(self.lawn_height)), Image.ANTIALIAS)
+                (int(self.lawn_width/resize_num),
+                 int(self.lawn_height/resize_num)), Image.ANTIALIAS)
             self.current_belt.imgs.append(ImageTk.PhotoImage(current_img))   
         for j in range(len(self.current_belt.plants_base)):
             self.current_belt.plants_base[j].number = j
         self.belt_img = Image.open(self.current_belt.img)
-        self.belt_img = self.belt_img.resize((self.lawn_width, self.lawn_height), Image.ANTIALIAS)
+        self.belt_img = self.belt_img.resize((int(self.lawn_width/resize_num),
+                 int(self.lawn_height/resize_num)), Image.ANTIALIAS)
         self.belt_width, self.belt_height = self.belt_img.width, self.belt_img.height
         self.belt_img = ImageTk.PhotoImage(self.belt_img)
         self.current_belt.belts = [ttk.Button(self, image=self.belt_img, command=lambda i=i:self.belt_plant(i)) for i in range(self.current_belt.show_length)]
-        belt_x, belt_y = belt_place
+        belt_x, belt_y = self.current_belt.belt_x, self.current_belt.belt_y
+        offset = self.current_belt.offset
         for k in range(self.current_belt.show_length):
             current = self.current_belt.belts[k]
             current.plants = None
-            current.place(x=belt_x + k*(self.lawn_width+10), y=belt_y)
+            current.place(x=belt_x + k*(self.belt_width+offset), y=belt_y)
         
         self.configs = ttk.Button(self,
                                   text='设置',
