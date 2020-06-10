@@ -6,7 +6,13 @@ def pool_check(games, block):
     if block.types != 'pool':
         games.action_text.set('香蒲需要种植在水面上')
         return False
-    return True
+    if block.plants and block.plants.name == '荷叶' and not block.plants.contain_plants:
+        return True
+    else:
+        games.action_text.set('香蒲需要种植在荷叶上')
+        return False
+def cat_plant(games, block, self):
+    block.plants.contain_plants = self
 
 def cat_check(self, games):
     if any(x.status == 1 for x in games.whole_zombies):
@@ -169,4 +175,5 @@ def moving(games, obj, target, columns_move=0, rows_move=0):
              func=cat_check,
              bullet_func=moving,
              plant_range=[pool_check],
+             plant_func=cat_plant,
              other_img = [[f'thron{k}.png', 3, True] for k in [4, 2, 6, 1, 3, 7, 5]])

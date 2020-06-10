@@ -8,15 +8,21 @@ def zombie_move(self, games, columns_move=0, rows_move=0):
         return
     check_if_plants = games.blocks[self.rows][self.columns].plants
     if check_if_plants is not None:
+        if check_if_plants.name == '荷叶' and check_if_plants.contain_plants:
+            self.nexted_plants = check_if_plants.contain_plants
+        else:
+            self.nexted_plants = check_if_plants
         self.next_to_plants = True
-        self.nexted_plants = check_if_plants
         self.adjust_col = -1
         return
     check_if_plants2 = games.blocks[self.rows][self.columns +
                                                columns_move].plants
     if check_if_plants2 is not None:
+        if check_if_plants2.name == '荷叶' and check_if_plants2.contain_plants:
+            self.nexted_plants = check_if_plants2.contain_plants
+        else:
+            self.nexted_plants = check_if_plants2
         self.next_to_plants = True
-        self.nexted_plants = check_if_plants2
         self.adjust_col = 0
         return
     self.rows += rows_move

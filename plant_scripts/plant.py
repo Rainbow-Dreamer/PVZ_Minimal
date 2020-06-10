@@ -1,10 +1,22 @@
 from copy import deepcopy
 
 def day_check(games, block):
-    if block.types != 'day':
-        games.action_text.set('这个植物需要种植在草地上')
-        return False
-    return True
+    if block.types == 'pool':
+        if block.plants and block.plants.name == '荷叶' and not block.plants.contain_plants:
+            return True
+        else:
+            games.action_text.set('这个植物需要种植在荷叶上')
+            return False
+    if block.types == 'day':
+        return block.plants is None
+    return False
+
+def when_plant(games, block, self):
+    if block.types == 'pool' and block.plants and block.plants.name == '荷叶':
+        block.plants.contain_plants = self
+    elif block.types == 'day':
+        block.plants = self
+    
 
 class plant:
     def __init__(self,
@@ -25,6 +37,7 @@ class plant:
                  func=None,
                  bullet_func=None,
                  away_func=None,
+                 away_self_func=None,
                  effects=None,
                  no_cooling_start=False,
                  is_bullet=True,
@@ -33,8 +46,8 @@ class plant:
                  use_bullet_img_first=False,
                  other_img=None,
                  information=None,
-                 plant_normal=True,
                  plant_range=[day_check],
+                 plant_func=when_plant,
                  rows=None,
                  columns=None):
         self.name = name
@@ -57,6 +70,7 @@ class plant:
         self.func = func
         self.bullet_func = bullet_func
         self.away_func = away_func
+        self.away_self_func = away_self_func
         self.effects = effects
         self.no_cooling_start = no_cooling_start
         self.is_bullet = is_bullet
@@ -69,8 +83,8 @@ class plant:
         else:
             self.other_img_name = None
         self.information = information
-        self.plant_normal = plant_normal
         self.plant_range = plant_range
+        self.plant_func = plant_func
         self.rows = rows
         self.columns = columns
         self.status = 1

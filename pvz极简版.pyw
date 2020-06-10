@@ -49,6 +49,7 @@ class Root(Tk):
         self.make_button = ttk.Button
         self.get_zombies = get_zombies
         self.plant_bite_sound = plant_bite_sound
+        self.unset_plants_sound = unset_plants_sound
         self.NULL, self.PLACE, self.REMOVE, self.PAUSE = 0, 1, 2, 3
         self.map_img_dict = map_img_dict
         global lawn_size
@@ -571,52 +572,60 @@ class Root(Tk):
             if self.mode == PLACE:
                 current = self.blocks[j][k]
                 choose_plant = self.plants_generate[self.choosed_plant]
-                if current.plants is None or (not choose_plant.plant_normal):
-                    if any(cond(self, current) if callable(cond) else current.types == cond for cond in choose_plant.plant_range):
-                        current_time = self.current_time
-                        current.plants = get_plant(choose_plant, j, k)
-                        if current.plants.bullet_sound:
-                            for each in current.plants.bullet_sound:
-                                if type(each) == list:
-                                    for each_sound in each:
-                                        each_sound.set_volume(self.sound_volume)
-                                else:
-                                    each.set_volume(self.sound_volume)
-                        self.make_img(current.plants)
-                        if current.plants.use_bullet_img_first:
-                            current.configure(image=current.plants.bullet_img)
-                        else:
-                            current.configure(image=current.plants.img)
-    
-                        current.plants.time = current_time
-                        current_plant_name = current.plants.name
-                        current_choosed_plants = choosed_plants[self.choosed_plant]
-                        current.plants.button = current_choosed_plants.button
-                        set_plants_sound.play()
-                        self.action_text.set(
-                            f'你成功放置了{current_plant_name}在第{j+1}行，第{k+1}列')
-                        current.plants.button.textvariable.set(
-                            f'${current.plants.price} 冷却中')
-                        current_choosed_plants.counter = current_time
-                        current_choosed_plants.enable = 0
-                        self.sunshine -= current.plants.price
-                        self.sunshine_text.set(self.sunshine)
-                        self.choosed_plant = None
-                        self.mode = NULL
+                if any(cond(self, current) if callable(cond) else current.types == cond for cond in choose_plant.plant_range):
+                    current_time = self.current_time
+                    ready_plants = get_plant(choose_plant, j, k)
+                    if ready_plants.bullet_sound:
+                        for each in ready_plants.bullet_sound:
+                            if type(each) == list:
+                                for each_sound in each:
+                                    each_sound.set_volume(self.sound_volume)
+                            else:
+                                each.set_volume(self.sound_volume)
+                    self.make_img(ready_plants)
+                    if ready_plants.use_bullet_img_first:
+                        current.configure(image=ready_plants.bullet_img)
+                    else:
+                        current.configure(image=ready_plants.img)
+
+                    ready_plants.time = current_time
+                    current_plant_name = ready_plants.name
+                    current_choosed_plants = choosed_plants[self.choosed_plant]
+                    ready_plants.button = current_choosed_plants.button
+                    set_plants_sound.play()
+                    self.action_text.set(
+                        f'你成功放置了{current_plant_name}在第{j+1}行，第{k+1}列')
+                    ready_plants.button.textvariable.set(
+                        f'${ready_plants.price} 冷却中')
+                    current_choosed_plants.counter = current_time
+                    current_choosed_plants.enable = 0
+                    self.sunshine -= ready_plants.price
+                    self.sunshine_text.set(self.sunshine)
+                    if not ready_plants.plant_func:
+                        current.plants = ready_plants
+                    else:
+                        ready_plants.plant_func(self, current, ready_plants)
+                    self.choosed_plant = None
+                    self.mode = NULL
                 else:
-                    self.action_text.set('这里已经有植物了，要种的话请先铲掉')
+                    if current.plants:
+                        self.action_text.set('这里已经有植物了，要种的话请先铲掉')
 
             elif self.mode == REMOVE:
                 block = self.blocks[j][k]
                 if block.plants is not None:
-                    block.configure(image=self.lawn_photo)
-                    unset_plants_sound.play()
-                    self.action_text.set(
-                        f'你铲除了第{j+1}行，第{k+1}列的植物{block.plants.name}')
                     if block.plants.away_func:
                         block.plants.away_func(block.plants, self)
-                    block.plants.status = 0
-                    block.plants = None
+                    if block.plants.away_self_func:
+                        block.plants.away_self_func(block.plants, self, block)
+                    else:
+                        block.configure(image=self.map_img_dict[block.types])
+                        unset_plants_sound.play()
+                        self.action_text.set(
+                            f'你铲除了第{j+1}行，第{k+1}列的植物{block.plants.name}')
+                        
+                        block.plants.status = 0
+                        block.plants = None
                 else:
                     self.action_text.set('这里并没有植物，请问您要铲什么？')
                 self.mode = NULL
@@ -633,14 +642,18 @@ class Root(Tk):
                     ])
                     plants_on_block = self.blocks[j][k].plants
                     if plants_on_block:
+                        if plants_on_block.name == '荷叶' and plants_on_block.contain_plants:
+                            plants_on_block = plants_on_block.contain_plants
                         zombies_message += '\n'
                         zombies_message += f'这上面有个{plants_on_block.name}, 当前生命值{plants_on_block.hp}'
                     self.action_text.set(zombies_message)
                 else:
                     plants_on_block = self.blocks[j][k].plants
-                    if plants_on_block is None:
+                    if not plants_on_block:
                         self.action_text.set('这是一块空荡荡的草坪')
                     else:
+                        if plants_on_block.name == '荷叶' and plants_on_block.contain_plants:
+                            plants_on_block = plants_on_block.contain_plants
                         self.action_text.set(
                             f'这上面有个{plants_on_block.name}, 当前生命值{plants_on_block.hp}'
                         )
@@ -839,7 +852,7 @@ class Root(Tk):
                                     f'第{i+1}行，第{j+1}列的植物{current.plants.name}被吃掉了'
                                 )
                                 current.plants = None
-                                current.configure(image=self.lawn_photo)
+                                current.configure(image=self.map_img_dict[current.types])
                                 j += 1
                                 continue
                         if current.plants.hp_img:
