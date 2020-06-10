@@ -2,6 +2,14 @@ def sounds(x):
     return pygame.mixer.Sound(x).get_raw()
 
 
+def get_zombies(zombies_obj, rows=None, columns=None, appear_time=None):
+    result = deepcopy(zombies_obj)
+    result.rows = rows
+    result.columns = columns
+    result.appear_time = appear_time
+    return result
+
+
 def get_plant(plant_obj, rows=None, columns=None):
     result = deepcopy(plant_obj)
     if result.bullet_sound:
@@ -17,15 +25,6 @@ def get_plant(plant_obj, rows=None, columns=None):
     result.rows = rows
     result.columns = columns
     return result
-
-
-def get_zombies(zombies_obj, rows=None, columns=None, appear_time=None):
-    result = deepcopy(zombies_obj)
-    result.rows = rows
-    result.columns = columns
-    result.appear_time = appear_time
-    return result
-
 
 class Stage:
     def __init__(self, num_of_waves):
@@ -67,7 +66,6 @@ class lawnmower:
         self.move_speed = move_speed
         self.attack = attack
 
-
 class belt:
     def __init__(self, plants_base, show_length=10, speed=4):
         self.plants_base = plants_base
@@ -75,12 +73,20 @@ class belt:
         self.speed = speed
         self.current_plants = []
     def choose(self):
-        result = random.choose(self.plants_base)
+        result = random.choice(self.plants_base)
         return result
     
 
 
 
+pygame.mixer.init()
+stage_file = '预设关卡1.py'
+with open(stage_file, encoding='utf-8') as f:
+    stage_file_contents = f.read()
+
+choosed_plants = []
+os.chdir('../../')
+sys.path.append('.')
 whole_plants_name = None
 if whole_plants_name is None:
     whole_plants_name = os.listdir('plant_scripts')
@@ -89,48 +95,36 @@ if whole_plants_name is None:
         if each in whole_plants_name:
             whole_plants_name.remove(each)
     whole_plants_name = [x[:-3] for x in whole_plants_name]
-whole_plants = [(x, f"{x}.png") for x in whole_plants_name]
-modified_file = None
-stage_file = os.listdir('stages')
-stage_file.remove('__init__.py')
-stage_file = [x[:-3] for x in stage_file]
-
-os.chdir('resource/')
-
+for x in whole_plants_name:
+    exec(f"from plant_scripts.{x} import {x}")
+whole_plants = [eval(x) for x in whole_plants_name]
+os.chdir('resource')
 lawnmower_rows = [0, 1, 2, 3, 4]
-default_lawnmower_rows = deepcopy(lawnmower_rows)
 lawnmower_mode = 0
 lawnmower_speed = 200
 lawnmower_atack = None
 lawnmower_img = 'Lawn_mower_2.PNG.png'
 no_lawnmower_img = 'no_lawnmower.png'
 
-background_music = 'sounds/Laura Shigihara - Ultimate Battle IN-GAME.ogg'
+background_music = 'sounds/Laura Shigihara - Loonboon.ogg'
 action_text_place_x = 270
-lawn_size = 60
+show_zombies = True
 icon_name = 'pvz.ico'
 title_name = "PVZ极简版"
-screen_size = 900, 650
+screen_size = 900, 600
 sunshine_img = 'sun.png'
 fall_sunshine_img = 'Sun_PvZ2.png'
 shovel_img = 'Shovel.png'
 paused_img = 'paused.png'
 map_size = 5, 9
-default_map_size = deepcopy(map_size)
-first_time = True
-lawn_photo = 'Almanac_GroundDay.png'
-map_img_dict = {'day': 'Almanac_GroundDay.png', 'pool': 'Almanac_GroundPool.jpg', 'empty': 'empty.png'}
-map_content = [['day' for i in range(map_size[1])] for j in range(map_size[0])]
-default_map_content = deepcopy(map_content)
-init_sunshine = 50
+lawn_img = 'Almanac_GroundDay.png'
+init_sunshine = 0
 sunshine_cooling_time = 10
 zombie_explode = 'explode.png'
 flag_img = 'Zombie_flagpole.png'
 damaged_flag_img = 'Zombie_flagpole2.png'
 zombie_head_img = 'Zombatar_Normal_Zombie.PNG.png'
 sky_sunshine = 25
-
-choose_seed_volume = 0.5
 background_volume = 0.6
 sunshine_not_enough = pygame.mixer.Sound("sounds/buzzer.ogg")
 choose_plants_sound = pygame.mixer.Sound("sounds/bleep.ogg")
@@ -139,26 +133,16 @@ unset_plants_sound = pygame.mixer.Sound("sounds/plant2.ogg")
 pick_shovel_sound = pygame.mixer.Sound("sounds/shovel.ogg")
 get_sunshine_sound = pygame.mixer.Sound("sounds/points.ogg")
 plant_bite_sound = pygame.mixer.Sound('sounds/gulp.ogg')
-
+swing_sound = pygame.mixer.Sound('sounds/swing.ogg')
+hammer_sound = pygame.mixer.Sound('sounds/bonk.ogg')
 reset_sound = [
     pygame.mixer.Sound('sounds/tap.ogg'),
     pygame.mixer.Sound('sounds/tap2.ogg')
 ]
 pause_sound = pygame.mixer.Sound('sounds/pause.ogg')
 lose_sound = pygame.mixer.Sound('sounds/losemusic.ogg')
-choose_plants_music = 'sounds/Laura Shigihara - Choose Your Seeds IN-GAME.ogg'
-choose_plant_sound = pygame.mixer.Sound('sounds/seedlift.ogg')
 zombies_coming_sound = pygame.mixer.Sound('sounds/awooga.ogg')
 huge_wave_sound = pygame.mixer.Sound('sounds/hugewave.ogg')
 lawnmower_sound = pygame.mixer.Sound('sounds/lawnmower.ogg')
-win_sound = pygame.mixer.Sound('sounds/winmusic.ogg')
-
 NULL, PLACE, REMOVE, PAUSE = 0, 1, 2, 3
-show_zombies = True
-choosed_plants = []
-whole_sounds = [
-    sunshine_not_enough, choose_plants_sound, set_plants_sound,
-    unset_plants_sound, pick_shovel_sound, get_sunshine_sound,
-    plant_bite_sound, reset_sound, pause_sound, lose_sound, choose_plant_sound,
-    zombies_coming_sound, huge_wave_sound, lawnmower_sound, win_sound
-]
+exec(stage_file_contents)
