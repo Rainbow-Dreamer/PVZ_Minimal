@@ -69,11 +69,12 @@ class lawnmower:
 
 
 class belt:
-    def __init__(self, plants_base, show_length=10, speed=4):
+    def __init__(self, plants_base, show_length=10, new_plant_speed=4, move_speed=2, img='belt.png'):
         self.plants_base = plants_base
         self.show_length = show_length
-        self.speed = speed
-        self.current_plants = []
+        self.new_plant_speed = new_plant_speed
+        self.move_speed = move_speed
+        self.img = img
     def choose(self):
         result = random.choose(self.plants_base)
         return result

@@ -67,11 +67,12 @@ class lawnmower:
         self.attack = attack
 
 class belt:
-    def __init__(self, plants_base, show_length=10, speed=4):
+    def __init__(self, plants_base, show_length=10, new_plant_speed=4, move_speed=2, img='belt.png'):
         self.plants_base = plants_base
         self.show_length = show_length
-        self.speed = speed
-        self.current_plants = []
+        self.new_plant_speed = new_plant_speed
+        self.move_speed = move_speed
+        self.img = img
     def choose(self):
         result = random.choice(self.plants_base)
         return result
@@ -144,5 +145,12 @@ lose_sound = pygame.mixer.Sound('sounds/losemusic.ogg')
 zombies_coming_sound = pygame.mixer.Sound('sounds/awooga.ogg')
 huge_wave_sound = pygame.mixer.Sound('sounds/hugewave.ogg')
 lawnmower_sound = pygame.mixer.Sound('sounds/lawnmower.ogg')
+whole_sounds = [
+    sunshine_not_enough, choose_plants_sound, set_plants_sound,
+    unset_plants_sound, pick_shovel_sound, get_sunshine_sound,
+    plant_bite_sound, reset_sound, pause_sound, lose_sound, choose_plant_sound,
+    zombies_coming_sound, huge_wave_sound, lawnmower_sound, win_sound
+]
+
 NULL, PLACE, REMOVE, PAUSE = 0, 1, 2, 3
 exec(stage_file_contents)

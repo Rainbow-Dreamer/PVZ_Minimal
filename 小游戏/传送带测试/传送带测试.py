@@ -1,6 +1,11 @@
 os.chdir('传送带测试')
 with open('config.py', encoding='utf-8') as f:
     exec(f.read())
+try:
+    with open('../memory.txt') as f:
+        last_place = f.read()
+except:
+    last_place = '.'
 
 
 def go_back():
@@ -15,7 +20,10 @@ class Root(Tk):
         self.wm_iconbitmap(icon_name)
         self.title('传送带测试')
         self.minsize(*screen_size)
+        self.last_place = last_place
         self.paused_time = 0
+        self.sound_volume = 1
+        self.music_flag = 1
         self.bullets_ls = []
         self.back_button = ttk.Button(self, text='返回', command=go_back)
         self.back_button.place(x=screen_size[0]-100, y=0)
@@ -44,7 +52,7 @@ class Root(Tk):
             self.current_belt.imgs.append(ImageTk.PhotoImage(current_img))   
         for j in range(len(self.current_belt.plants_base)):
             self.current_belt.plants_base[j].number = j
-        self.belt_img = Image.open('belt.png')
+        self.belt_img = Image.open(self.current_belt.img)
         self.belt_img = self.belt_img.resize((self.lawn_width, self.lawn_height), Image.ANTIALIAS)
         self.belt_width, self.belt_height = self.belt_img.width, self.belt_img.height
         self.belt_img = ImageTk.PhotoImage(self.belt_img)
@@ -54,6 +62,12 @@ class Root(Tk):
             current = self.current_belt.belts[k]
             current.plants = None
             current.place(x=belt_x + k*(self.lawn_width+10), y=belt_y)
+        
+        self.configs = ttk.Button(self,
+                                  text='设置',
+                                  command=self.make_config_window)
+        
+        self.configs.place(x=screen_size[0] - 100, y=screen_size[1] - 60)
         
             
         self.belt_counter = time.time()        
@@ -223,6 +237,102 @@ class Root(Tk):
             
     
     
+    def make_config_window(self):
+        config_window = Toplevel(self)
+        config_window.title('设置')
+        config_window.minsize(500, 300)
+        config_window.bg_volume_text = ttk.Label(config_window, text='背景音乐音量')
+        config_window.bg_volume = Scale(
+            config_window,
+            from_=0,
+            to=100,
+            orient=HORIZONTAL,
+            resolution=5,
+            length=200,
+            command=lambda e: self.change_bg_volume(config_window))
+        config_window.bg_volume.set(int(pygame.mixer.music.get_volume() * 100))
+        config_window.bg_volume_text.place(x=0, y=20)
+        config_window.bg_volume.place(x=100, y=0)
+        config_window.bg_text = ttk.Label(config_window, text='背景音乐')
+        config_window.bg = Text(config_window, width=55, height=5)
+        config_window.bg_button = ttk.Button(
+            config_window,
+            text='更改',
+            command=lambda: self.change_bg(config_window))
+        if self.music_flag == 1:
+            config_window.bg.insert(END, background_music)
+        elif self.music_flag == 0:
+            config_window.bg.insert(END, choose_plants_music)
+        config_window.bg_text.place(x=0, y=60)
+        config_window.bg.place(x=0, y=80)
+        config_window.bg_button.place(x=400, y=80)
+        config_window.sound_volume_text = ttk.Label(config_window, text='音效音量')
+        config_window.sound_volume = Scale(
+            config_window,
+            from_=0,
+            to=100,
+            orient=HORIZONTAL,
+            resolution=5,
+            length=200,
+            command=lambda e: self.change_sound_volume(config_window))
+        config_window.sound_volume.set(int(self.sound_volume * 100))
+        config_window.sound_volume_text.place(x=0, y=180)
+        config_window.sound_volume.place(x=100, y=160)
+        if self.music_flag == 1:
+            config_window.go_back_button = ttk.Button(config_window, text='返回主界面', command=lambda: self.go_back(config_window))
+            config_window.go_back_button.place(x=400, y=20)
+
+    def change_bg(self, config_window):
+        filename = filedialog.askopenfilename(initialdir=self.last_place,
+                                              title="选择你想播放的背景音乐",
+                                              filetype=(("音乐文件",
+                                                         "*.mp3;*.ogg;*.wav"),
+                                                        ("所有文件", "*.*")))
+        if filename:
+            self.last_place = os.path.dirname(filename)
+            with open('../memory.txt', 'w') as f:
+                f.write(self.last_place)
+
+            if self.music_flag == 1:
+                global background_music
+                background_music = filename
+                pygame.mixer.music.stop()
+                pygame.mixer.music.load(background_music)
+                pygame.mixer.music.play(loops=-1)
+                config_window.bg.delete('1.0', END)
+                config_window.bg.insert(END, background_music)
+            elif self.music_flag == 0:
+                global choose_plants_music
+                choose_plants_music = filename
+                pygame.mixer.music.stop()
+                pygame.mixer.music.load(choose_plants_music)
+                pygame.mixer.music.play(loops=-1)
+                config_window.bg.delete('1.0', END)
+                config_window.bg.insert(END, choose_plants_music)
+
+    def change_bg_volume(self, config_window):
+        new_volume = config_window.bg_volume.get()
+        if new_volume != int(pygame.mixer.music.get_volume() * 100):
+            pygame.mixer.music.set_volume(new_volume / 100)
+            if self.music_flag == 1:
+                global background_volume
+                background_volume = new_volume / 100
+            elif self.music_flag == 0:
+                global choose_seed_volume
+                choose_seed_volume = new_volume / 100                
+
+    def change_sound_volume(self, config_window):
+        new_volume = config_window.sound_volume.get()
+        if new_volume != int(self.sound_volume * 100):
+            new_set_volume = new_volume / 100
+            for each in whole_sounds:
+                if type(each) == list:
+                    for i in each:
+                        i.set_volume(new_set_volume)
+                else:
+                        each.set_volume(new_set_volume)
+            self.sound_volume = new_set_volume
+    
     
     def block_action(self, j, k=None, mode=0):
         if self.mode != PAUSE:
@@ -235,6 +345,13 @@ class Root(Tk):
                 if current.plants is None or (not choose_plant.plant_normal):
                     current_time = self.current_time
                     current.plants = get_plant(choose_plant, j, k)
+                    if current.plants.bullet_sound:
+                        for each in current.plants.bullet_sound:
+                            if type(each) == list:
+                                for each_sound in each:
+                                    each_sound.set_volume(self.sound_volume)
+                            else:
+                                each.set_volume(self.sound_volume)                    
                     self.make_img(current.plants)
                     if current.plants.use_bullet_img_first:
                         current.configure(image=current.plants.bullet_img)
@@ -393,14 +510,27 @@ class Root(Tk):
         current_zombies.attack_sound = [
             pygame.mixer.Sound(j) for j in current_zombies.attack_sound
         ]
+        for each in current_zombies.attack_sound:
+            each.set_volume(self.sound_volume)
+        whole_sounds.extend(current_zombies.attack_sound)
         current_zombies.dead_sound = [
             pygame.mixer.Sound(j)
             if type(j) != list else [pygame.mixer.Sound(k) for k in j]
             for j in current_zombies.dead_sound
         ]
+        for each in current_zombies.dead_sound:
+            if type(each) != list:
+                each.set_volume(self.sound_volume)
+            else:
+                for i in each:
+                    i.set_volume(self.sound_volume)
+        whole_sounds.extend(current_zombies.dead_sound)
         current_zombies.hit_sound = [
             pygame.mixer.Sound(j) for j in current_zombies.hit_sound
         ]
+        for each in current_zombies.hit_sound:
+            each.set_volume(self.sound_volume)
+        whole_sounds.extend(current_zombies.hit_sound)
         if current_zombies.hit_sound_ls:
             for k in range(len(current_zombies.hit_sound_ls)):
                 current = current_zombies.hit_sound_ls[k][1]
@@ -408,20 +538,27 @@ class Root(Tk):
                     current) if type(current) != list else [
                         pygame.mixer.Sound(y) for y in current
                     ]
+            for each in current_zombies.hit_sound_ls:
+                if type(each[1]) != list:
+                    each[1].set_volume(self.sound_volume)
+                else:
+                    for i in each[1]:
+                        i.set_volume(self.sound_volume)
+            whole_sounds.extend([i[1] for i in current_zombies.hit_sound_ls])
         if current_zombies.other_sound:
             current_zombies.other_sound = [
                 pygame.mixer.Sound(k) for k in current_zombies.other_sound
             ]
-        zombie_img = Image.open(current_zombies.img)
-        zombie_img = zombie_img.resize((self.lawn_width, self.lawn_height),
-                                       Image.ANTIALIAS)
-        zombie_img = ImageTk.PhotoImage(zombie_img)
+            for each in current_zombies.other_sound:
+                each.set_volume(self.sound_volume)
+            whole_sounds.extend(current_zombies.other_sound)
+        self.make_img(current_zombies)
         current_zombies_button = ttk.Button(
             self.maps,
-            image=zombie_img,
+            image=current_zombies.img,
             command=lambda current_zombies=current_zombies: self.block_action(
                 current_zombies, mode=1))
-        current_zombies_button.image = zombie_img
+        current_zombies_button.image = current_zombies.img
         current_zombies.button = current_zombies_button
         current_zombies.next_to_plants = False
         current_zombies.eating = False
@@ -464,7 +601,7 @@ class Root(Tk):
 
     def check_plants(self):
         self.current_time = time.time()
-        if self.current_time - self.belt_counter >= self.current_belt.speed:
+        if self.current_time - self.belt_counter >= self.current_belt.new_plant_speed:
             self.belt_counter = self.current_time
             belt_col = self.current_belt.show_length - 1
             last_unit = self.current_belt.belts[belt_col]
@@ -478,7 +615,7 @@ class Root(Tk):
             each_unit = self.current_belt.belts[k]
             if each_unit.plants:
                 each = each_unit.plants
-                if self.current_time - each.belt_counter >= 2:
+                if self.current_time - each.belt_counter >= self.current_belt.move_speed:
                     each.belt_counter = self.current_time
                     after_belt = self.current_belt.belts[k-1]
                     if after_belt.plants is None:                    
