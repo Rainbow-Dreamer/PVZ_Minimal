@@ -31,19 +31,23 @@ class Root(Tk):
         self.sound_volume = 1
         self.last_place = last_place
         self.music_flag = 0
-        
+
         self.wiki = ttk.Button(self, text='图鉴', command=self.open_wiki)
-        self.wiki.place(x=screen_size[0]-100, y=screen_size[1]-180)
-        
-        self.make_stage = ttk.Button(self, text='制作关卡', command=self.open_make_stage)
-        self.make_stage.place(x=screen_size[0]-100, y=screen_size[1]-140)
-        
+        self.wiki.place(x=screen_size[0] - 100, y=screen_size[1] - 180)
+
+        self.make_stage = ttk.Button(self,
+                                     text='制作关卡',
+                                     command=self.open_make_stage)
+        self.make_stage.place(x=screen_size[0] - 100, y=screen_size[1] - 140)
+
         self.configs = ttk.Button(self,
                                   text='设置',
                                   command=self.make_config_window)
-        self.little_game = ttk.Button(self, text='小游戏', command=self.open_little_game)
-        self.little_game.place(x=screen_size[0]-100, y=screen_size[1]-100)
-        
+        self.little_game = ttk.Button(self,
+                                      text='小游戏',
+                                      command=self.open_little_game)
+        self.little_game.place(x=screen_size[0] - 100, y=screen_size[1] - 100)
+
         self.configs.place(x=screen_size[0] - 100, y=screen_size[1] - 60)
         self.make_label = ttk.Label
         self.make_button = ttk.Button
@@ -56,11 +60,11 @@ class Root(Tk):
         if not lawn_size:
             lawn_size = 250 // map_size[0]
         self.lawn_photo = Image.open(lawn_photo)
-        self.lawn_photo = self.lawn_photo.resize((lawn_size, lawn_size),Image.ANTIALIAS)
-        self.background_img = self.lawn_photo.copy() 
+        self.lawn_photo = self.lawn_photo.resize((lawn_size, lawn_size),
+                                                 Image.ANTIALIAS)
+        self.background_img = self.lawn_photo.copy()
+        self.lawn_width, self.lawn_height = self.lawn_photo.width, self.lawn_photo.height
         self.lawn_photo = ImageTk.PhotoImage(self.lawn_photo)
-        self.lawn_width, self.lawn_height = self.lawn_photo.width(
-        ), self.lawn_photo.height()
         self.action_text = StringVar()
         self.action_text_show = ttk.Label(self, textvariable=self.action_text)
         self.action_text_place_y = map_size[0] * (self.lawn_height + 10) + 150
@@ -108,28 +112,25 @@ class Root(Tk):
             self.choose_stages.insert(END, k)
         self.choose_stages.place(x=450, y=250)
         self.choose_stages_bar.config(command=self.choose_stages.yview)
-    
-    
+
     def open_wiki(self):
         os.chdir('..')
         with open('图鉴.pyw', encoding='utf-8') as f:
             exec(f.read(), globals())
-    
+
     def open_make_stage(self):
         with open('../关卡制作器.pyw', encoding='utf-8') as f:
             exec(f.read(), globals())
-    
-    
+
     def open_little_game(self):
         filename = filedialog.askopenfilename(initialdir='../小游戏',
                                               title="选择游戏脚本文件",
-                                              filetype=(("游戏脚本文件",
-                                                         "*.pzg;"),
+                                              filetype=(("游戏脚本文件", "*.pzg;"),
                                                         ("所有文件", "*.*")))
         if filename:
             quit()
             read_little_games(filename)
-    
+
     def make_config_window(self):
         config_window = Toplevel(self)
         config_window.title('设置')
@@ -172,7 +173,10 @@ class Root(Tk):
         config_window.sound_volume_text.place(x=0, y=180)
         config_window.sound_volume.place(x=100, y=160)
         if self.music_flag == 1:
-            config_window.go_back_button = ttk.Button(config_window, text='返回主界面', command=lambda: self.go_back(config_window))
+            config_window.go_back_button = ttk.Button(
+                config_window,
+                text='返回主界面',
+                command=lambda: self.go_back(config_window))
             config_window.go_back_button.place(x=400, y=20)
 
     def change_bg(self, config_window):
@@ -212,7 +216,7 @@ class Root(Tk):
                 background_volume = new_volume / 100
             elif self.music_flag == 0:
                 global choose_seed_volume
-                choose_seed_volume = new_volume / 100                
+                choose_seed_volume = new_volume / 100
 
     def change_sound_volume(self, config_window):
         new_volume = config_window.sound_volume.get()
@@ -226,37 +230,43 @@ class Root(Tk):
                     each.set_volume(new_set_volume)
             self.sound_volume = new_set_volume
 
-    def make_img(self, each, resize_num=1):
+    def make_img(self, each, resize_num=1, types=None):
         current_img = Image.open(each.img)
         if each.img_transparent:
-            ratio = min(self.lawn_height / current_img.height, self.lawn_width / current_img.width)
+            ratio = min(lawn_size / current_img.height,
+                        lawn_size / current_img.width)
             current_img = current_img.resize(
                 (int(current_img.width * ratio / resize_num),
                  int(current_img.height * ratio / resize_num)),
                 Image.ANTIALIAS)
-            center_width = int(self.lawn_width / 2 - current_img.width / 2)
-            temp = self.background_img.copy()
+            center_width = int(lawn_size / 2 - current_img.width / 2)
+            if types:
+                temp = self.background_dict[types].copy()
+            else:
+                temp = self.background_img.copy()
             temp.paste(current_img, (center_width, 0), current_img)
             each.img = ImageTk.PhotoImage(temp)
 
         else:
             current_img = current_img.resize(
-                (int(self.lawn_width / resize_num),
-                 int(self.lawn_height / resize_num)), Image.ANTIALIAS)
+                (int(lawn_size / resize_num), int(lawn_size / resize_num)),
+                Image.ANTIALIAS)
             each.img = ImageTk.PhotoImage(current_img)
         try:
             if each.bullet_img:
                 if not each.is_bullet:
                     current_img = Image.open(each.bullet_img)
-                    current_img = current_img.resize(
-                        (self.lawn_width, self.lawn_height), Image.ANTIALIAS)
+                    current_img = current_img.resize((lawn_size, lawn_size),
+                                                     Image.ANTIALIAS)
                     each.bullet_img = ImageTk.PhotoImage(current_img)
                 else:
                     each.bullet_img = Image.open(each.bullet_img)
-                    ratio = min((self.lawn_height/3) / each.bullet_img.height, (self.lawn_width/3) / each.bullet_img.width)
+                    ratio = min((lawn_size / 3) / each.bullet_img.height,
+                                (lawn_size / 3) / each.bullet_img.width)
                     each.bullet_img = ImageTk.PhotoImage(
                         each.bullet_img.resize(
-                            (int(each.bullet_img.width*ratio), int(each.bullet_img.height*ratio)),
+                            (int(each.bullet_img.width * ratio),
+                             int(each.bullet_img.height * ratio)),
                             Image.ANTIALIAS))
             if each.other_img:
                 for j in range(len(each.other_img)):
@@ -268,10 +278,13 @@ class Root(Tk):
                     elif current_len == 3:
                         img_name, resize_num, as_bullet = current_other_img_ls
                     current_other_img = Image.open(img_name)
-                    ratio = min((self.lawn_height/resize_num) / current_other_img.height, (self.lawn_width/resize_num) / current_other_img.width)
+                    ratio = min(
+                        (lawn_size / resize_num) / current_other_img.height,
+                        (lawn_size / resize_num) / current_other_img.width)
                     current_other_img = current_other_img.resize(
-                        (int(current_other_img.width*ratio),
-                         int(current_other_img.height*ratio)), Image.ANTIALIAS)
+                        (int(current_other_img.width * ratio),
+                         int(current_other_img.height * ratio)),
+                        Image.ANTIALIAS)
                     current_other_img_ls[1] = img_name
                     current_other_img_ls[0] = ImageTk.PhotoImage(
                         current_other_img)
@@ -444,10 +457,11 @@ class Root(Tk):
         self.current_ind = -1
         self.current_zombies_num = len(self.whole_zombies)
         self.current_killed_zombies = 0
-        self._zombie1 = self.after(int(start_time * 1000), zombies_coming_sound.play)
+        self._zombie1 = self.after(int(start_time * 1000),
+                                   zombies_coming_sound.play)
         self._zombie2 = self.after(int(start_time * 1000), self.check_zombies)
         global first_time
-        first_time = False        
+        first_time = False
 
     def pause(self):
         if self.mode != PAUSE:
@@ -520,9 +534,12 @@ class Root(Tk):
         self.shovel_button.grid(row=0, column=self.plants_num + 1)
 
     def init_map(self):
-        if first_time:
-            for each_type in self.map_img_dict:
-                self.map_img_dict[each_type] = ImageTk.PhotoImage(Image.open(self.map_img_dict[each_type]).resize((lawn_size, lawn_size),Image.ANTIALIAS))        
+        self.background_dict = {}
+        for each_type in self.map_img_dict:
+            current_bg = Image.open(self.map_img_dict[each_type]).resize(
+                (lawn_size, lawn_size), Image.ANTIALIAS)
+            self.background_dict[each_type] = current_bg.copy()
+            self.map_img_dict[each_type] = ImageTk.PhotoImage(current_bg)
         rows, columns = len(map_content), len(map_content[0])
         for j in range(rows):
             block_row = []
@@ -572,7 +589,9 @@ class Root(Tk):
             if self.mode == PLACE:
                 current = self.blocks[j][k]
                 choose_plant = self.plants_generate[self.choosed_plant]
-                if any(cond(self, current) if callable(cond) else current.types == cond for cond in choose_plant.plant_range):
+                if any(
+                        cond(self, current) if callable(cond) else current.
+                        types == cond for cond in choose_plant.plant_range):
                     current_time = self.current_time
                     ready_plants = get_plant(choose_plant, j, k)
                     if ready_plants.bullet_sound:
@@ -582,7 +601,7 @@ class Root(Tk):
                                     each_sound.set_volume(self.sound_volume)
                             else:
                                 each.set_volume(self.sound_volume)
-                    self.make_img(ready_plants)
+                    self.make_img(ready_plants, types=current.types)
                     if ready_plants.use_bullet_img_first:
                         current.configure(image=ready_plants.bullet_img)
                     else:
@@ -623,7 +642,7 @@ class Root(Tk):
                         unset_plants_sound.play()
                         self.action_text.set(
                             f'你铲除了第{j+1}行，第{k+1}列的植物{block.plants.name}')
-                        
+
                         block.plants.status = 0
                         block.plants = None
                 else:
@@ -730,7 +749,9 @@ class Root(Tk):
             for each in current_zombies.other_sound:
                 each.set_volume(self.sound_volume)
             whole_sounds.extend(current_zombies.other_sound)
-        self.make_img(current_zombies)
+        self.make_img(current_zombies,
+                      types=self.blocks[current_zombies.rows][
+                          current_zombies.columns].types)
         current_zombies_button = ttk.Button(
             self.maps,
             image=current_zombies.img,
@@ -852,7 +873,8 @@ class Root(Tk):
                                     f'第{i+1}行，第{j+1}列的植物{current.plants.name}被吃掉了'
                                 )
                                 current.plants = None
-                                current.configure(image=self.map_img_dict[current.types])
+                                current.configure(
+                                    image=self.map_img_dict[current.types])
                                 j += 1
                                 continue
                         if current.plants.hp_img:
@@ -884,7 +906,7 @@ class Root(Tk):
 
     def check_zombies(self):
         if self.mode == 'stop':
-            return        
+            return
         if self.mode != PAUSE:
             current_time = self.current_time
             if self.normal_or_wave == 0:
@@ -1007,8 +1029,7 @@ class Root(Tk):
         pygame.mixer.music.stop()
         win_sound.play()
         self.after(5000, self.ask_if_continue)
-    
-    
+
     def go_back(self, obj):
         self.mode = 'stop'
         if self._zombie1:
@@ -1023,6 +1044,14 @@ class Root(Tk):
         lawnmower_rows = deepcopy(default_lawnmower_rows)
         global choosed_plants
         choosed_plants = []
+        global lawn_size
+        lawn_size = deepcopy(default_lawn_size)
+        self.lawn_photo = self.background_img.copy()
+        self.lawn_photo = self.lawn_photo.resize((lawn_size, lawn_size),
+                                                 Image.ANTIALIAS)
+        self.lawn_width, self.lawn_height = self.lawn_photo.width, self.lawn_photo.height
+        self.lawn_photo = ImageTk.PhotoImage(self.lawn_photo)
+        self.map_img_dict = deepcopy(default_map_img_dict)
         obj.destroy()
         self.choose.destroy()
         self.whole_map.destroy()
@@ -1060,7 +1089,7 @@ class Root(Tk):
                 command=lambda i=i: self.append_plants(i))
             current_button.image = current_img
             current_button.grid(row=i // 6, column=i % 6)
-            self.choose_buttons.append(current_button)        
+            self.choose_buttons.append(current_button)
         self.start_game = ttk.Button(text='开始游戏', command=self.start_init)
         self.start_game.place(x=0, y=500)
         self.choose_stage_text = ttk.Label(self, text='请选择关卡')
@@ -1072,8 +1101,8 @@ class Root(Tk):
         for k in stage_file:
             self.choose_stages.insert(END, k)
         self.choose_stages.place(x=450, y=250)
-        self.choose_stages_bar.config(command=self.choose_stages.yview) 
-    
+        self.choose_stages_bar.config(command=self.choose_stages.yview)
+
     def ask_if_continue(self):
         self.mode = 'stop'
         screen_width = self.winfo_screenwidth()
@@ -1083,15 +1112,17 @@ class Root(Tk):
         ask_window.title('继续游戏')
         ask_window.minsize(300, 200)
         ask_window.update()
-        ask_window.geometry('%dx%d+%d+%d' % (300, 200, x, y))        
-        ask_window.ask_text = ttk.Label(ask_window, text='请问要返回选择植物和关卡的界面还是退出游戏？')
+        ask_window.geometry('%dx%d+%d+%d' % (300, 200, x, y))
+        ask_window.ask_text = ttk.Label(ask_window,
+                                        text='请问要返回选择植物和关卡的界面还是退出游戏？')
         ask_window.ask_text.place(x=0, y=0)
-        ask_window.back_button = ttk.Button(ask_window, text='返回主界面', command=lambda: self.go_back(ask_window))
-        ask_window.quit_button = ttk.Button(ask_window, text='退出', command=quit)
+        ask_window.back_button = ttk.Button(
+            ask_window, text='返回主界面', command=lambda: self.go_back(ask_window))
+        ask_window.quit_button = ttk.Button(ask_window,
+                                            text='退出',
+                                            command=quit)
         ask_window.back_button.place(x=0, y=30)
         ask_window.quit_button.place(x=100, y=30)
-    
-    
 
 
 root = Root()
@@ -1106,6 +1137,7 @@ def read_little_games(filename):
     os.chdir('../小游戏')
     with open(filename, encoding='utf-8') as f:
         exec(f.read(), globals())
+
 
 root.protocol('WM_DELETE_WINDOW', quit)
 root.mainloop()

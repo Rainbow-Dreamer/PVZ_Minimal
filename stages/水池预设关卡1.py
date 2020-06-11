@@ -1,4 +1,4 @@
-# 这是一个很简单的预设关卡
+# 水池预设关卡1
 zombies_names = ['普通僵尸', '路障僵尸', '铁桶僵尸']
 with open('common.py', encoding='utf-8') as f:
     exec(f.read(), globals())
@@ -29,5 +29,10 @@ big_wave2 = [
 current_stage = Stage(2)
 current_stage.set_normal_all(part1, part2, part3)
 current_stage.set_waves_all(big_wave1, big_wave2)
+map_size = 6, 9
+lawn_size = 50
 map_content = [['day' for i in range(map_size[1])] for j in range(map_size[0])]
-
+#以下几行可以把当前关卡的地图的第2到第3行变成水池
+for i in range(2, 4):
+    for j in range(map_size[1]):
+        map_content[i][j] = 'pool'

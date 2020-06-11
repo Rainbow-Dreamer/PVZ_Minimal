@@ -69,7 +69,16 @@ class lawnmower:
 
 
 class belt:
-    def __init__(self, plants_base, show_length=10, new_plant_speed=4, move_speed=2, belt_x=100, belt_y=40, resize_num=1, img='belt.png', offset=10):
+    def __init__(self,
+                 plants_base,
+                 show_length=10,
+                 new_plant_speed=4,
+                 move_speed=2,
+                 belt_x=100,
+                 belt_y=40,
+                 resize_num=1,
+                 img='belt.png',
+                 offset=10):
         self.plants_base = plants_base
         self.show_length = show_length
         self.new_plant_speed = new_plant_speed
@@ -79,11 +88,10 @@ class belt:
         self.resize_num = resize_num
         self.img = img
         self.offset = offset
+
     def choose(self):
         result = random.choose(self.plants_base)
         return result
-    
-
 
 
 whole_plants_name = None
@@ -113,6 +121,7 @@ no_lawnmower_img = 'no_lawnmower.png'
 background_music = 'sounds/Laura Shigihara - Ultimate Battle IN-GAME.ogg'
 action_text_place_x = 270
 lawn_size = 60
+default_lawn_size = deepcopy(lawn_size)
 icon_name = 'pvz.ico'
 title_name = "PVZ极简版"
 screen_size = 900, 650
@@ -124,7 +133,12 @@ map_size = 5, 9
 default_map_size = deepcopy(map_size)
 first_time = True
 lawn_photo = 'Almanac_GroundDay.png'
-map_img_dict = {'day': 'Almanac_GroundDay.png', 'pool': 'Almanac_GroundPool.jpg', 'empty': 'empty.png'}
+map_img_dict = {
+    'day': 'Almanac_GroundDay.png',
+    'pool': 'Almanac_GroundPool.jpg',
+    'empty': 'empty.png'
+}
+default_map_img_dict = deepcopy(map_img_dict)
 map_content = [['day' for i in range(map_size[1])] for j in range(map_size[0])]
 default_map_content = deepcopy(map_content)
 init_sunshine = 50
