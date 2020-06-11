@@ -7,9 +7,7 @@ def day_check(games, block):
         else:
             games.action_text.set('这个植物需要种植在荷叶上')
             return False
-    if block.types == 'day':
-        return block.plants is None
-    return False
+    return block.plants is None
 
 def when_plant(games, block, self):
     if block.types == 'pool' and block.plants and block.plants.name == '荷叶':

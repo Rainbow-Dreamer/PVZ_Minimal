@@ -3,7 +3,7 @@ def lily_check(games, block):
     if block.types != 'pool':
         games.action_text.set('荷叶需要种植在水面上')
         return False
-    return True
+    return block.plants is None
 
 def lily_func(self, games):
     if self.contain_plants:
