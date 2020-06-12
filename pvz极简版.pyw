@@ -58,7 +58,8 @@ class Root(Tk):
         self.map_img_dict = map_img_dict
         global lawn_size
         if not lawn_size:
-            lawn_size = 250 // map_size[0]
+            lawn_size = 250 / map_size[0]
+        lawn_size = int(lawn_size)
         self.lawn_photo = Image.open(lawn_photo)
         self.lawn_photo = self.lawn_photo.resize((lawn_size, lawn_size),
                                                  Image.ANTIALIAS)
