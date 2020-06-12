@@ -3,7 +3,6 @@ zombies_names = ['普通僵尸', '路障僵尸', '铁桶僵尸']
 with open('common.py', encoding='utf-8') as f:
     exec(f.read(), globals())
 start_time = 5
-modified_file = 'modified.py'
 part1 = [
     get_zombies(random.choice([普通僵尸, 路障僵尸]), random.randint(0, 4), 8, random.randint(1, 120))
     for i in range(20)
@@ -33,7 +32,6 @@ map_size = 6, 9
 lawn_size = 50
 lawnmower_rows = [0, 1, 2, 3, 4, 5]
 map_content = [['day' for i in range(map_size[1])] for j in range(map_size[0])]
-#以下几行可以把当前关卡的地图的第2到第3行变成水池
 for i in range(2, 4):
     for j in range(map_size[1]):
         map_content[i][j] = 'pool'
