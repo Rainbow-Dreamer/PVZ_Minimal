@@ -231,7 +231,7 @@ class Root(Tk):
             self.sound_volume = new_set_volume
 
     def make_img(self, each, resize_num=1, types=None):
-        current_img = Image.open(each.img)
+        current_img = Image.open(each.img).convert('RGBA')
         if each.img_transparent:
             ratio = min(lawn_size / current_img.height,
                         lawn_size / current_img.width)

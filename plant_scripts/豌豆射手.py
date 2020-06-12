@@ -72,7 +72,7 @@ def moving(games, obj, columns_move=0, rows_move=0):
 
 
 豌豆射手 = plant(name='豌豆射手',
-             img='豌豆射手.gif',
+             img='豌豆射手.png',
              price=100,
              hp=5,
              cooling_time=7.5,
@@ -83,4 +83,4 @@ def moving(games, obj, columns_move=0, rows_move=0):
              bullet_sound=('sounds/throw.ogg', ),
              func=peashooter_check,
              bullet_func=moving,
-             img_transparent=False)
+             img_transparent=True)
