@@ -4,7 +4,7 @@ with open('common.py', encoding='utf-8') as f:
     exec(f.read())
 start_time = 5
 for each in zombies_sample:
-    each.move_speed = 3
+    each.move_speed = 0.5
 # 这个modified.py给你的植物可以给你的植物全部价格设为0，冷却时间也设为0，
 # 但是就这样你也是打不过
 modified_file = 'modified.py'

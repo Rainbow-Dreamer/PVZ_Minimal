@@ -58,7 +58,7 @@ def squash_attack(self, games):
                                 f'杀死僵尸数: {games.killed_zombies}')
                             each.button.destroy()
         squash_block = games.blocks[i][j]
-        squash_block.configure(image=games.lawn_photo)
+        squash_block.configure(image=games.map_img_dict[squash_block.types])
         squash_block.plants = None
 
 

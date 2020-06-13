@@ -2,7 +2,9 @@ os.chdir('..')
 sys.path.append('.')
 for x in zombies_names:
     exec(f'from zombie_scripts.{x} import {x}', globals())
-zombies_sample = [eval(j, globals()) for j in zombies_names]
+zombies_sample = deepcopy([eval(j, globals()) for j in zombies_names])
+for every in zombies_sample:
+    exec(f'{every.name} = every', globals())
 os.chdir('resource/')
 for current_zombies in zombies_sample:
     current_zombies.attack_sound = [

@@ -31,7 +31,7 @@ class Root(Tk):
         self.sound_volume = 1
         self.last_place = last_place
         self.music_flag = 0
-
+        self.is_stop = False
         self.wiki = ttk.Button(self, text='图鉴', command=self.open_wiki)
         self.wiki.place(x=screen_size[0] - 100, y=screen_size[1] - 180)
 
@@ -319,6 +319,7 @@ class Root(Tk):
         self.choose_buttons[x].grid(row=x // 6, column=x % 6)
 
     def start_init(self):
+        self.is_stop = False
         choosed_stage = self.choose_stages.get(ACTIVE)
         with open(f'../stages/{choosed_stage}.py', encoding='utf-8') as f:
             stage_file_contents = f.read()
@@ -344,10 +345,10 @@ class Root(Tk):
         self.sunshine_time = self.game_start_time
         choosed_plants = [x[0] for x in choosed_plants]
         os.chdir('..')
-        choosed_plants = [
+        choosed_plants = deepcopy([
             eval(f'importlib.import_module("plant_scripts.{x}").{x}')
             for x in choosed_plants
-        ]
+        ])
         os.chdir('resource')
         if modified_file:
             with open(modified_file, encoding='utf-8') as f:
@@ -785,6 +786,8 @@ class Root(Tk):
                     each.hp -= obj.attack
 
     def lawnmower_move(self, obj):
+        if self.is_stop:
+            return
         if obj.columns == 0:
             lawnmower_sound.play()
         if obj.columns >= self.map_columns:
@@ -822,7 +825,7 @@ class Root(Tk):
         self.after(2000, lambda: random.choice(obj.dead_sound[1]).play())
 
     def check_plants(self):
-        if self.mode == 'stop':
+        if self.is_stop:
             return
         if self.mode == PAUSE:
             if keyboard.is_pressed('p'):
@@ -905,7 +908,7 @@ class Root(Tk):
         self.after(1, self.check_plants)
 
     def check_zombies(self):
-        if self.mode == 'stop':
+        if self.is_stop:
             return
         if self.mode != PAUSE:
             current_time = self.current_time
@@ -1029,13 +1032,17 @@ class Root(Tk):
         pygame.mixer.music.stop()
         win_sound.play()
         self.after(5000, self.ask_if_continue)
+    
 
     def go_back(self, obj):
-        self.mode = 'stop'
+        self.is_stop = True
+        self.mode = PAUSE
         if self._zombie1:
             self.after_cancel(self._zombie1)
         if self._zombie2:
             self.after_cancel(self._zombie2)
+        global modified_file
+        modified_file = None
         global map_size
         map_size = default_map_size
         global map_content
@@ -1103,7 +1110,7 @@ class Root(Tk):
         self.choose_stages_bar.config(command=self.choose_stages.yview)
 
     def ask_if_continue(self):
-        self.mode = 'stop'
+        self.is_stop = True
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
         x, y = self.winfo_x(), self.winfo_y()
