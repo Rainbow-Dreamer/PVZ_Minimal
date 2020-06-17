@@ -338,6 +338,11 @@ class Root(Tk):
 
     def start_init(self):
         self.is_stop = False
+        self.msg_text = StringVar()
+        self.msg_box_text = ttk.Label(self, textvariable=self.msg_text)
+        self.msg_lines = 0
+        if msg_box:
+            self.msg_box_text.place(x=msg_box_x, y=msg_box_y)
         choosed_stage = self.choose_stages.get(ACTIVE)
         with open(f'../stages/{choosed_stage}.py', encoding='utf-8') as f:
             stage_file_contents = f.read()
@@ -497,6 +502,22 @@ class Root(Tk):
             random.choice(reset_sound).play()
         self.change_mode(NULL)
 
+    
+    def msg_refresh(self):
+        self.msg_text.set('')
+    
+    def msg_write(self, text, newline=True):
+        if self.msg_lines >= msg_lines_limit:
+            self.msg_refresh()
+            self.msg_lines = 0
+        content = self.msg_text.get()
+        if newline:
+            self.msg_lines += 1
+            content += '\n'
+        content += text
+        self.msg_text.set(content)
+    
+    
     def init_sunshine(self):
         sun_photo = ImageTk.PhotoImage(
             Image.open(sunshine_img).resize(
@@ -1061,6 +1082,8 @@ class Root(Tk):
             self.after_cancel(self._zombie1)
         if self._zombie2:
             self.after_cancel(self._zombie2)
+        if msg_box:
+            self.msg_box_text.place_forget()
         global modified_file
         modified_file = None
         global map_size

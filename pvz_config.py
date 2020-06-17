@@ -183,3 +183,6 @@ whole_sounds = [
     plant_bite_sound, reset_sound, pause_sound, lose_sound, choose_plant_sound,
     zombies_coming_sound, huge_wave_sound, lawnmower_sound, win_sound
 ]
+msg_box = True
+msg_box_x, msg_box_y = 700, 100
+msg_lines_limit = 15
