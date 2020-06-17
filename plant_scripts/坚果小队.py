@@ -25,7 +25,8 @@ def start_plant_wallnut(self, games):
             games.make_img(current.plants)
             current.configure(image=current.plants.img)
             current.plants.time = games.current_time
-            current.plants.button = self.button
+            if hasattr(current.plants, 'button'):
+                current.plants.button = self.button
             self.whole_wallnuts.append(current.plants)
         self.pre_hp = deepcopy(self.hp)
         for each in self.whole_wallnuts:
@@ -35,6 +36,11 @@ def start_plant_wallnut(self, games):
             each.whole_wallnuts = self.whole_wallnuts
         self.whole_wallnuts.append(self)
         self.func = long_wallnut_check
+    else:
+        games.action_text.set('这一列有其他植物，无法种植坚果小队')
+        self_block = games.blocks[i][j]
+        self_block.plants = None
+        self_block.configure(image=games.map_img_dict[self_block.types])
         
     
     

@@ -81,7 +81,11 @@ class belt:
         result = random.choice(self.plants_base)
         return result
     
-
+map_img_dict = {
+    'day': 'Almanac_GroundDay.png',
+    'pool': 'Almanac_GroundPool.jpg',
+    'empty': 'empty.png'
+}
 
 
 pygame.mixer.init()

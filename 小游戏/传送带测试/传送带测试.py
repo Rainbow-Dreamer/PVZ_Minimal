@@ -29,21 +29,32 @@ class Root(Tk):
         self.back_button.place(x=screen_size[0]-100, y=0)
         self.make_label = ttk.Label
         self.make_button = ttk.Button
+        self.get_plant = get_plant
         self.NULL, self.PLACE, self.REMOVE, self.PAUSE = 0, 1, 2, 3
-        self.lawn_photo = Image.open(lawn_img)
-
         lawn_size = 250 // map_size[0]
+        self.lawn_photo = Image.open(lawn_img)
         self.lawn_photo = self.lawn_photo.resize((lawn_size, lawn_size),
                                                  Image.ANTIALIAS)
         self.background_img = self.lawn_photo.copy()
         self.lawn_photo = ImageTk.PhotoImage(self.lawn_photo)
         self.lawn_width, self.lawn_height = self.lawn_photo.width(
-        ), self.lawn_photo.height()
+        ), self.lawn_photo.height()        
+        
+        self.map_img_dict = map_img_dict
+        self.background_dict = {}
+        for each_type in self.map_img_dict:
+            current_bg = Image.open(self.map_img_dict[each_type]).resize(
+                (lawn_size, lawn_size), Image.ANTIALIAS)
+            self.background_dict[each_type] = current_bg.copy()
+            self.map_img_dict[each_type] = ImageTk.PhotoImage(current_bg)        
+        
         self.choose_plant_bg = Image.open(choose_plant_bg)
         self.choose_plant_bg = self.choose_plant_bg.resize((lawn_size, lawn_size),
                                                  Image.ANTIALIAS)        
         self.target_plant = None
-        
+        self.flower_sunshine_img = ImageTk.PhotoImage(
+            Image.open(fall_sunshine_img).resize(
+                (lawn_size, lawn_size), Image.ANTIALIAS))        
         self.current_belt = current_belt
         self.current_belt.imgs = []
         for each in self.current_belt.plants_base:
@@ -68,8 +79,13 @@ class Root(Tk):
                     (int(lawn_size/resize_num), int(lawn_size/resize_num)),
                     Image.ANTIALIAS)
                 current_img = ImageTk.PhotoImage(current_img)            
-            self.current_belt.imgs.append(current_img)   
-        for j in range(len(self.current_belt.plants_base)):
+            self.current_belt.imgs.append(current_img)  
+        global choosed_plants
+        choosed_plants = self.current_belt.plants_base
+        self.choosed_plants = choosed_plants
+        self.plants_generate = choosed_plants
+        self.plants_num = len(choosed_plants)
+        for j in range(self.plants_num):
             self.current_belt.plants_base[j].number = j
         self.belt_img = Image.open(self.current_belt.img)
         self.belt_img = self.belt_img.resize((int(self.lawn_width/resize_num),
@@ -363,7 +379,7 @@ class Root(Tk):
             if self.mode == PLACE:
                 current = self.blocks[j][k]
                 choose_plant = self.target_plant
-                if current.plants is None or (not choose_plant.plant_normal):
+                if not current.plants:
                     current_time = self.current_time
                     current.plants = get_plant(choose_plant, j, k)
                     if current.plants.bullet_sound:
@@ -512,6 +528,7 @@ class Root(Tk):
                 current_block = ttk.Button(self.maps,
                                            image=lawn_photo,command=lambda j=j, k=k: self.block_action(j, k))
                 current_block.plants = None
+                current_block.types = 'day'
                 current_block.image = lawn_photo
                 current_block.grid(row=j, column=k)
                 block_row.append(current_block)

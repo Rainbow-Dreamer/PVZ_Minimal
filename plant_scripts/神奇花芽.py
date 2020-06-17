@@ -31,12 +31,13 @@ def random_choose(self, games):
 
         current.plants.time = current_time
         current_plant_name = current.plants.name
-        current_choosed_plants = games.choosed_plants[choosed_plant]
-        current.plants.button = current_choosed_plants.button
         games.action_text.set(
             f'你成功放置了{current_plant_name}在第{j+1}行，第{k+1}列')
-        current.plants.button.textvariable.set(
-            f'${current.plants.price} 冷却中')
+        current_choosed_plants = games.choosed_plants[choosed_plant]
+        if hasattr(current.plants, 'button'):
+            current.plants.button = current_choosed_plants.button
+            current.plants.button.textvariable.set(
+                f'${current.plants.price} 冷却中')
     
 
 
