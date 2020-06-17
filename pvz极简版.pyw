@@ -1104,14 +1104,27 @@ class Root(Tk):
             average_height = lawn_size
         for i in range(self.num_plants):
             current_plant = whole_plants[i]
-            current_plant_img = whole_plants_img[i]
+            current_img = whole_plants_img[i]
             current_plant[1] = i
-            current_img = Image.open(current_plant_img)
-            ratio = average_height / current_img.height
-            current_img = current_img.resize((int(
-                current_img.width * ratio), int(current_img.height * ratio)),
-                                             Image.ANTIALIAS)
-            current_img = ImageTk.PhotoImage(current_img)
+            if current_img in pre_transparent:
+                current_img = Image.open(current_img)
+                ratio = min(lawn_size / current_img.height,
+                            lawn_size / current_img.width)
+                current_img = current_img.resize(
+                    (int(current_img.width * ratio),
+                     int(current_img.height * ratio)),
+                    Image.ANTIALIAS)
+                center_width = int(lawn_size / 2 - current_img.width / 2)
+                temp = self.choose_plant_bg.copy()
+                temp.paste(current_img, (center_width, 0), current_img)
+                current_img = ImageTk.PhotoImage(temp)
+    
+            else:
+                current_img = Image.open(current_img)
+                current_img = current_img.resize(
+                    (int(lawn_size), int(lawn_size)),
+                    Image.ANTIALIAS)
+                current_img = ImageTk.PhotoImage(current_img)
             current_button = ttk.Button(
                 self.choose_plants_screen,
                 image=current_img,
