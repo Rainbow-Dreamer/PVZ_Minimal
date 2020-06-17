@@ -10,9 +10,10 @@ except:
 
 def go_back():
     pygame.mixer.quit()
-    root.destroy()    
+    root.destroy()
     os.chdir('..')
     os.startfile('pvz极简版.exe')
+
 
 class Root(Tk):
     def __init__(self):
@@ -26,7 +27,7 @@ class Root(Tk):
         self.music_flag = 1
         self.bullets_ls = []
         self.back_button = ttk.Button(self, text='返回', command=go_back)
-        self.back_button.place(x=screen_size[0]-100, y=0)
+        self.back_button.place(x=screen_size[0] - 100, y=0)
         self.make_label = ttk.Label
         self.make_button = ttk.Button
         self.get_plant = get_plant
@@ -38,23 +39,23 @@ class Root(Tk):
         self.background_img = self.lawn_photo.copy()
         self.lawn_photo = ImageTk.PhotoImage(self.lawn_photo)
         self.lawn_width, self.lawn_height = self.lawn_photo.width(
-        ), self.lawn_photo.height()        
-        
+        ), self.lawn_photo.height()
+
         self.map_img_dict = map_img_dict
         self.background_dict = {}
         for each_type in self.map_img_dict:
             current_bg = Image.open(self.map_img_dict[each_type]).resize(
                 (lawn_size, lawn_size), Image.ANTIALIAS)
             self.background_dict[each_type] = current_bg.copy()
-            self.map_img_dict[each_type] = ImageTk.PhotoImage(current_bg)        
-        
+            self.map_img_dict[each_type] = ImageTk.PhotoImage(current_bg)
+
         self.choose_plant_bg = Image.open(choose_plant_bg)
-        self.choose_plant_bg = self.choose_plant_bg.resize((lawn_size, lawn_size),
-                                                 Image.ANTIALIAS)        
+        self.choose_plant_bg = self.choose_plant_bg.resize(
+            (lawn_size, lawn_size), Image.ANTIALIAS)
         self.target_plant = None
         self.flower_sunshine_img = ImageTk.PhotoImage(
-            Image.open(fall_sunshine_img).resize(
-                (lawn_size, lawn_size), Image.ANTIALIAS))        
+            Image.open(fall_sunshine_img).resize((lawn_size, lawn_size),
+                                                 Image.ANTIALIAS))
         self.current_belt = current_belt
         self.current_belt.imgs = []
         for each in self.current_belt.plants_base:
@@ -72,14 +73,14 @@ class Root(Tk):
                 temp = self.choose_plant_bg.copy()
                 temp.paste(current_img, (center_width, 0), current_img)
                 current_img = ImageTk.PhotoImage(temp)
-    
+
             else:
                 current_img = Image.open(current_img)
                 current_img = current_img.resize(
-                    (int(lawn_size/resize_num), int(lawn_size/resize_num)),
+                    (int(lawn_size / resize_num), int(lawn_size / resize_num)),
                     Image.ANTIALIAS)
-                current_img = ImageTk.PhotoImage(current_img)            
-            self.current_belt.imgs.append(current_img)  
+                current_img = ImageTk.PhotoImage(current_img)
+            self.current_belt.imgs.append(current_img)
         global choosed_plants
         choosed_plants = self.current_belt.plants_base
         self.choosed_plants = choosed_plants
@@ -88,26 +89,31 @@ class Root(Tk):
         for j in range(self.plants_num):
             self.current_belt.plants_base[j].number = j
         self.belt_img = Image.open(self.current_belt.img)
-        self.belt_img = self.belt_img.resize((int(self.lawn_width/resize_num),
-                 int(self.lawn_height/resize_num)), Image.ANTIALIAS)
+        self.belt_img = self.belt_img.resize((int(
+            self.lawn_width / resize_num), int(self.lawn_height / resize_num)),
+                                             Image.ANTIALIAS)
         self.belt_width, self.belt_height = self.belt_img.width, self.belt_img.height
         self.belt_img = ImageTk.PhotoImage(self.belt_img)
-        self.current_belt.belts = [ttk.Button(self, image=self.belt_img, command=lambda i=i:self.belt_plant(i)) for i in range(self.current_belt.show_length)]
+        self.current_belt.belts = [
+            ttk.Button(self,
+                       image=self.belt_img,
+                       command=lambda i=i: self.belt_plant(i))
+            for i in range(self.current_belt.show_length)
+        ]
         belt_x, belt_y = self.current_belt.belt_x, self.current_belt.belt_y
         offset = self.current_belt.offset
         for k in range(self.current_belt.show_length):
             current = self.current_belt.belts[k]
             current.plants = None
-            current.place(x=belt_x + k*(self.belt_width+offset), y=belt_y)
-        
+            current.place(x=belt_x + k * (self.belt_width + offset), y=belt_y)
+
         self.configs = ttk.Button(self,
                                   text='设置',
                                   command=self.make_config_window)
-        
+
         self.configs.place(x=screen_size[0] - 100, y=screen_size[1] - 60)
-        
-            
-        self.belt_counter = time.time()        
+
+        self.belt_counter = time.time()
         self.action_text = StringVar()
         self.action_text_show = ttk.Label(self, textvariable=self.action_text)
         self.action_text_place_y = map_size[0] * (self.lawn_height + 10) + 150
@@ -153,7 +159,7 @@ class Root(Tk):
 
         self.init_map(*map_size)
         self.maps.place(x=65, y=100)
-        
+
         self.choosed_plant = None
         self.sunshine_ls = []
         self.map_rows, self.map_columns = map_size
@@ -222,14 +228,12 @@ class Root(Tk):
         self.check_plants()
         self.after(int(start_time * 1000), zombies_coming_sound.play)
         self.after(int(start_time * 1000), self.check_zombies)
-    
-    
+
     def reset(self):
         self.action_text.set('')
         self.target_plant = None
         self.mode = NULL
-    
-    
+
     def change_mode(self, num, plant=None):
         if self.mode != PAUSE:
             self.mode = num
@@ -251,29 +255,24 @@ class Root(Tk):
             elif num == REMOVE:
                 pick_shovel_sound.play()
                 self.action_text.set('请选择一个草地上的植物铲除')
-            elif     num == NULL:
+            elif num == NULL:
                 self.action_text.set('')
-    
-    
+
     def init_shovel(self):
         shovel_photo = ImageTk.PhotoImage(
             Image.open(shovel_img).resize((self.lawn_width, self.lawn_height),
                                           Image.ANTIALIAS))
         self.shovel_button = ttk.Button(
-            self,
-            image=shovel_photo,
-            command=lambda: self.change_mode(REMOVE))
+            self, image=shovel_photo, command=lambda: self.change_mode(REMOVE))
         self.shovel_button.image = shovel_photo
-        self.shovel_button.place(x=screen_size[0]-170, y=0)   
-    
+        self.shovel_button.place(x=screen_size[0] - 170, y=0)
+
     def belt_plant(self, i):
         current = self.current_belt.belts[i]
         if current.plants:
             self.mode = PLACE
             self.target_plant = current.plants
-            
-    
-    
+
     def make_config_window(self):
         config_window = Toplevel(self)
         config_window.title('设置')
@@ -316,7 +315,10 @@ class Root(Tk):
         config_window.sound_volume_text.place(x=0, y=180)
         config_window.sound_volume.place(x=100, y=160)
         if self.music_flag == 1:
-            config_window.go_back_button = ttk.Button(config_window, text='返回主界面', command=lambda: self.go_back(config_window))
+            config_window.go_back_button = ttk.Button(
+                config_window,
+                text='返回主界面',
+                command=lambda: self.go_back(config_window))
             config_window.go_back_button.place(x=400, y=20)
 
     def change_bg(self, config_window):
@@ -356,7 +358,7 @@ class Root(Tk):
                 background_volume = new_volume / 100
             elif self.music_flag == 0:
                 global choose_seed_volume
-                choose_seed_volume = new_volume / 100                
+                choose_seed_volume = new_volume / 100
 
     def change_sound_volume(self, config_window):
         new_volume = config_window.sound_volume.get()
@@ -367,10 +369,9 @@ class Root(Tk):
                     for i in each:
                         i.set_volume(new_set_volume)
                 else:
-                        each.set_volume(new_set_volume)
+                    each.set_volume(new_set_volume)
             self.sound_volume = new_set_volume
-    
-    
+
     def block_action(self, j, k=None, mode=0):
         if self.mode != PAUSE:
             if mode == 1:
@@ -388,7 +389,7 @@ class Root(Tk):
                                 for each_sound in each:
                                     each_sound.set_volume(self.sound_volume)
                             else:
-                                each.set_volume(self.sound_volume)                    
+                                each.set_volume(self.sound_volume)
                     self.make_img(current.plants)
                     if current.plants.use_bullet_img_first:
                         current.configure(image=current.plants.bullet_img)
@@ -403,7 +404,8 @@ class Root(Tk):
                     current.plants.counter = current_time
                     current.plants.enable = 0
                     self.choosed_plant = None
-                    current_unit = self.current_belt.belts[choose_plant.belt_col]
+                    current_unit = self.current_belt.belts[
+                        choose_plant.belt_col]
                     current_unit.configure(image=self.belt_img)
                     current_unit.plants = None
                     self.target_plant = None
@@ -450,13 +452,11 @@ class Root(Tk):
                             f'这上面有个{plants_on_block.name}, 当前生命值{plants_on_block.hp}'
                         )
 
-    
-    
-    
     def make_img(self, each, resize_num=1):
         current_img = Image.open(each.img)
         if each.img_transparent:
-            ratio = min(self.lawn_height / current_img.height, self.lawn_width / current_img.width)
+            ratio = min(self.lawn_height / current_img.height,
+                        self.lawn_width / current_img.width)
             current_img = current_img.resize(
                 (int(current_img.width * ratio / resize_num),
                  int(current_img.height * ratio / resize_num)),
@@ -480,10 +480,13 @@ class Root(Tk):
                     each.bullet_img = ImageTk.PhotoImage(current_img)
                 else:
                     each.bullet_img = Image.open(each.bullet_img)
-                    ratio = min((self.lawn_height/3) / each.bullet_img.height, (self.lawn_width/3) / each.bullet_img.width)
+                    ratio = min(
+                        (self.lawn_height / 3) / each.bullet_img.height,
+                        (self.lawn_width / 3) / each.bullet_img.width)
                     each.bullet_img = ImageTk.PhotoImage(
                         each.bullet_img.resize(
-                            (int(each.bullet_img.width*ratio), int(each.bullet_img.height*ratio)),
+                            (int(each.bullet_img.width * ratio),
+                             int(each.bullet_img.height * ratio)),
                             Image.ANTIALIAS))
             if each.other_img:
                 for j in range(len(each.other_img)):
@@ -495,21 +498,22 @@ class Root(Tk):
                     elif current_len == 3:
                         img_name, resize_num, as_bullet = current_other_img_ls
                     current_other_img = Image.open(img_name)
-                    ratio = min((self.lawn_height/resize_num) / current_other_img.height, (self.lawn_width/resize_num) / current_other_img.width)
+                    ratio = min((self.lawn_height / resize_num) /
+                                current_other_img.height,
+                                (self.lawn_width / resize_num) /
+                                current_other_img.width)
                     current_other_img = current_other_img.resize(
-                        (int(current_other_img.width*ratio),
-                         int(current_other_img.height*ratio)), Image.ANTIALIAS)
+                        (int(current_other_img.width * ratio),
+                         int(current_other_img.height * ratio)),
+                        Image.ANTIALIAS)
                     current_other_img_ls[1] = img_name
                     current_other_img_ls[0] = ImageTk.PhotoImage(
                         current_other_img)
                     if as_bullet:
                         self.bullets_ls.append(img_name)
         except:
-            pass    
-    
-    
-    
-    
+            pass
+
     def pause(self):
         if self.mode != PAUSE:
             self.mode = PAUSE
@@ -518,15 +522,15 @@ class Root(Tk):
             pause_sound.play()
             self.paused_start = time.time()
 
-
-
     def init_map(self, rows, columns):
         lawn_photo = self.lawn_photo
         for j in range(rows):
             block_row = []
             for k in range(columns):
-                current_block = ttk.Button(self.maps,
-                                           image=lawn_photo,command=lambda j=j, k=k: self.block_action(j, k))
+                current_block = ttk.Button(
+                    self.maps,
+                    image=lawn_photo,
+                    command=lambda j=j, k=k: self.block_action(j, k))
                 current_block.plants = None
                 current_block.types = 'day'
                 current_block.image = lawn_photo
@@ -534,7 +538,6 @@ class Root(Tk):
                 block_row.append(current_block)
             self.blocks.append(block_row)
         self.lawn_photo = lawn_photo
-
 
     def flower_get_sunshine(self, sun, obj):
         if self.mode != PAUSE:
@@ -636,7 +639,6 @@ class Root(Tk):
         obj.dead_sound[0].play()
         self.after(2000, lambda: random.choice(obj.dead_sound[1]).play())
 
-
     def check_plants(self):
         self.current_time = time.time()
         if self.current_time - self.belt_counter >= self.current_belt.new_plant_speed:
@@ -647,7 +649,8 @@ class Root(Tk):
                 new_plant = deepcopy(self.current_belt.choose())
                 new_plant.belt_col = belt_col
                 new_plant.belt_counter = self.current_time
-                last_unit.configure(image=self.current_belt.imgs[new_plant.number])
+                last_unit.configure(
+                    image=self.current_belt.imgs[new_plant.number])
                 last_unit.plants = new_plant
         for k in range(1, self.current_belt.show_length):
             each_unit = self.current_belt.belts[k]
@@ -655,12 +658,13 @@ class Root(Tk):
                 each = each_unit.plants
                 if self.current_time - each.belt_counter >= self.current_belt.move_speed:
                     each.belt_counter = self.current_time
-                    after_belt = self.current_belt.belts[k-1]
-                    if after_belt.plants is None:                    
+                    after_belt = self.current_belt.belts[k - 1]
+                    if after_belt.plants is None:
                         each_unit.configure(image=self.belt_img)
                         each_unit.plants = None
-                        each.belt_col = k-1
-                        after_belt.configure(image=self.current_belt.imgs[each.number])
+                        each.belt_col = k - 1
+                        after_belt.configure(
+                            image=self.current_belt.imgs[each.number])
                         after_belt.plants = each
         if self.mode == 'stop':
             return
@@ -733,12 +737,9 @@ class Root(Tk):
                                 current.plants.runs(self)
                     j += 1
 
-        self.after(1, self.check_plants) 
-     
-    
+        self.after(1, self.check_plants)
+
     def check_zombies(self):
-        
-                
 
         if self.mode != PAUSE:
             current_time = self.current_time

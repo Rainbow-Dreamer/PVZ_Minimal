@@ -26,6 +26,7 @@ def get_plant(plant_obj, rows=None, columns=None):
     result.columns = columns
     return result
 
+
 class Stage:
     def __init__(self, num_of_waves):
         # number of waves means number of flags (when a big wave of zombies will come)
@@ -66,8 +67,18 @@ class lawnmower:
         self.move_speed = move_speed
         self.attack = attack
 
+
 class belt:
-    def __init__(self, plants_base, show_length=10, new_plant_speed=4, move_speed=2, belt_x=100, belt_y=40, resize_num=1, img='belt.png', offset=10):
+    def __init__(self,
+                 plants_base,
+                 show_length=10,
+                 new_plant_speed=4,
+                 move_speed=2,
+                 belt_x=100,
+                 belt_y=40,
+                 resize_num=1,
+                 img='belt.png',
+                 offset=10):
         self.plants_base = plants_base
         self.show_length = show_length
         self.new_plant_speed = new_plant_speed
@@ -77,16 +88,17 @@ class belt:
         self.resize_num = resize_num
         self.img = img
         self.offset = offset
+
     def choose(self):
         result = random.choice(self.plants_base)
         return result
-    
+
+
 map_img_dict = {
     'day': 'Almanac_GroundDay.png',
     'pool': 'Almanac_GroundPool.jpg',
     'empty': 'empty.png'
 }
-
 
 pygame.mixer.init()
 stage_file = '预设关卡1.py'
@@ -107,7 +119,7 @@ if whole_plants_name is None:
 for x in whole_plants_name:
     exec(f"from plant_scripts.{x} import {x}")
 whole_plants = [eval(x) for x in whole_plants_name]
-pre_transparent = ['豌豆射手.png','番薯.png']
+pre_transparent = ['豌豆射手.png', '番薯.png']
 choose_plant_bg = 'Almanac_GroundDay.png'
 os.chdir('resource')
 lawnmower_rows = [0, 1, 2, 3, 4]

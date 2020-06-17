@@ -4,8 +4,8 @@ with open('common.py', encoding='utf-8') as f:
     exec(f.read(), globals())
 start_time = 5
 part1 = [
-    get_zombies(random.choice([普通僵尸, 路障僵尸]), random.randint(0, 4), 8, random.randint(1, 120))
-    for i in range(20)
+    get_zombies(random.choice([普通僵尸, 路障僵尸]), random.randint(0, 4), 8,
+                random.randint(1, 120)) for i in range(20)
 ]
 
 part2 = [
@@ -18,8 +18,8 @@ part3 = [
                 random.randint(1, 120)) for i in range(20)
 ]
 big_wave1 = [
-    get_zombies(random.choice([普通僵尸, 路障僵尸]), random.randint(0, 4), 8, random.randint(1, 5))
-    for i in range(25)
+    get_zombies(random.choice([普通僵尸, 路障僵尸]), random.randint(0, 4), 8,
+                random.randint(1, 5)) for i in range(25)
 ]
 big_wave2 = [
     get_zombies(random.choice([普通僵尸, 路障僵尸, 铁桶僵尸]), random.randint(0, 4), 8,

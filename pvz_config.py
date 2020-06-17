@@ -103,7 +103,7 @@ if whole_plants_name is None:
             whole_plants_name.remove(each)
     whole_plants_name = [x[:-3] for x in whole_plants_name]
 whole_plants = [(x, f"{x}.png") for x in whole_plants_name]
-pre_transparent = ['豌豆射手.png','番薯.png']
+pre_transparent = ['豌豆射手.png', '番薯.png']
 choose_plant_bg = 'Almanac_GroundDay.png'
 modified_file = None
 stage_file = os.listdir('stages')

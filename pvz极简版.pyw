@@ -62,7 +62,7 @@ class Root(Tk):
         lawn_size = int(lawn_size)
         global default_lawn_size
         if not default_lawn_size:
-            default_lawn_size = deepcopy(lawn_size)             
+            default_lawn_size = deepcopy(lawn_size)
         self.lawn_photo = Image.open(lawn_photo)
         self.lawn_photo = self.lawn_photo.resize((lawn_size, lawn_size),
                                                  Image.ANTIALIAS)
@@ -85,8 +85,8 @@ class Root(Tk):
         if lawn_size <= average_height:
             average_height = lawn_size
         self.choose_plant_bg = Image.open(choose_plant_bg)
-        self.choose_plant_bg = self.choose_plant_bg.resize((lawn_size, lawn_size),
-                                                 Image.ANTIALIAS)
+        self.choose_plant_bg = self.choose_plant_bg.resize(
+            (lawn_size, lawn_size), Image.ANTIALIAS)
         for i in range(self.num_plants):
             current_plant = whole_plants[i]
             current_img = whole_plants_img[i]
@@ -97,18 +97,16 @@ class Root(Tk):
                             lawn_size / current_img.width)
                 current_img = current_img.resize(
                     (int(current_img.width * ratio),
-                     int(current_img.height * ratio)),
-                    Image.ANTIALIAS)
+                     int(current_img.height * ratio)), Image.ANTIALIAS)
                 center_width = int(lawn_size / 2 - current_img.width / 2)
                 temp = self.choose_plant_bg.copy()
                 temp.paste(current_img, (center_width, 0), current_img)
                 current_img = ImageTk.PhotoImage(temp)
-    
+
             else:
                 current_img = Image.open(current_img)
                 current_img = current_img.resize(
-                    (int(lawn_size), int(lawn_size)),
-                    Image.ANTIALIAS)
+                    (int(lawn_size), int(lawn_size)), Image.ANTIALIAS)
                 current_img = ImageTk.PhotoImage(current_img)
             current_button = ttk.Button(
                 self.choose_plants_screen,
@@ -348,7 +346,8 @@ class Root(Tk):
             stage_file_contents = f.read()
         exec(stage_file_contents, globals())
         if lawn_size != default_lawn_size:
-            self.background_img = self.background_img.resize((int(lawn_size), int(lawn_size)), Image.ANTIALIAS)            
+            self.background_img = self.background_img.resize(
+                (int(lawn_size), int(lawn_size)), Image.ANTIALIAS)
         self.stage_name = ttk.Label(self, text=choosed_stage)
         self.stage_name.place(x=10, y=screen_size[1] - 50)
         global choosed_plants
@@ -395,8 +394,8 @@ class Root(Tk):
         self.lawnmower_frame = ttk.LabelFrame(self.whole_map)
         self.lawnmowers = [0 for j in range(map_size[0])]
         self.lawnmower_img = Image.open(lawnmower_img)
-        self.lawnmower_img = self.lawnmower_img.resize(
-            (lawn_size, lawn_size), Image.ANTIALIAS)
+        self.lawnmower_img = self.lawnmower_img.resize((lawn_size, lawn_size),
+                                                       Image.ANTIALIAS)
         self.lawnmower_img = ImageTk.PhotoImage(self.lawnmower_img)
         self.no_lawnmower_img = Image.open(no_lawnmower_img)
         self.no_lawnmower_img = self.no_lawnmower_img.resize(
@@ -442,16 +441,16 @@ class Root(Tk):
                                        y=action_text_place_y,
                                        anchor='center')
         self.flag_img = Image.open(flag_img)
-        self.flag_img = self.flag_img.resize(
-            (lawn_size // 2, lawn_size // 2), Image.ANTIALIAS)
+        self.flag_img = self.flag_img.resize((lawn_size // 2, lawn_size // 2),
+                                             Image.ANTIALIAS)
         self.flag_img = ImageTk.PhotoImage(self.flag_img)
         self.damaged_flag_img = Image.open(damaged_flag_img)
         self.damaged_flag_img = self.damaged_flag_img.resize(
             (lawn_size // 2, lawn_size // 2), Image.ANTIALIAS)
         self.damaged_flag_img = ImageTk.PhotoImage(self.damaged_flag_img)
         self.head_img = Image.open(zombie_head_img)
-        self.head_img = self.head_img.resize(
-            (lawn_size // 2, lawn_size // 2), Image.ANTIALIAS)
+        self.head_img = self.head_img.resize((lawn_size // 2, lawn_size // 2),
+                                             Image.ANTIALIAS)
         self.head_img = ImageTk.PhotoImage(self.head_img)
         self.zombie_bar = ttk.LabelFrame(self)
         self.zombie_bar_normal_labels = []
@@ -502,10 +501,9 @@ class Root(Tk):
             random.choice(reset_sound).play()
         self.change_mode(NULL)
 
-    
     def msg_refresh(self):
         self.msg_text.set('')
-    
+
     def msg_write(self, text, newline=True):
         if self.msg_lines >= msg_lines_limit:
             self.msg_refresh()
@@ -516,12 +514,11 @@ class Root(Tk):
             content += '\n'
         content += text
         self.msg_text.set(content)
-    
-    
+
     def init_sunshine(self):
         sun_photo = ImageTk.PhotoImage(
-            Image.open(sunshine_img).resize(
-                (lawn_size, lawn_size), Image.ANTIALIAS))
+            Image.open(sunshine_img).resize((lawn_size, lawn_size),
+                                            Image.ANTIALIAS))
         self.sunshine = init_sunshine
         self.sunshine_text = StringVar()
         self.sunshine_text.set(self.sunshine)
@@ -532,11 +529,11 @@ class Root(Tk):
         self.sunshine_show.image = sun_photo
         self.sunshine_show.grid(row=0, column=0)
         self.fall_sunshine_img = ImageTk.PhotoImage(
-            Image.open(fall_sunshine_img).resize(
-                (lawn_size, lawn_size), Image.ANTIALIAS))
+            Image.open(fall_sunshine_img).resize((lawn_size, lawn_size),
+                                                 Image.ANTIALIAS))
         self.flower_sunshine_img = ImageTk.PhotoImage(
-            Image.open(fall_sunshine_img).resize(
-                (lawn_size, lawn_size), Image.ANTIALIAS))
+            Image.open(fall_sunshine_img).resize((lawn_size, lawn_size),
+                                                 Image.ANTIALIAS))
 
     def init_plants(self):
         self.bullets_ls = []
@@ -934,8 +931,7 @@ class Root(Tk):
                                 new_hp_img = Image.open(
                                     current.plants.hp_img[0][1])
                                 new_hp_img = new_hp_img.resize(
-                                    (lawn_size, lawn_size),
-                                    Image.ANTIALIAS)
+                                    (lawn_size, lawn_size), Image.ANTIALIAS)
                                 new_hp_img = ImageTk.PhotoImage(new_hp_img)
                                 current.configure(image=new_hp_img)
                                 current.plants.img = new_hp_img
@@ -1030,8 +1026,7 @@ class Root(Tk):
                                             each.full_hp - each.hp >= hp_tol):
                                 new_hp_img = Image.open(each.hp_img[0][1])
                                 new_hp_img = new_hp_img.resize(
-                                    (lawn_size, lawn_size),
-                                    Image.ANTIALIAS)
+                                    (lawn_size, lawn_size), Image.ANTIALIAS)
                                 new_hp_img = ImageTk.PhotoImage(new_hp_img)
                                 each.button.configure(image=new_hp_img)
                                 each.button.image = new_hp_img
@@ -1073,7 +1068,6 @@ class Root(Tk):
         pygame.mixer.music.stop()
         win_sound.play()
         self.after(5000, self.ask_if_continue)
-    
 
     def go_back(self, obj):
         self.is_stop = True
@@ -1096,7 +1090,8 @@ class Root(Tk):
         choosed_plants = []
         global lawn_size
         if lawn_size != default_lawn_size:
-            self.background_img = self.background_img.resize((default_lawn_size, default_lawn_size), Image.ANTIALIAS)          
+            self.background_img = self.background_img.resize(
+                (default_lawn_size, default_lawn_size), Image.ANTIALIAS)
         lawn_size = deepcopy(default_lawn_size)
         self.lawn_photo = self.background_img.copy()
         self.lawn_photo = self.lawn_photo.resize((lawn_size, lawn_size),
@@ -1134,18 +1129,16 @@ class Root(Tk):
                             lawn_size / current_img.width)
                 current_img = current_img.resize(
                     (int(current_img.width * ratio),
-                     int(current_img.height * ratio)),
-                    Image.ANTIALIAS)
+                     int(current_img.height * ratio)), Image.ANTIALIAS)
                 center_width = int(lawn_size / 2 - current_img.width / 2)
                 temp = self.choose_plant_bg.copy()
                 temp.paste(current_img, (center_width, 0), current_img)
                 current_img = ImageTk.PhotoImage(temp)
-    
+
             else:
                 current_img = Image.open(current_img)
                 current_img = current_img.resize(
-                    (int(lawn_size), int(lawn_size)),
-                    Image.ANTIALIAS)
+                    (int(lawn_size), int(lawn_size)), Image.ANTIALIAS)
                 current_img = ImageTk.PhotoImage(current_img)
             current_button = ttk.Button(
                 self.choose_plants_screen,
