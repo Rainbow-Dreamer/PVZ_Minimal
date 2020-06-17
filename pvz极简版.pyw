@@ -70,9 +70,8 @@ class Root(Tk):
         self.lawn_photo = ImageTk.PhotoImage(self.lawn_photo)
         self.action_text = StringVar()
         self.action_text_show = ttk.Label(self, textvariable=self.action_text)
-        self.action_text_place_y = map_size[0] * (lawn_size + 10) + 150
         self.action_text_show.place(x=action_text_place_x,
-                                    y=self.action_text_place_y,
+                                    y=action_text_place_y,
                                     anchor='center')
         pygame.mixer.music.load(choose_plants_music)
         pygame.mixer.music.set_volume(choose_seed_volume)
@@ -435,7 +434,7 @@ class Root(Tk):
         self.killed_zombies_show = ttk.Label(
             textvariable=self.killed_zombies_text)
         self.killed_zombies_show.place(x=action_text_place_x + 200,
-                                       y=self.action_text_place_y,
+                                       y=action_text_place_y,
                                        anchor='center')
         self.flag_img = Image.open(flag_img)
         self.flag_img = self.flag_img.resize(
@@ -474,7 +473,7 @@ class Root(Tk):
                 self.zombie_bar_wave_labels.append(current_bar)
                 counter -= 1
         self.zombie_bar.place(x=action_text_place_x,
-                              y=self.action_text_place_y + 50,
+                              y=action_text_place_y + 50,
                               anchor='center')
         self.current_ind = -1
         self.current_zombies_num = len(self.whole_zombies)

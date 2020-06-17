@@ -121,7 +121,7 @@ lawnmower_img = 'Lawn_mower_2.PNG.png'
 no_lawnmower_img = 'no_lawnmower.png'
 
 background_music = 'sounds/Laura Shigihara - Ultimate Battle IN-GAME.ogg'
-action_text_place_x = 270
+action_text_place_x, action_text_place_y = 270, 500
 lawn_size = None
 default_lawn_size = deepcopy(lawn_size)
 icon_name = 'pvz.ico'
