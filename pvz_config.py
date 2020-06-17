@@ -103,6 +103,8 @@ if whole_plants_name is None:
             whole_plants_name.remove(each)
     whole_plants_name = [x[:-3] for x in whole_plants_name]
 whole_plants = [(x, f"{x}.png") for x in whole_plants_name]
+pre_transparent = ['豌豆射手.png','番薯.png']
+choose_plant_bg = 'Almanac_GroundDay.png'
 modified_file = None
 stage_file = os.listdir('stages')
 stage_file.remove('__init__.py')
@@ -120,7 +122,7 @@ no_lawnmower_img = 'no_lawnmower.png'
 
 background_music = 'sounds/Laura Shigihara - Ultimate Battle IN-GAME.ogg'
 action_text_place_x = 270
-lawn_size = 60
+lawn_size = None
 default_lawn_size = deepcopy(lawn_size)
 icon_name = 'pvz.ico'
 title_name = "PVZ极简版"

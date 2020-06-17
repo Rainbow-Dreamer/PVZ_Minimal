@@ -29,7 +29,7 @@ current_stage = Stage(2)
 current_stage.set_normal_all(part1, part2, part3)
 current_stage.set_waves_all(big_wave1, big_wave2)
 map_size = 6, 9
-lawn_size = 50
+lawn_size = 40
 lawnmower_rows = [0, 1, 2, 3, 4, 5]
 map_content = [['day' for i in range(map_size[1])] for j in range(map_size[0])]
 for i in range(2, 4):

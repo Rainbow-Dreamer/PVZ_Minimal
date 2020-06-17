@@ -60,6 +60,9 @@ class Root(Tk):
         if not lawn_size:
             lawn_size = 250 / map_size[0]
         lawn_size = int(lawn_size)
+        global default_lawn_size
+        if not default_lawn_size:
+            default_lawn_size = deepcopy(lawn_size)             
         self.lawn_photo = Image.open(lawn_photo)
         self.lawn_photo = self.lawn_photo.resize((lawn_size, lawn_size),
                                                  Image.ANTIALIAS)
@@ -82,16 +85,32 @@ class Root(Tk):
         average_height = 200 / (self.num_plants / 5)
         if lawn_size <= average_height:
             average_height = lawn_size
+        self.choose_plant_bg = Image.open(choose_plant_bg)
+        self.choose_plant_bg = self.choose_plant_bg.resize((lawn_size, lawn_size),
+                                                 Image.ANTIALIAS)
         for i in range(self.num_plants):
             current_plant = whole_plants[i]
-            current_plant_img = whole_plants_img[i]
+            current_img = whole_plants_img[i]
             current_plant[1] = i
-            current_img = Image.open(current_plant_img)
-            ratio = average_height / current_img.height
-            current_img = current_img.resize((int(
-                current_img.width * ratio), int(current_img.height * ratio)),
-                                             Image.ANTIALIAS)
-            current_img = ImageTk.PhotoImage(current_img)
+            if current_img in pre_transparent:
+                current_img = Image.open(current_img)
+                ratio = min(lawn_size / current_img.height,
+                            lawn_size / current_img.width)
+                current_img = current_img.resize(
+                    (int(current_img.width * ratio),
+                     int(current_img.height * ratio)),
+                    Image.ANTIALIAS)
+                center_width = int(lawn_size / 2 - current_img.width / 2)
+                temp = self.choose_plant_bg.copy()
+                temp.paste(current_img, (center_width, 0), current_img)
+                current_img = ImageTk.PhotoImage(temp)
+    
+            else:
+                current_img = Image.open(current_img)
+                current_img = current_img.resize(
+                    (int(lawn_size), int(lawn_size)),
+                    Image.ANTIALIAS)
+                current_img = ImageTk.PhotoImage(current_img)
             current_button = ttk.Button(
                 self.choose_plants_screen,
                 image=current_img,
@@ -324,6 +343,8 @@ class Root(Tk):
         with open(f'../stages/{choosed_stage}.py', encoding='utf-8') as f:
             stage_file_contents = f.read()
         exec(stage_file_contents, globals())
+        if lawn_size != default_lawn_size:
+            self.background_img = self.background_img.resize((int(lawn_size), int(lawn_size)), Image.ANTIALIAS)            
         self.stage_name = ttk.Label(self, text=choosed_stage)
         self.stage_name.place(x=10, y=screen_size[1] - 50)
         global choosed_plants
@@ -1052,6 +1073,8 @@ class Root(Tk):
         global choosed_plants
         choosed_plants = []
         global lawn_size
+        if lawn_size != default_lawn_size:
+            self.background_img = self.background_img.resize((default_lawn_size, default_lawn_size), Image.ANTIALIAS)          
         lawn_size = deepcopy(default_lawn_size)
         self.lawn_photo = self.background_img.copy()
         self.lawn_photo = self.lawn_photo.resize((lawn_size, lawn_size),
