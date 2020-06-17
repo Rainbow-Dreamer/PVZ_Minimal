@@ -103,6 +103,8 @@ if whole_plants_name is None:
 for x in whole_plants_name:
     exec(f"from plant_scripts.{x} import {x}")
 whole_plants = [eval(x) for x in whole_plants_name]
+pre_transparent = ['豌豆射手.png','番薯.png']
+choose_plant_bg = 'Almanac_GroundDay.png'
 os.chdir('resource')
 lawnmower_rows = [0, 1, 2, 3, 4]
 lawnmower_mode = 0

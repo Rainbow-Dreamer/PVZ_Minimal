@@ -39,18 +39,36 @@ class Root(Tk):
         self.lawn_photo = ImageTk.PhotoImage(self.lawn_photo)
         self.lawn_width, self.lawn_height = self.lawn_photo.width(
         ), self.lawn_photo.height()
-        
+        self.choose_plant_bg = Image.open(choose_plant_bg)
+        self.choose_plant_bg = self.choose_plant_bg.resize((lawn_size, lawn_size),
+                                                 Image.ANTIALIAS)        
         self.target_plant = None
         
         self.current_belt = current_belt
         self.current_belt.imgs = []
         for each in self.current_belt.plants_base:
-            current_img = Image.open(each.img)
+            current_img = each.img
             resize_num = self.current_belt.resize_num
-            current_img = current_img.resize(
-                (int(self.lawn_width/resize_num),
-                 int(self.lawn_height/resize_num)), Image.ANTIALIAS)
-            self.current_belt.imgs.append(ImageTk.PhotoImage(current_img))   
+            if current_img in pre_transparent:
+                current_img = Image.open(current_img)
+                ratio = min(lawn_size / current_img.height,
+                            lawn_size / current_img.width)
+                current_img = current_img.resize(
+                    (int(current_img.width * ratio / resize_num),
+                     int(current_img.height * ratio / resize_num)),
+                    Image.ANTIALIAS)
+                center_width = int(lawn_size / 2 - current_img.width / 2)
+                temp = self.choose_plant_bg.copy()
+                temp.paste(current_img, (center_width, 0), current_img)
+                current_img = ImageTk.PhotoImage(temp)
+    
+            else:
+                current_img = Image.open(current_img)
+                current_img = current_img.resize(
+                    (int(lawn_size/resize_num), int(lawn_size/resize_num)),
+                    Image.ANTIALIAS)
+                current_img = ImageTk.PhotoImage(current_img)            
+            self.current_belt.imgs.append(current_img)   
         for j in range(len(self.current_belt.plants_base)):
             self.current_belt.plants_base[j].number = j
         self.belt_img = Image.open(self.current_belt.img)
