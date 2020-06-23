@@ -87,8 +87,7 @@ class Root3(Toplevel):
         self.read_new_map_size = None
         self.new_map = None
         self.new_map_show = None
-    
-    
+
     def make_maps(self):
         make_map_window = Toplevel(self)
         make_map_window.title('定制地图')
@@ -100,22 +99,22 @@ class Root3(Toplevel):
         make_map_window.ask_map_size_text.place(x=0, y=0)
         make_map_window.ask_map_size.place(x=160, y=0)
         make_map_window.confirm = ttk.Button(make_map_window, text='保存', command=lambda: self.make_maps_confirm(make_map_window))
-        make_map_window.confirm.place(x=0, y=250) 
+        make_map_window.confirm.place(x=0, y=250)
         make_map_window.change_all_button = ttk.Button(make_map_window, text='全部变成', command=lambda: self.change_all(make_map_window))
         make_map_window.change_all_content = ttk.Entry(make_map_window, width=15)
-        make_map_window.change_all_button.place(x=100, y=250) 
+        make_map_window.change_all_button.place(x=100, y=250)
         make_map_window.change_all_content.place(x=200, y=250)
         make_map_window.change_button = ttk.Button(make_map_window, text='改变', command=lambda: self.changes(make_map_window))
         make_map_window.change_content = ttk.Entry(make_map_window, width=20)
-        make_map_window.change_button.place(x=320, y=250) 
+        make_map_window.change_button.place(x=320, y=250)
         make_map_window.change_content.place(x=420, y=250)
         make_map_window.change_format = ttk.Label(make_map_window, text='改变的格式为: r行数, 类型 (改变一整行), c列数, 类型 (改变一整列), \nr行数c列数, 类型 (改变第r行第c列), 以1作为起始。')
         make_map_window.change_format.place(x=0, y=300)
         make_map_window.new_map_content = Text(make_map_window, width=80, height=15)
         if self.new_map_show:
-            make_map_window.new_map_content.insert(END, self.new_map_show)            
+            make_map_window.new_map_content.insert(END, self.new_map_show)
         make_map_window.new_map_content.place(x=0, y=30)
-    
+
     def change_all(self, obj):
         content = obj.change_all_content.get()
         if content and self.read_new_map_size:
@@ -124,9 +123,8 @@ class Root3(Toplevel):
             obj.new_map_content.delete('1.0', END)
             enter_char = ',\n'
             self.new_map_show = f"[{enter_char.join([str(x) for x in self.new_map])}]"
-            obj.new_map_content.insert(END, self.new_map_show)            
-        
-    
+            obj.new_map_content.insert(END, self.new_map_show)
+
     def changes(self, obj):
         content = obj.change_content.get()
         if content and self.read_new_map_size and self.new_map:
@@ -141,18 +139,18 @@ class Root3(Toplevel):
                         if rows.isdigit() and columns.isdigit():
                             correct = True
                             read_type = 3
-                            rows, columns = int(rows)-1, int(columns)-1
-                            
+                            rows, columns = int(rows) - 1, int(columns) - 1
+
                     else:
                         if places[1:].isdigit():
                             correct = True
                             read_type = 1
-                            rows =  int(places[1:])-1
+                            rows = int(places[1:]) - 1
                 elif places[0] == 'c':
                     if places[1:].isdigit():
                             correct = True
                             read_type = 2
-                            columns =  int(places[1:])-1
+                            columns = int(places[1:]) - 1
                 if correct:
                     if read_type == 1:
                         if 0 <= rows < self.read_new_map_size[0]:
@@ -162,20 +160,18 @@ class Root3(Toplevel):
                         if 0 <= columns < self.read_new_map_size[1]:
                             for each_row in self.new_map:
                                 each_row[columns] = types
-                            self.map_reinsert(obj)   
+                            self.map_reinsert(obj)
                     elif read_type == 3:
                         if 0 <= rows < self.read_new_map_size[0] and 0 <= columns < self.read_new_map_size[1]:
                             self.new_map[rows][columns] = types
-                            self.map_reinsert(obj)   
-                            
-                            
-                        
+                            self.map_reinsert(obj)
+
     def map_reinsert(self, obj):
         obj.new_map_content.delete('1.0', END)
         enter_char = ',\n'
         self.new_map_show = f"[{enter_char.join([str(x) for x in self.new_map])}]"
-        obj.new_map_content.insert(END, self.new_map_show)                    
-    
+        obj.new_map_content.insert(END, self.new_map_show)
+
     def make_maps_confirm(self, obj):
         self.new_map_size = obj.ask_map_size.get()
         if self.new_map_size:
@@ -193,11 +189,9 @@ class Root3(Toplevel):
         new_map_show = obj.new_map_content.get('1.0', END)
         if self.new_map_show != new_map_show:
             self.new_map_show = new_map_show
-        
-    
+
     def edit_map(self, obj):
         pass
-        
 
     def read_num(self):
         self.stage_num = self.choose_num_label.get()
