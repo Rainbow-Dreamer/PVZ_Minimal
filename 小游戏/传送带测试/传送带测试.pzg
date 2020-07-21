@@ -53,6 +53,9 @@ class Root(Tk):
         self.choose_plant_bg = self.choose_plant_bg.resize(
             (lawn_size, lawn_size), Image.ANTIALIAS)
         self.target_plant = None
+        self.fall_sunshine_img = ImageTk.PhotoImage(
+            Image.open(fall_sunshine_img).resize((lawn_size, lawn_size),
+                                                 Image.ANTIALIAS))        
         self.flower_sunshine_img = ImageTk.PhotoImage(
             Image.open(fall_sunshine_img).resize((lawn_size, lawn_size),
                                                  Image.ANTIALIAS))

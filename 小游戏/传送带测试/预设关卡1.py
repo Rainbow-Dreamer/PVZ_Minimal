@@ -33,4 +33,4 @@ map_content = [['day' for i in range(map_size[1])] for j in range(map_size[0])]
 #for i in range(1, 3):
 #for j in range(map_size[1]):
 #map_content[i][j] = 'pool'
-current_belt = belt(whole_plants, 10, 1, 0.5)
+current_belt = belt(whole_plants)
