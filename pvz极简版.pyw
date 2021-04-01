@@ -11,6 +11,7 @@ from tkinter import filedialog
 from tkinter.scrolledtext import ScrolledText
 from PIL import Image, ImageTk
 from copy import deepcopy
+
 pygame.mixer.init()
 sys.path.append(os.path.dirname(__file__))
 current_dir = os.getcwd()
@@ -779,7 +780,7 @@ class Root(Tk):
                 current_zombies.hit_sound_ls[k][1] = pygame.mixer.Sound(
                     current) if type(current) != list else [
                         pygame.mixer.Sound(y) for y in current
-                ]
+                    ]
             for each in current_zombies.hit_sound_ls:
                 if type(each[1]) != list:
                     each[1].set_volume(self.sound_volume)
@@ -931,9 +932,9 @@ class Root(Tk):
                                     <= plants_hp_tol) or (
                                         current.plants.change_mode == 1
                                         and current.plants.hp <= plants_hp_tol
-                            ) or (current.plants.change_mode == 2
-                                  and current.plants.full_hp -
-                                  current.plants.hp >= plants_hp_tol):
+                                    ) or (current.plants.change_mode == 2
+                                          and current.plants.full_hp -
+                                          current.plants.hp >= plants_hp_tol):
                                 new_hp_img = Image.open(
                                     current.plants.hp_img[0][1])
                                 new_hp_img = new_hp_img.resize(
