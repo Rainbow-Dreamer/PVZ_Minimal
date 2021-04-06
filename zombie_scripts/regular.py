@@ -73,12 +73,15 @@ def zombie_move(self, games, columns_move=0, rows_move=0):
         attack_bullet.stop = True
 
 
-def next_to_plant(self, games):
+def next_to_plant(self, games, move_func=0):
     if self.hp > 0:
         if not self.eating and not self.stop:
             if games.current_time - self.time >= self.move_speed:
                 self.time = games.current_time
-                zombie_move(self, games, -1)
+                if move_func == 0:
+                    zombie_move(self, games, -1)
+                else:
+                    move_func(self, games, -1)
         if self.next_to_plants:
             self.next_to_plants = False
             self.eat_time = games.current_time
