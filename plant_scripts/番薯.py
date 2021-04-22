@@ -1,4 +1,5 @@
 from plant import plant
+
 text = '''
 番薯
 

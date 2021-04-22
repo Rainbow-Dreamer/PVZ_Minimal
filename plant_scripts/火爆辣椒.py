@@ -36,7 +36,8 @@ def jalapeno_explode(self, games):
                 fire_ls[each.columns - 1 - each.adjust_col].destroy()
                 games.after(3000, lambda t=each: t.button.destroy())
         jalapeno_blocks = games.blocks[i][j]
-        jalapeno_blocks.configure(image=games.map_img_dict[jalapeno_blocks.types])
+        jalapeno_blocks.configure(
+            image=games.map_img_dict[jalapeno_blocks.types])
         jalapeno_blocks.plants = None
 
 

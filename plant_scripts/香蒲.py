@@ -11,8 +11,11 @@ def pool_check(games, block):
     else:
         games.action_text.set('香蒲需要种植在荷叶上')
         return False
+
+
 def cat_plant(games, block, self):
     block.plants.contain_plants = self
+
 
 def cat_check(self, games):
     if any(x.status == 1 for x in games.whole_zombies):
@@ -21,13 +24,14 @@ def cat_check(self, games):
             i, j = self.rows, self.columns
             now_zombies = [x for x in games.whole_zombies if x.status == 1]
             if now_zombies:
-                distances = [((each.rows - i)**2 + (each.columns - j)**2)**0.5 for each in now_zombies]
+                distances = [((each.rows - i)**2 + (each.columns - j)**2)**0.5
+                             for each in now_zombies]
                 inds = distances.index(min(distances))
-                target_zombies = now_zombies[inds]    
+                target_zombies = now_zombies[inds]
                 shoot(self, games, target_zombies)
                 games.after(200, lambda: shoot(self, games, target_zombies))
-            
-            
+
+
 def shoot(self, games, target):
     i, j = self.rows, self.columns
     new_thron = games.make_label(games.maps, image=self.bullet_img)
@@ -43,7 +47,8 @@ def shoot(self, games, target):
     new_thron.func = self.bullet_func
     new_thron.direction = 0
     self.bullet_sound[0].play()
-    moving(games, new_thron, target)    
+    moving(games, new_thron, target)
+
 
 def moving(games, obj, target, columns_move=0, rows_move=0):
     '''
@@ -56,7 +61,7 @@ def moving(games, obj, target, columns_move=0, rows_move=0):
     5: leftup
     6: rightdown
     7: leftdown
-    '''    
+    '''
     if games.mode != games.PAUSE:
         if obj.stop:
             obj.destroy()
@@ -77,13 +82,15 @@ def moving(games, obj, target, columns_move=0, rows_move=0):
                     target.hit_sound.play()
                 games.after(500, obj.destroy)
                 return
-            affect_zombies = [x for x in games.whole_zombies
-                    if x.status == 1 and x.rows == i and x.columns == j]
+            affect_zombies = [
+                x for x in games.whole_zombies
+                if x.status == 1 and x.rows == i and x.columns == j
+            ]
             if affect_zombies:
                 passed_time = games.current_time - games.zombie_time
                 affect_zombies.sort(
                     key=lambda k: (passed_time - k.appear_time) / k.move_speed,
-                    reverse=True)            
+                    reverse=True)
                 current = affect_zombies[0]
                 obj.grid(row=i, column=j)
                 current.hp -= obj.attack
@@ -92,12 +99,12 @@ def moving(games, obj, target, columns_move=0, rows_move=0):
                 else:
                     current.hit_sound.play()
                 games.after(500, obj.destroy)
-                return            
+                return
             abs_row_diff = abs(row_diff)
             abs_col_diff = abs(col_diff)
             if abs_row_diff != abs_col_diff:
                 if abs_col_diff > abs_row_diff:
-                    rows_move = 0 
+                    rows_move = 0
                     if col_diff >= 0:
                         columns_move = 1
                         direction = 0
@@ -120,7 +127,7 @@ def moving(games, obj, target, columns_move=0, rows_move=0):
                 if col_diff >= 0:
                     columns_move = 1
                 else:
-                    columns_move = -1 
+                    columns_move = -1
                 if rows_move == 1 and columns_move == 1:
                     direction = 6
                 elif rows_move == 1 and columns_move == -1:
@@ -128,18 +135,20 @@ def moving(games, obj, target, columns_move=0, rows_move=0):
                 elif rows_move == -1 and columns_move == 1:
                     direction = 4
                 elif rows_move == -1 and columns_move == -1:
-                    direction = 5   
+                    direction = 5
             if direction != obj.direction:
                 obj.direction = direction
                 obj.configure(image=obj.image[direction])
         else:
-            affect_zombies = [x for x in games.whole_zombies
-                    if x.status == 1 and x.rows == i and x.columns == j]
+            affect_zombies = [
+                x for x in games.whole_zombies
+                if x.status == 1 and x.rows == i and x.columns == j
+            ]
             if affect_zombies:
                 passed_time = games.current_time - games.zombie_time
                 affect_zombies.sort(
                     key=lambda k: (passed_time - k.appear_time) / k.move_speed,
-                    reverse=True)            
+                    reverse=True)
                 current = affect_zombies[0]
                 obj.grid(row=i, column=j)
                 current.hp -= obj.attack
@@ -148,12 +157,14 @@ def moving(games, obj, target, columns_move=0, rows_move=0):
                 else:
                     current.hit_sound.play()
                 games.after(500, obj.destroy)
-                return                        
+                return
             if columns_move == 0 and rows_move == 0:
                 columns_move = 1
         if 0 <= j < games.map_columns and 0 <= i < games.map_rows:
             obj.grid(row=i, column=j)
-            games.after(obj.bullet_speed, lambda: moving(games, obj, target, columns_move, rows_move))
+            games.after(
+                obj.bullet_speed,
+                lambda: moving(games, obj, target, columns_move, rows_move))
         else:
             obj.destroy()
             return
@@ -163,17 +174,18 @@ def moving(games, obj, target, columns_move=0, rows_move=0):
 
 
 香蒲 = plant(name='香蒲',
-             img='香蒲.png',
-             price=225,
-             hp=5,
-             cooling_time=30,
-             attack_interval=1.4,
-             bullet_img='thron.png',
-             bullet_speed=200,
-             bullet_attack=1,
-             bullet_sound=('sounds/throw.ogg', ),
-             func=cat_check,
-             bullet_func=moving,
-             plant_range=[pool_check],
-             plant_func=cat_plant,
-             other_img = [[f'thron{k}.png', 3, True] for k in [4, 2, 6, 1, 3, 7, 5]])
+           img='香蒲.png',
+           price=225,
+           hp=5,
+           cooling_time=30,
+           attack_interval=1.4,
+           bullet_img='thron.png',
+           bullet_speed=200,
+           bullet_attack=1,
+           bullet_sound=('sounds/throw.ogg', ),
+           func=cat_check,
+           bullet_func=moving,
+           plant_range=[pool_check],
+           plant_func=cat_plant,
+           other_img=[[f'thron{k}.png', 3, True]
+                      for k in [4, 2, 6, 1, 3, 7, 5]])

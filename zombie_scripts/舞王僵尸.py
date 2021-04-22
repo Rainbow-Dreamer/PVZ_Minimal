@@ -2,6 +2,7 @@ from zombies import *
 from regular import *
 import random
 from 普通僵尸 import 普通僵尸 as 舞伴僵尸
+
 舞伴僵尸.img = 'Old_Backup_Dancer.png'
 舞伴僵尸.name = '舞伴僵尸'
 舞伴僵尸.with_stop = False

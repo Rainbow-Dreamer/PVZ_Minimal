@@ -5,10 +5,10 @@ def sunflower_check(self, games):
     i, j = self.rows, self.columns
     if games.current_time - self.time >= self.attack_interval:
         self.time = games.current_time
-        flower_sunshine = games.make_button(
-            games.maps,
-            image=games.flower_sunshine_img)
-        flower_sunshine.configure(command=lambda: games.flower_get_sunshine(flower_sunshine, self))
+        flower_sunshine = games.make_button(games.maps,
+                                            image=games.flower_sunshine_img)
+        flower_sunshine.configure(
+            command=lambda: games.flower_get_sunshine(flower_sunshine, self))
         flower_sunshine.image = games.fall_sunshine_img
         flower_sunshine.grid(row=i, column=j)
 

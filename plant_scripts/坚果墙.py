@@ -1,4 +1,5 @@
 from plant import plant
+
 坚果墙 = plant(name='坚果墙',
             img='坚果墙.png',
             price=50,

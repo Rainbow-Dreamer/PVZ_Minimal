@@ -1,5 +1,6 @@
 from copy import deepcopy
 
+
 def day_check(games, block):
     if block.types == 'pool':
         if block.plants and block.plants.name == '荷叶' and not block.plants.contain_plants:
@@ -9,12 +10,13 @@ def day_check(games, block):
             return False
     return block.plants is None
 
+
 def when_plant(games, block, self):
     if block.types == 'pool' and block.plants and block.plants.name == '荷叶':
         block.plants.contain_plants = self
     elif block.types == 'day':
         block.plants = self
-    
+
 
 class plant:
     def __init__(self,
@@ -90,7 +92,7 @@ class plant:
     def __repr__(self):
         attr_dict = vars(self)
         return '\n'.join([f'{x}: {attr_dict[x]}' for x in attr_dict])
-    
+
     def __deepcopy__(self, memo):
         if type(self.img) != str:
             self.img = deepcopy(self.img_name)
@@ -103,6 +105,6 @@ class plant:
         for k, v in self.__dict__.items():
             setattr(result, k, deepcopy(v, memo))
         return result
-    
+
     def runs(self, games):
         self.func(self, games)

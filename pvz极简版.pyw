@@ -1069,7 +1069,7 @@ class Root(Tk):
         pygame.mixer.stop()
         pygame.mixer.music.stop()
         lose_sound.play()
-        self.after(7000, quit)
+        self.after(5000, self.ask_if_continue)
 
     def win(self):
         pygame.mixer.music.stop()

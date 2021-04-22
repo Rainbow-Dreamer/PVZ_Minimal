@@ -1,5 +1,6 @@
 from zombies import *
 from regular import *
+
 铁桶僵尸 = zombies(name='铁桶僵尸',
                img='bucket.png',
                hp=66,

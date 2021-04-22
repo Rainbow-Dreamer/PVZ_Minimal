@@ -92,7 +92,7 @@ def moving(games, obj, columns_move=0, rows_move=0):
                             hitted_zombies.butter_obj = [obj]
                         else:
                             if hitted_zombies.stick_butter == 0:
-                                hitted_zombies.remain_time = games.current_time - hitted_zombies.time                            
+                                hitted_zombies.remain_time = games.current_time - hitted_zombies.time
                             hitted_zombies.stick_butter += 1
                             hitted_zombies.butter_obj.append(obj)
                         obj.hit_zombies = hitted_zombies

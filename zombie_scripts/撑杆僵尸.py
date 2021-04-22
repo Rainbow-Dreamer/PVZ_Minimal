@@ -2,10 +2,7 @@ from zombies import *
 from regular import *
 
 
-def pole_zombies_move(self,
-                      games,
-                      columns_move=0,
-                      rows_move=0):
+def pole_zombies_move(self, games, columns_move=0, rows_move=0):
     if self.stop or games.mode == games.PAUSE:
         return
     if self.hp <= 0 or self.status == 0:
@@ -91,7 +88,8 @@ def pole_zombies_move(self,
                dead_sound=regular_dead_sound,
                hit_sound=regular_hit_sound,
                start_func=pole_zombies_move,
-               eachtime_func=lambda self, games: next_to_plant(self, games, move_func=pole_zombies_move),
+               eachtime_func=lambda self, games: next_to_plant(
+                   self, games, move_func=pole_zombies_move),
                repause_func=repause,
                other_sound=['sounds/polevault.ogg'])
 撑杆僵尸.has_pole = 1

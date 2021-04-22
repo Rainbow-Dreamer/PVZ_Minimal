@@ -1,4 +1,5 @@
 from plant import plant
+
 text = '''
 十字火爆辣椒
 
@@ -74,7 +75,8 @@ def jalapeno_explode(self, games):
                 fire_ls_col[each.rows].destroy()
                 games.after(3000, lambda t=each: t.button.destroy())
         jalapeno_blocks = games.blocks[i][j]
-        jalapeno_blocks.configure(image=games.map_img_dict[jalapeno_blocks.types])
+        jalapeno_blocks.configure(
+            image=games.map_img_dict[jalapeno_blocks.types])
         jalapeno_blocks.plants = None
 
 

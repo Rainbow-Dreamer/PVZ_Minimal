@@ -111,7 +111,9 @@ sys.path.append('.')
 whole_plants_name = None
 if whole_plants_name is None:
     whole_plants_name = os.listdir('plant_scripts')
-    except_ls = ['__pycache__', '__init__.py', 'plant.py', 'bullets.py', '向日葵.py']
+    except_ls = [
+        '__pycache__', '__init__.py', 'plant.py', 'bullets.py', '向日葵.py'
+    ]
     for each in except_ls:
         if each in whole_plants_name:
             whole_plants_name.remove(each)

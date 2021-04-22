@@ -16,7 +16,8 @@ def shoot(self, games):
     new_pea.stop = False
     new_pea.func = self.bullet_func
     self.bullet_sound[0].play()
-    moving(games, new_pea)    
+    moving(games, new_pea)
+
 
 def peashooter_check(self, games):
     i, j = self.rows, self.columns
