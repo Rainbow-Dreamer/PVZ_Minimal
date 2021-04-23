@@ -10,8 +10,8 @@ def chomper_check(self, games):
             self.eating = False
             games.blocks[i][j].configure(image=self.img)
     else:
-        if any(x.status == 1 and x.rows == i and 0 <= x.columns - j <= 1
-               for x in games.whole_zombies):
+        if any(x.status == 1 and x.rows == i and 0 <= x.columns - 1 -
+               x.adjust_col - j <= 1 for x in games.whole_zombies):
             self.eating = True
             self.eating_time = time.time()
             games.after(1000, lambda: chomper_attack(self, games))
@@ -22,9 +22,10 @@ def chomper_attack(self, games):
     self.bullet_sound[0].play()
     hit_zombies = [
         x for x in games.whole_zombies
-        if x.status == 1 and x.rows == i and 0 <= x.columns - j <= 1
+        if x.status == 1 and x.rows == i and 0 <= x.columns - 1 -
+        x.adjust_col - j <= 1
     ]
-    hit_zombies.sort(key=lambda s: s.columns - j)
+    hit_zombies.sort(key=lambda s: s.columns - 1 - s.adjust_col - j)
     if hit_zombies:
         attack_zombies = hit_zombies[0]
         attack_zombies.hp = 0
