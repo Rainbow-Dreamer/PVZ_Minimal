@@ -2,7 +2,7 @@
 
 [中文](#PVZ极简版) English
 
-pvz minimalist version, completely original, the greatest freedom of Plants vs Zombies
+Plants vs Zombies Minimal Edition, with the greatest freedom of game customization and gameplay designing
 
 I recently wrote a minimalist version of Plants vs Zombies using tkinter in python, and it's almost finished. In this version, you can very simply modify all the plants and zombies game parameters, you can customize the level, you can make your own new plants, new zombies, and all the things in the game screen can be changed, including the map, background music and all the game sound, how to modify I will say next. I kind of wrote a pvz from scratch, all the game layout and zombie and plant game logic algorithm, all the game interface design, data structure are their own original, no reference to any source code. Not all the plants and zombies algorithms have been written yet, but it will be soon.
 
