@@ -1,4 +1,281 @@
-﻿# PVZ极简版
+# PVZ Minimal
+
+[中文](#PVZ极简版) English
+
+pvz minimalist version, completely original, the greatest freedom of Plants vs Zombies
+
+I recently wrote a minimalist version of Plants vs Zombies using tkinter in python, and it's almost finished. In this version, you can very simply modify all the plants and zombies game parameters, you can customize the level, you can make your own new plants, new zombies, and all the things in the game screen can be changed, including the map, background music and all the game sound, how to modify I will say next. I kind of wrote a pvz from scratch, all the game layout and zombie and plant game logic algorithm, all the game interface design, data structure are their own original, no reference to any source code. Not all the plants and zombies algorithms have been written yet, but it will be soon.
+
+The upper left corner is the current sunlight obtained, and the upper right corner is the sunlight falling from the sky. Because it is a minimalist version, players can get sunlight by clicking directly on the sunlight when it appears in the upper right corner. The number of horizontal and vertical grids in the meadow can be modified by yourself. It is worth mentioning that this minimalist version has a current status bar at the bottom of the screen compared to the original version, which shows what you are currently doing (such as what plants are planted where, which grid has no plants, what plants are there), which plant in your current location has been eaten, whether you have enough sunlight to plant a plant, whether the plant is still cooling, etc. This status bar will give players a better idea of the overall situation of the game they are playing. Another difference is that the right side of this status bar will show the current number of zombies you have killed.
+
+The zombie progress bar directly below is similar to the original design, and will change accordingly as you customize your level.
+
+The current version of the game is structured to give each plant and each zombie a separate script file, and all plant script files are placed in the
+
+plant_scripts folder, and all zombie scripts are placed in the zombie_scripts folder.
+
+Each level also corresponds to a separate script file, and the script files for all levels are placed in the stages folder.
+
+The resource folder is where all the game's images, music and sound effects are stored, i.e. the game's resources folder.
+
+If you have scripts that need to modify parameters in bulk, you need to put them here, and then change modified_file to the script file name in the pvz_config configuration file.
+
+In the resource folder there is also a common.py file, this is when reading the level, will go to the resource folder, this common.py script file
+
+will do the pre-processing of the sound resources for each zombie.
+
+Next I will explain in detail the data structure design of this minimalist version of pvz. If you want to make your own new plants and zombies, please be sure to read through it carefully.
+
+First is the design of plant types. Each plant belongs to a plant type. The internal parameters of the plant type are as follows.
+
+name,
+
+img,
+
+price, 
+
+hp, 
+
+cooling_time, 
+
+hp_img, 
+
+attack_interval, 
+
+bullet_img, 
+
+bullet_speed, 
+
+bullet_attack, 
+
+bullet_sound, 
+
+sound_volume, 
+
+self_attack, 
+
+change_mode,
+
+func,
+
+bullet_func,
+
+effects,
+
+no_cooling_start,
+
+is_bullet,
+
+dead_normal,
+
+img_transparent, 
+
+rows, 
+
+columns
+
+I'll explain each of these parameters next.
+
+name is the name of the plant, e.g. pea shooter, then name is "pea shooter".
+
+img is the path to the plant's image file, which is how the plant will appear in the game, both on the card and after planting.
+
+price is the price of the plant's sunlight.
+
+hp is the plant's life value.
+
+cooling_time is the plant's cooldown time in seconds.
+
+hp_img is the picture that changes if a plant's life value is reduced to a certain amount, then it is set to
+
+((percentage of life left 1, corresponding image path 1), (percentage of life left 2, corresponding image path 2), ...)
+
+Here the percentage is not multiplied by 100, for example, the nut will become a gnawed picture when there are two-thirds left, that is, 66% of the blood, if the picture path is in "resource/bite.png", then here write ((2/3, "resource/bite.png"),).
+
+If there is a plant that turns into half.png when it has half blood left, then it is ((0.5, "resource/half.png"),).
+
+attack_interval is the attack interval of the plant in seconds, for example, a pea shooter fires a pea every 2 seconds, so here it is 2.
+
+bullet_img is the picture path of the bullet fired by the plant.
+
+bullet_speed is the movement speed of the bullet fired by the plant, in milliseconds (thousandths of a second). For example, if a pea shooter fires a pea that moves one frame every 0.2 seconds, then this is 200.
+
+bullet_attack is the attack power of the bullets fired by the plant.
+
+This minimalist version of PvZ's blood design is based on the attack power of a pea shooter's pea as a unit, that is, the pea shooter's pea attack power is 1, corresponding to the blood of ordinary zombies is 10, because in the original version of an ordinary zombie full blood state can just be pea hit 10 times. The pea shooter is usually gnawed by zombies 5 times without dropping, so the pea shooter's blood is 5 by default.
+
+bullet_sound is the path of the sound file when the plant fires a bullet.
+
+sound_volume is the sound size adjustment of the plant firing bullets, 1 is 100% volume (maximum volume), if it is 0.6 is 60% volume.
+
+self_attack is the attack power of the plant itself (if any), for example, the big mouth flower has a large attack power itself.
+
+About self_attack has not yet written the corresponding algorithm, the next write big mouth flower will be added to the game's general algorithm.
+
+change_mode is the mode selection parameter in the previous hp_img to determine the life value. change_mode is 0 by default.
+
+When change_mode is 0, the amount of blood less than or equal to the percentage will become the corresponding picture.
+
+When the change_mode is 1, the blood volume becomes the corresponding image when it is less than or equal to a value.
+
+When change_mode is 2, the picture will be the corresponding picture when the amount of blood is reduced by a value greater than or equal to one, that is, after how many times it has been chewed.
+
+func is the algorithm that the plant runs in each loop of the game, and is a function with two parameters, the first parameter self is the plant itself, and the second parameter games is the game body.
+
+With these two arguments you can achieve full interaction between the plant and the game body, and the player can make his own algorithm for new plants as he pleases. If one func is not enough, the
+
+If one func is not enough, this func can call other functions by itself, just write them in the plant script.
+
+bullet_func is a function that handles the bullet that was stopped when the game resumes after the player pauses, usually by continuing the same bullet movement function as before.
+
+effects is a dictionary, the key is the type of effect a plant will have on other plants or bullets or zombies, and the corresponding value is a function that allows you to modify the parameters of the affected plant or bullet or zombie, or whatever you want.
+
+The corresponding value is a function that allows you to modify the parameters of the affected plant or bullet or zombie or whatever you want to do. The affected plants or bullets or zombies need to be written in their own scripts with the corresponding detection section, usually in the func.
+
+no_cooling_start is a boolean value, when it is True, the game is cooled down directly at the beginning of the game, and cooled down normally later. When it is False, the game cools down normally from the start. The default value is False.
+
+Generally only sunflower this plant will use this parameter, sunflower no_cooling_start is True.
+
+is_bullet is a boolean value. When it is True, the bullet_img of the plant will be scaled to one-third of the size of the ground image.
+
+When it is False, it will not be scaled and will be at the original size. The default value is True.
+
+dead_normal is a boolean value, when it is True, the plant will be judged as dead and disappear when its life value is less than or equal to 0, when it is False, it will not.
+
+The player can set in the func what the plant will do when the life value is less than or equal to 0. The default value is True. (For example, if the plant is an exploding nut, this parameter should be set to False)
+
+img_transparent is a boolean value, when True, the plant image will be treated as a transparent background image, and resized and positioned and ground image composite as the new plant image.
+
+When False, the plant image is used directly without any processing. The default value is False.
+
+rows is the number of rows where the plant is located, and columns is the number of columns where the plant is located, these two values together indicate the current position of the plant.
+
+These are all the parameters of the plant, and all of them can be modified at will. In the pvz_config.py file, plant_dict, there are the plant parameters that I have finished writing so far, and they can be changed at will.
+
+Next is the design of the zombie type. Each type of zombie belongs to the zombie type. The internal parameters of the zombie type are as follows.
+
+name, 
+
+img, 
+
+hp, 
+
+move_speed, 
+
+attack, 
+
+attack_speed, 
+
+attack_sound, 
+
+dead_sound, 
+
+hit_sound, 
+
+hit_sound_ls, 
+
+hp_img, 
+
+start_func,
+
+eachtime_func,
+
+repause_func,
+
+other_sound,
+
+img_transparent,
+
+rows, 
+
+columns, 
+
+appear_time, 
+
+change_mode
+
+name is the name of the bot.
+
+img is the file path of the zombie's image.
+
+hp is the life value of the zombie. The unit of life value, as I said before on the plant side, is 1 for the attack power of a pea, so the life value of a normal zombie is 10 by default.
+
+move_speed is the zombie's movement speed, how many seconds to move a grid (a whole grid of grass), for example, an ordinary zombie can walk through a whole grid of grass every 9 seconds, then move_speed is set to 9.
+
+attack is the attack power of the zombie, each attack how much the opponent's life value reduction.
+
+attack_speed is the attack speed of the zombie.
+
+attack_sound is the path of the sound file when the zombie attacks.
+
+dead_sound is the path of the sound file when the zombie dies.
+
+hit_sound is the path to the sound file when the zombie is attacked by a plant.
+
+hit_sound_ls is the path of the corresponding sound file after the zombie's life value is reduced to how much, written with reference to the previous plant's hp_img.
+
+hp_img, also refer to the previous plant's hp_img.
+
+start_func is what this zombie does when it appears in the game, players can import the default start_func from inside regular when writing the script, the default start_func in regular is zombie_move.
+
+eachtime_func is what this zombie will do in every cycle of the game, the default inside regular is next_to_plants.
+
+repause_func is what the zombie will do when the game is paused and resumes, and defaults to repause in regular.
+
+other_sound is the sound that the zombie needs other than the sound of being attacked, the sound of the attack, and the sound of being defeated.
+
+img_transparent refers to the img_transparent in plants.
+
+rows and columns are the number of rows and columns of the zombie.
+
+appear_time is the appearance time of the zombie after the game starts, in seconds, that is, how many seconds after the game starts the zombie will appear.
+
+change_mode refers to the change_mode of the previous plants.
+
+Here the data structure of plants and zombies is almost finished. In fact, the real complexity is the implementation of different plants and zombies game logic algorithm, but this data structure design, so I feel very smooth in the design of the algorithm, the organization is also very clear.
+
+Next, let's start with the controls in the game. The left mouse button can do exactly the same things as the original, select plants, plant plants, eradicate plants, take sunlight, etc. In addition to that, there are many functions that the original version does not have, such as when the left mouse button clicks on a plant card, the status bar below will write which plant you have selected, and when you plant, the status bar below will write what plant you have planted in the first few rows and columns. When you click a piece of grass directly, the status bar below will show whether the current grid has any plants, and if so, what is on it. When you eradicate a plant, the status bar below will taunt you if there is no plant (laugh), and if there is a plant, the status bar will say what plant you eradicated in what location. When you click on sunlight, the status bar will show you how much sunlight you have gained.
+
+The right mouse button cancels the currently selected thing. For example, if you select a plant to plant, tap the right mouse button to cancel it. When you select a shovel, tap the right button to cancel it as well. Press the spacebar on the keyboard to pause the game, and press P to continue the game.
+
+The screen at the beginning of the game is for you to choose a plant, here is the same as the original version, directly click the plant card will see the selection to the card slot, tap the plant in the card slot to deselect this plant.
+
+After selecting the plants, click Start Game to start.
+
+All the game parameters can be modified in the file pvz_config.py, and here are some other game parameters.
+
+background_music is the path to the game's background music file.
+
+choose_plants_music is the background music of choose plants interface.
+
+sunshine_img is the path to the sunshine image file.
+
+There are very many other parameters, for example, you can even change the title of the game, the icon, and the picture of the map can also be changed, lawn_img that is the picture file path of the map.
+
+Next, how to customize the level. In this version, in addition to the plant type and zombie type, there is also a level type. The initialization parameter for the level type is only one, that is, how many flags there are in total (that is, how many waves of zombies).
+
+Now we create a new level with the name current_stage, because the main program reads the level variable name current_stage, so we fix current_stage here.
+
+current_stage = Stage(2)
+
+If we want to set a random number of 30 zombies to appear in a row within 1 minute before the first flag arrives, and the zombie type is chosen from normal zombies and roadblock zombies, then write part1 = [get_zombies(random.choice(['normal zombies', 'roadblock zombies',), random.randint(0, 4), 8, random.randint(1, 60)) for i in range(30)]. The first parameter of the get_zombies function is the name of the zombie, the second parameter is the number of rows in which the zombie appears, the third parameter is the number of columns in which the zombie appears, and the fourth parameter is the time (in seconds) in which the zombie appears. It is worth noting that the next wave of zombies will not appear until all the zombies in the current part1 wave have been beaten, which is also the same as the original version, so the starting reference point of the appearance time is the beginning of each wave of zombies, for example, when the second wave starts, the time from the second wave is the starting time. part1 is a list of 30 zombies, we now only We now only need current_stage.set_normal(0, part1) to set part1 to the zombies that appeared before the first flag.
+
+If it is the time of the banner, that is, "a wave of zombies is coming", we also customize the zombies like part1, for example, called wave_1, and then just current_stage.set_waves(0, wave_1) can set wave_1 to the first banner. 1 is set to the zombie that appears at the first banner.
+
+(For those who don't know programming, please note that 0 is generally used as the first in programming, so 0 represents the first wave, 1 represents the second wave, etc.)
+
+As for making new plants and new zombies, then you may really have to know a little python 2333, or in fact, I was thinking, there is no way to make a program that allows users to easily develop a new plant and new zombie game algorithm by themselves, even if people who do not know how to program will write the kind of difficulty, and then I write an interpreter to translate it into python code. These algorithms can be saved as separate files and then just used inside the configuration file (pvz_config.py). For example, we want to write a new plant called apple, which looks delicious but is poisonous, and will make every zombie that eats it deduct some life value per second for the next 15 seconds, the amount of this deduction varies from 1 to 5 (randomly chosen). Each zombie will only take one bite of the apple and then walk right past it. This algorithm can be written very quickly as long as you know a little python, but it may not be so easy to design for people who don't know python, so it may be very convenient if I write an algorithm customizer. I'll try to write one next.
+
+If the current level is won, the status bar below will show that you won, and then the game will close itself after 7 seconds. When a zombie enters the house, the status bar below shows you lost, then also after 7 seconds the game closes by itself.
+
+This minimalist version of pvz currently allows you to make your own levels, and then open the game to select the level you want to play and start playing. I also wrote some mini-games for this version, and currently finished writing the original version in
+Hammer Zombie and I Am Zombie (including custom levels and endless mode). In the game click the settings button to adjust the volume of the current soundtrack, the volume of the sound effects and the ability to change the background music. Will be added later
+More features that can be set during the game.
+
+# PVZ极简版
+
+中文 [English](#PVZ-Minimal)
+
 pvz极简版，完全原创，自由度最大的植物大战僵尸
 
 最近用python的tkinter写了一个极简版的植物大战僵尸，目前完成度差不多了。在这个版本里，大家可以非常简单随意地修改所有植物和僵尸的游戏参数，可以自己定制关卡，可以自己制作新植物，新僵尸，而且所有游戏画面里的东西都可以改，也包括地图，背景音乐和所有游戏音效，如何修改我接下来会说。我算是从零开始写了一个pvz，一切游戏布局和僵尸和植物的游戏逻辑算法，全部的游戏界面设计，数据结构都是自己原创，没有参考任何源代码。目前还没有把所有的植物和僵尸的算法都写完，不过很快的。
