@@ -110,15 +110,15 @@ def moving(games, obj, columns_move=0, rows_move=0):
 
 
 玉米投手 = plant2(name='玉米投手',
-             img='玉米投手.png',
-             price=100,
-             hp=5,
-             cooling_time=7.5,
-             attack_interval=3,
-             bullet_img='Cornpult_kernal.png',
-             bullet_speed=200,
-             bullet_attack=1,
-             bullet_sound=('sounds/throw.ogg', ),
-             func=corn_check,
-             other_img=[['Cornpult_butter.png', 3, True]],
-             bullet_func=moving)
+              img='玉米投手.png',
+              price=100,
+              hp=5,
+              cooling_time=7.5,
+              attack_interval=3,
+              bullet_img='Cornpult_kernal.png',
+              bullet_speed=200,
+              bullet_attack=1,
+              bullet_sound=('sounds/throw.ogg', ),
+              func=corn_check,
+              other_img=[['Cornpult_butter.png', 3, True]],
+              bullet_func=moving)

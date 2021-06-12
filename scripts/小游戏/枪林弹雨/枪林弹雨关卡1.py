@@ -1,5 +1,6 @@
 # 这是一个很简单的预设关卡
 
+
 def shooting_move(self, games, columns_move=0, rows_move=0):
     if self.stop or games.mode == games.PAUSE:
         return
@@ -32,12 +33,12 @@ def shooting_move(self, games, columns_move=0, rows_move=0):
             lawnmower_here.show.grid(row=self.rows, column=0)
             games.lawnmowers[self.rows] = 0
             return
-    
+
         else:
             games.lose()
             games.mode = games.PAUSE
             return
-    
+
     i, j = self.rows, self.columns
     self.button.grid(row=i, column=j)
     i, j = self.rows, self.columns
@@ -50,8 +51,7 @@ def shooting_move(self, games, columns_move=0, rows_move=0):
         attack_bullet = current_bullets[0]
         attack_bullet.bullet_sound[0].play()
         self.hp -= attack_bullet.attack
-        attack_bullet.stop = True    
-
+        attack_bullet.stop = True
 
 
 def shooting_check(self, games):
@@ -60,10 +60,12 @@ def shooting_check(self, games):
             if games.current_time - self.time >= self.move_speed:
                 self.time = games.current_time
                 shooting_move(self, games, -1)
-    
+
+
 def reset_func(self, games):
     self.stop = False
     shooting_move(self, games)
+
 
 def shooting_newspaper(self, games):
     shooting_check(self, games)
@@ -78,6 +80,7 @@ def shooting_newspaper(self, games):
                 self.stop = True
                 games.after(500, lambda: reset_func(self, games))
 
+
 zombies_names = ['普通僵尸', '路障僵尸', '读报僵尸', '铁桶僵尸']
 with open('common.py', encoding='utf-8') as f:
     exec(f.read())
@@ -90,25 +93,22 @@ for each in [普通僵尸, 路障僵尸, 铁桶僵尸]:
 
 start_time = 2
 part1 = [
-    get_zombies(random.choice([普通僵尸, 路障僵尸, 读报僵尸]), random.randint(0, 4),
-                8, random.randint(1, 60))
-    for i in range(20)
+    get_zombies(random.choice([普通僵尸, 路障僵尸, 读报僵尸]), random.randint(0, 4), 8,
+                random.randint(1, 60)) for i in range(20)
 ]
 
 part2 = [
-    get_zombies(random.choice([普通僵尸, 路障僵尸, 铁桶僵尸]), random.randint(0, 4),
-                8, random.randint(1, 60))
-    for i in range(20)
+    get_zombies(random.choice([普通僵尸, 路障僵尸, 铁桶僵尸]), random.randint(0, 4), 8,
+                random.randint(1, 60)) for i in range(20)
 ]
 
 part3 = [
     get_zombies(random.choice([普通僵尸, 路障僵尸, 铁桶僵尸, 读报僵尸]), random.randint(0, 4),
-                8, random.randint(1, 60))
-    for i in range(30)
+                8, random.randint(1, 60)) for i in range(30)
 ]
 big_wave1 = [
-    get_zombies(random.choice([普通僵尸, 路障僵尸, 铁桶僵尸]), random.randint(0, 4),
-                8, random.randint(1, 5)) for i in range(20)
+    get_zombies(random.choice([普通僵尸, 路障僵尸, 铁桶僵尸]), random.randint(0, 4), 8,
+                random.randint(1, 5)) for i in range(20)
 ]
 big_wave2 = [
     get_zombies(random.choice([普通僵尸, 路障僵尸, 铁桶僵尸, 读报僵尸]), random.randint(0, 4),

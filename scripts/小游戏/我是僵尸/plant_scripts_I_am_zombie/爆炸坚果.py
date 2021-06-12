@@ -1,4 +1,5 @@
 from plant2 import *
+
 text = '''
 爆炸坚果
 
@@ -9,6 +10,7 @@ text = '''
 总是红着脸生着不知道哪里来的气。僵尸们如果碰到他，那可就要小心了，
 因为他可不是好惹之辈。别看坚果家族貌似都挺和善，但是这家伙可不一样。
 '''
+
 
 def wallnut_explode(self, games):
     if self.hp <= 0:
@@ -38,14 +40,14 @@ def wallnut_explode(self, games):
 
 
 爆炸坚果 = plant2(name='爆炸坚果',
-             img='爆炸坚果.png',
-             price=100,
-             hp=72,
-             bullet_attack=90,
-             cooling_time=30,
-             bullet_sound=('sounds/cherrybomb.ogg', ),
-             func=wallnut_explode,
-             dead_normal=False,
-             information=text,
-             hp_img=((2 / 3, 'Explode-o-nut2.png'), (1 / 3,
+              img='爆炸坚果.png',
+              price=100,
+              hp=72,
+              bullet_attack=90,
+              cooling_time=30,
+              bullet_sound=('sounds/cherrybomb.ogg', ),
+              func=wallnut_explode,
+              dead_normal=False,
+              information=text,
+              hp_img=((2 / 3, 'Explode-o-nut2.png'), (1 / 3,
                                                       'Explode-o-nut3.png')))

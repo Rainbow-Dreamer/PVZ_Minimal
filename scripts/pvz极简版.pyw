@@ -135,13 +135,26 @@ class Root(Tk):
             self.choose_stages.insert(END, k)
         self.choose_stages.place(x=450, y=250)
         self.choose_stages_bar.config(command=self.choose_stages.yview)
+        self.open_config_window = False
+        self.open_wiki_window = False
+        self.open_make_stage_window = False
 
     def open_wiki(self):
+        if self.open_wiki_window:
+            wiki_window.focus_set()
+            return
+        else:
+            self.open_wiki_window = True
         os.chdir('..')
         with open('scripts/图鉴.pyw', encoding='utf-8') as f:
             exec(f.read(), globals())
 
     def open_make_stage(self):
+        if self.open_make_stage_window:
+            make_stage_window.focus_set()
+            return
+        else:
+            self.open_make_stage_window = True
         with open('../scripts/关卡制作器.pyw', encoding='utf-8') as f:
             exec(f.read(), globals())
 
@@ -154,8 +167,19 @@ class Root(Tk):
             quit()
             read_little_games(filename)
 
+    def close_config_window(self):
+        self.config_window.destroy()
+        self.open_config_window = False
+
     def make_config_window(self):
+        if self.open_config_window:
+            self.config_window.focus_set()
+            return
+        else:
+            self.open_config_window = True
         config_window = Toplevel(self)
+        self.config_window = config_window
+        config_window.protocol('WM_DELETE_WINDOW', self.close_config_window)
         config_window.title('设置')
         config_window.minsize(500, 300)
         config_window.bg_volume_text = ttk.Label(config_window, text='背景音乐音量')
@@ -205,6 +229,7 @@ class Root(Tk):
     def change_bg(self, config_window):
         filename = filedialog.askopenfilename(initialdir=self.last_place,
                                               title="选择你想播放的背景音乐",
+                                              parent=config_window,
                                               filetype=(("音乐文件",
                                                          "*.mp3;*.ogg;*.wav"),
                                                         ("所有文件", "*.*")))
@@ -349,7 +374,8 @@ class Root(Tk):
         if msg_box:
             self.msg_box_text.place(x=msg_box_x, y=msg_box_y)
         choosed_stage = self.choose_stages.get(ACTIVE)
-        with open(f'../scripts/stages/{choosed_stage}.py', encoding='utf-8') as f:
+        with open(f'../scripts/stages/{choosed_stage}.py',
+                  encoding='utf-8') as f:
             stage_file_contents = f.read()
         exec(stage_file_contents, globals())
         if lawn_size != default_lawn_size:

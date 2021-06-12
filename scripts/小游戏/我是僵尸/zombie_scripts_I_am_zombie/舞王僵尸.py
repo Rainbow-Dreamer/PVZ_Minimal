@@ -3,6 +3,7 @@ from regular import *
 import random
 from copy import deepcopy
 from 普通僵尸 import 普通僵尸
+
 舞伴僵尸 = deepcopy(普通僵尸)
 舞伴僵尸.img = 'Old_Backup_Dancer.png'
 舞伴僵尸.name = '舞伴僵尸'
@@ -277,18 +278,18 @@ def dance_eat_plants(games, plants, self):
 
 
 舞王僵尸 = zombies2(name='舞王僵尸',
-               img='Old_Dancing_Zombie1.png',
-               hp=17,
-               move_speed=5,
-               price=350,
-               attack=1,
-               attack_speed=1000,
-               attack_sound=regular_attack_sound,
-               dead_sound=regular_dead_sound,
-               hit_sound=regular_hit_sound,
-               start_func=dance_move,
-               eachtime_func=dance_next_to_plant,
-               repause_func=dance_repause)
+                img='Old_Dancing_Zombie1.png',
+                hp=17,
+                move_speed=5,
+                price=350,
+                attack=1,
+                attack_speed=1000,
+                attack_sound=regular_attack_sound,
+                dead_sound=regular_dead_sound,
+                hit_sound=regular_hit_sound,
+                start_func=dance_move,
+                eachtime_func=dance_next_to_plant,
+                repause_func=dance_repause)
 舞王僵尸.calls_zombies = []
 舞王僵尸.first_plant = False
 舞伴僵尸.move_speed = 舞王僵尸.move_speed

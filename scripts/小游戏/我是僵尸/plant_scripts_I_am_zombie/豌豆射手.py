@@ -72,14 +72,14 @@ def moving(games, obj, columns_move=0, rows_move=0):
 
 
 豌豆射手 = plant2(name='豌豆射手',
-             img='豌豆射手.png',
-             price=100,
-             hp=5,
-             cooling_time=7.5,
-             attack_interval=1.4,
-             bullet_img='pea.png',
-             bullet_speed=200,
-             bullet_attack=1,
-             bullet_sound=('sounds/throw.ogg', ),
-             func=peashooter_check,
-             bullet_func=moving)
+              img='豌豆射手.png',
+              price=100,
+              hp=5,
+              cooling_time=7.5,
+              attack_interval=1.4,
+              bullet_img='pea.png',
+              bullet_speed=200,
+              bullet_attack=1,
+              bullet_sound=('sounds/throw.ogg', ),
+              func=peashooter_check,
+              bullet_func=moving)

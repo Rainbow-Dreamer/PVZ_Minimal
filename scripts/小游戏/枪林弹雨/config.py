@@ -26,6 +26,7 @@ def get_plant(plant_obj, rows=None, columns=None):
     result.columns = columns
     return result
 
+
 class Stage:
     def __init__(self, num_of_waves):
         # number of waves means number of flags (when a big wave of zombies will come)

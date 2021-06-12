@@ -107,15 +107,15 @@ def moving(games, obj, columns_move=0, rows_move=0):
 
 
 寒冰射手 = plant2(name='寒冰射手',
-             img='寒冰射手.png',
-             price=175,
-             hp=5,
-             cooling_time=7.5,
-             attack_interval=1.4,
-             bullet_img='snow pea.png',
-             bullet_speed=200,
-             bullet_attack=1,
-             bullet_sound=('sounds/throw.ogg', 'sounds/frozen.ogg'),
-             func=snow_pea_check,
-             bullet_func=moving,
-             other_img=[['pea.png', 3]])
+              img='寒冰射手.png',
+              price=175,
+              hp=5,
+              cooling_time=7.5,
+              attack_interval=1.4,
+              bullet_img='snow pea.png',
+              bullet_speed=200,
+              bullet_attack=1,
+              bullet_sound=('sounds/throw.ogg', 'sounds/frozen.ogg'),
+              func=snow_pea_check,
+              bullet_func=moving,
+              other_img=[['pea.png', 3]])

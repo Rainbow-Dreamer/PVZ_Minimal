@@ -10,8 +10,10 @@ if whole_plants_name is None:
 zombies_names = ['普通僵尸', '路障僵尸', '读报僵尸', '铁桶僵尸', '撑杆僵尸', '舞王僵尸']
 show_zombies = True
 
+
 def sounds(x):
     return pygame.mixer.Sound(x).get_raw()
+
 
 pygame.mixer.init()
 
@@ -19,7 +21,6 @@ with open('common.py', encoding='utf-8') as f:
     exec(f.read())
 
 choosed_zombies = zombies_sample
-
 
 
 def get_plant(plant_obj, rows=None, columns=None):
@@ -139,7 +140,11 @@ NULL, PLACE, REMOVE, PAUSE = 0, 1, 2, 3
 choosed_plants = []
 os.chdir('../scripts/小游戏/我是僵尸')
 sys.path.append('.')
-whole_plants = [eval(f'__import__("plant_scripts_I_am_zombie.{x}", fromlist=["plant_scripts_I_am_zombie"]).{x}') for x in whole_plants_name]
+whole_plants = [
+    eval(
+        f'__import__("plant_scripts_I_am_zombie.{x}", fromlist=["plant_scripts_I_am_zombie"]).{x}'
+    ) for x in whole_plants_name
+]
 plants_num = len(whole_plants)
 stage_file = '我是僵尸关卡.py'
 with open(stage_file, encoding='utf-8') as f:

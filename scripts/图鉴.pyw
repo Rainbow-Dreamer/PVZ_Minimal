@@ -37,6 +37,7 @@ os.chdir('../../resource')
 class Root2(Toplevel):
     def __init__(self):
         super(Root2, self).__init__()
+        self.protocol('WM_DELETE_WINDOW', self.close_wiki_window)
         self.minsize(*screen_size)
         self.title('图鉴')
         self.plants_frame = ttk.LabelFrame(self)
@@ -176,6 +177,10 @@ class Root2(Toplevel):
                 current.button.grid(row=(i - j) // num_each_row,
                                     column=(i - j) % num_each_row)
             self.current_page = page_num
+
+    def close_wiki_window(self):
+        root.open_wiki_window = False
+        self.destroy()
 
 
 wiki_window = Root2()

@@ -36,14 +36,14 @@ def potato_detect(self, games):
 
 
 土豆雷 = plant2(name='土豆雷',
-            img='土豆雷.png',
-            price=25,
-            hp=5,
-            cooling_time=30,
-            attack_interval=2,
-            bullet_img='UnarmedPotatoMine.png',
-            bullet_attack=90,
-            bullet_sound=('sounds/dirt_rise.ogg', 'sounds/potato_mine.ogg'),
-            func=potato_checking,
-            is_bullet=False,
-            use_bullet_img_first=True)
+             img='土豆雷.png',
+             price=25,
+             hp=5,
+             cooling_time=30,
+             attack_interval=2,
+             bullet_img='UnarmedPotatoMine.png',
+             bullet_attack=90,
+             bullet_sound=('sounds/dirt_rise.ogg', 'sounds/potato_mine.ogg'),
+             func=potato_checking,
+             is_bullet=False,
+             use_bullet_img_first=True)

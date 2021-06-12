@@ -43,6 +43,7 @@ def get_whole_types(obj):
 class Root3(Toplevel):
     def __init__(self):
         super(Root3, self).__init__()
+        self.protocol('WM_DELETE_WINDOW', self.close_make_stage_window)
         self.minsize(700, 800)
         self.title('关卡制作器')
         self.normals = None
@@ -593,6 +594,10 @@ class Root3(Toplevel):
         success = ttk.Label(self, text='成功生成脚本文件,请到stages文件夹里查看')
         success.place(x=0, y=50)
         self.after(1000, success.place_forget)
+
+    def close_make_stage_window(self):
+        root.open_make_stage_window = False
+        self.destroy()
 
 
 def random_from(ls_text, probs):

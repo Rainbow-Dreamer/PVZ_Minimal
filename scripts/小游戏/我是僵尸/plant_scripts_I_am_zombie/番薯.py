@@ -1,4 +1,5 @@
 from plant2 import *
+
 text = '''
 番薯
 
@@ -12,7 +13,7 @@ text = '''
 def move_here(each, i, games):
     each.stop = False
     each.time = games.current_time
-    each.runs(games)    
+    each.runs(games)
     if each.button.winfo_exists():
         each.button.grid(row=i, column=each.columns)
 
@@ -31,11 +32,12 @@ def attract(self, games):
             each.rows = i
             games.after(2000, lambda each=each: move_here(each, i, games))
 
+
 番薯 = plant2(name='番薯',
-           img='番薯.png',
-           price=150,
-           hp=40,
-           cooling_time=20,
-           img_transparent=True,
-           func=attract,
-           information=text)
+            img='番薯.png',
+            price=150,
+            hp=40,
+            cooling_time=20,
+            img_transparent=True,
+            func=attract,
+            information=text)

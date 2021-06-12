@@ -1,6 +1,7 @@
 os.chdir('..')
 sys.path.append('.')
 from plant_scripts.plant import plant
+
 os.chdir('小游戏/枪林弹雨')
 sys.path.append('.')
 with open('config.py', encoding='utf-8') as f:
@@ -9,9 +10,10 @@ with open('config.py', encoding='utf-8') as f:
 
 def go_back():
     pygame.mixer.quit()
-    root.destroy()    
+    root.destroy()
     os.chdir('..')
     os.startfile('pvz极简版.exe')
+
 
 class Root(Tk):
     def __init__(self):
@@ -20,7 +22,7 @@ class Root(Tk):
         self.title('枪林弹雨')
         self.minsize(*screen_size)
         self.back_button = ttk.Button(self, text='返回', command=go_back)
-        self.back_button.place(x=screen_size[0]-100, y=0)
+        self.back_button.place(x=screen_size[0] - 100, y=0)
         self.make_label = ttk.Label
         self.make_button = ttk.Button
         self.NULL, self.PLACE, self.REMOVE, self.PAUSE = 0, 1, 2, 3
@@ -78,9 +80,9 @@ class Root(Tk):
 
         self.init_map(*map_size)
         self.maps.place(x=65, y=100)
-        
+
         self.init_player()
-        
+
         self.choosed_plant = None
         self.sunshine_ls = []
         self.map_rows, self.map_columns = map_size
@@ -149,13 +151,12 @@ class Root(Tk):
         self.check_player()
         self.after(int(start_time * 1000), zombies_coming_sound.play)
         self.after(int(start_time * 1000), self.check_zombies)
-    
-    
-    
+
     def make_img(self, each, resize_num=1):
         current_img = Image.open(each.img)
         if each.img_transparent:
-            ratio = min(self.lawn_height / current_img.height, self.lawn_width / current_img.width)
+            ratio = min(self.lawn_height / current_img.height,
+                        self.lawn_width / current_img.width)
             current_img = current_img.resize(
                 (int(current_img.width * ratio / resize_num),
                  int(current_img.height * ratio / resize_num)),
@@ -179,10 +180,13 @@ class Root(Tk):
                     each.bullet_img = ImageTk.PhotoImage(current_img)
                 else:
                     each.bullet_img = Image.open(each.bullet_img)
-                    ratio = min((self.lawn_height/3) / each.bullet_img.height, (self.lawn_width/3) / each.bullet_img.width)
+                    ratio = min(
+                        (self.lawn_height / 3) / each.bullet_img.height,
+                        (self.lawn_width / 3) / each.bullet_img.width)
                     each.bullet_img = ImageTk.PhotoImage(
                         each.bullet_img.resize(
-                            (int(each.bullet_img.width*ratio), int(each.bullet_img.height*ratio)),
+                            (int(each.bullet_img.width * ratio),
+                             int(each.bullet_img.height * ratio)),
                             Image.ANTIALIAS))
             if each.other_img:
                 for j in range(len(each.other_img)):
@@ -194,19 +198,22 @@ class Root(Tk):
                     elif current_len == 3:
                         img_name, resize_num, as_bullet = current_other_img_ls
                     current_other_img = Image.open(img_name)
-                    ratio = min((self.lawn_height/resize_num) / current_other_img.height, (self.lawn_width/resize_num) / current_other_img.width)
+                    ratio = min((self.lawn_height / resize_num) /
+                                current_other_img.height,
+                                (self.lawn_width / resize_num) /
+                                current_other_img.width)
                     current_other_img = current_other_img.resize(
-                        (int(current_other_img.width*ratio),
-                         int(current_other_img.height*ratio)), Image.ANTIALIAS)
+                        (int(current_other_img.width * ratio),
+                         int(current_other_img.height * ratio)),
+                        Image.ANTIALIAS)
                     current_other_img_ls[1] = img_name
                     current_other_img_ls[0] = ImageTk.PhotoImage(
                         current_other_img)
                     if as_bullet:
                         self.bullets_ls.append(img_name)
         except:
-            pass    
-    
-    
+            pass
+
     def init_player(self):
         self.bullets_ls = []
         self.bullets_ls.append(peashooter_obj.bullet_img_name)
@@ -222,9 +229,7 @@ class Root(Tk):
         current.plants.time = current_time
         current.plants.counter = current_time
         current.plants.enable = 0
-        
-    
-    
+
     def pause(self):
         if self.mode != PAUSE:
             self.mode = PAUSE
@@ -232,7 +237,6 @@ class Root(Tk):
             pygame.mixer.music.pause()
             pause_sound.play()
             self.paused_start = time.time()
-
 
     def init_sunshine(self):
         sun_photo = ImageTk.PhotoImage(
@@ -259,8 +263,7 @@ class Root(Tk):
         for j in range(rows):
             block_row = []
             for k in range(columns):
-                current_block = ttk.Button(self.maps,
-                                           image=lawn_photo)
+                current_block = ttk.Button(self.maps, image=lawn_photo)
                 current_block.plants = None
                 current_block.image = lawn_photo
                 current_block.grid(row=j, column=k)
@@ -321,9 +324,7 @@ class Root(Tk):
         zombie_img = zombie_img.resize((self.lawn_width, self.lawn_height),
                                        Image.ANTIALIAS)
         zombie_img = ImageTk.PhotoImage(zombie_img)
-        current_zombies_button = ttk.Button(
-            self.maps,
-            image=zombie_img)
+        current_zombies_button = ttk.Button(self.maps, image=zombie_img)
         current_zombies_button.image = zombie_img
         current_zombies.button = current_zombies_button
         current_zombies.next_to_plants = False
@@ -364,54 +365,56 @@ class Root(Tk):
         obj.dead_sound[0].play()
         self.after(2000, lambda: random.choice(obj.dead_sound[1]).play())
 
-
-     
-     
     def check_player(self):
         if keyboard.is_pressed('A'):
             if peashooter_obj.columns > 0:
-                current = self.blocks[peashooter_obj.rows][peashooter_obj.columns]
+                current = self.blocks[peashooter_obj.rows][
+                    peashooter_obj.columns]
                 current.configure(image=self.lawn_photo)
                 current.plants = None
                 peashooter_obj.columns -= 1
-                current2 = self.blocks[peashooter_obj.rows][peashooter_obj.columns]
+                current2 = self.blocks[peashooter_obj.rows][
+                    peashooter_obj.columns]
                 current2.configure(image=peashooter_obj.img)
                 current2.plants = peashooter_obj
         if keyboard.is_pressed('D'):
             if peashooter_obj.columns < self.map_columns - 1:
-                current = self.blocks[peashooter_obj.rows][peashooter_obj.columns]
+                current = self.blocks[peashooter_obj.rows][
+                    peashooter_obj.columns]
                 current.configure(image=self.lawn_photo)
                 current.plants = None
                 peashooter_obj.columns += 1
-                current2 = self.blocks[peashooter_obj.rows][peashooter_obj.columns]
+                current2 = self.blocks[peashooter_obj.rows][
+                    peashooter_obj.columns]
                 current2.configure(image=peashooter_obj.img)
                 current2.plants = peashooter_obj
         if keyboard.is_pressed('W'):
             if peashooter_obj.rows > 0:
-                current = self.blocks[peashooter_obj.rows][peashooter_obj.columns]
+                current = self.blocks[peashooter_obj.rows][
+                    peashooter_obj.columns]
                 current.configure(image=self.lawn_photo)
                 current.plants = None
                 peashooter_obj.rows -= 1
-                current2 = self.blocks[peashooter_obj.rows][peashooter_obj.columns]
+                current2 = self.blocks[peashooter_obj.rows][
+                    peashooter_obj.columns]
                 current2.configure(image=peashooter_obj.img)
                 current2.plants = peashooter_obj
         if keyboard.is_pressed('S'):
             if peashooter_obj.rows < self.map_rows - 1:
-                current = self.blocks[peashooter_obj.rows][peashooter_obj.columns]
+                current = self.blocks[peashooter_obj.rows][
+                    peashooter_obj.columns]
                 current.configure(image=self.lawn_photo)
                 current.plants = None
                 peashooter_obj.rows += 1
-                current2 = self.blocks[peashooter_obj.rows][peashooter_obj.columns]
+                current2 = self.blocks[peashooter_obj.rows][
+                    peashooter_obj.columns]
                 current2.configure(image=peashooter_obj.img)
                 current2.plants = peashooter_obj
         if keyboard.is_pressed('J'):
             peashooter_obj.runs(self)
         self.after(80, self.check_player)
-    
-    
+
     def check_zombies(self):
-        
-                
 
         if self.mode != PAUSE:
             self.current_time = time.time()

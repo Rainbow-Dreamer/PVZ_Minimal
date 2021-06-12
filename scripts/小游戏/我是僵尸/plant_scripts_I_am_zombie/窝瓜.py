@@ -63,12 +63,12 @@ def squash_attack(self, games):
 
 
 窝瓜 = plant2(name='窝瓜',
-           img='窝瓜.png',
-           price=50,
-           hp=5,
-           cooling_time=30,
-           attack_interval=1.5,
-           bullet_attack=90,
-           bullet_sound=(['sounds/squash_hmm.ogg', 'sounds/squash_hmm2.ogg'],
-                         'sounds/gargantuar_thump.ogg'),
-           func=squash_check)
+            img='窝瓜.png',
+            price=50,
+            hp=5,
+            cooling_time=30,
+            attack_interval=1.5,
+            bullet_attack=90,
+            bullet_sound=(['sounds/squash_hmm.ogg', 'sounds/squash_hmm2.ogg'],
+                          'sounds/gargantuar_thump.ogg'),
+            func=squash_check)

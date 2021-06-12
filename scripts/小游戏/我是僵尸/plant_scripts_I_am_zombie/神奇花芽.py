@@ -14,9 +14,10 @@ text = '''
 现在，就是见证手气的时刻了。
 '''
 
+
 def random_choose(self, games):
     if games.current_time - self.time >= self.attack_interval:
-        choosed_plant = random.randint(0, games.plants_num-1)
+        choosed_plant = random.randint(0, games.plants_num - 1)
         j, k = self.rows, self.columns
         current = games.blocks[j][k]
         current.plants = None
@@ -31,16 +32,14 @@ def random_choose(self, games):
 
         current.plants.time = current_time
         current_plant_name = current.plants.name
-        games.action_text.set(
-            f'你成功放置了{current_plant_name}在第{j+1}行，第{k+1}列')
-    
+        games.action_text.set(f'你成功放置了{current_plant_name}在第{j+1}行，第{k+1}列')
 
 
 神奇花芽 = plant2(name='神奇花芽',
-             img='神奇花芽.png',
-             price=100,
-             hp=5,
-             cooling_time=7.5,
-             attack_interval=2,
-             func=random_choose,
-             information=text)
+              img='神奇花芽.png',
+              price=100,
+              hp=5,
+              cooling_time=7.5,
+              attack_interval=2,
+              func=random_choose,
+              information=text)

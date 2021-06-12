@@ -2,10 +2,7 @@ from zombies2 import *
 from regular import *
 
 
-def pole_zombies_move(self,
-                      games,
-                      columns_move=0,
-                      rows_move=0):
+def pole_zombies_move(self, games, columns_move=0, rows_move=0):
     if self.stop or games.mode == games.PAUSE:
         return
     if self.hp <= 0 or self.status == 0:
@@ -16,7 +13,7 @@ def pole_zombies_move(self,
             self.other_sound[0].play()
             self.has_pole = 0
             if columns_move == 0:
-                self.columns -= 1            
+                self.columns -= 1
         else:
             self.next_to_plants = True
             self.nexted_plants = check_if_plants
@@ -36,7 +33,7 @@ def pole_zombies_move(self,
                 self.nexted_plants = check_if_plants2
                 self.adjust_col = 0
                 return
-   
+
     self.rows += rows_move
     self.columns += columns_move
     if self.columns < 0:
@@ -48,13 +45,13 @@ def pole_zombies_move(self,
                 self.attack_sound.play()
             games.brains[self.rows] -= 1
             if games.brains[self.rows] <= 0:
-                games.brains_show[self.rows].configure(image=games.no_brain_img)
+                games.brains_show[self.rows].configure(
+                    image=games.no_brain_img)
                 games.plant_bite_sound.play()
-            games.after(self.attack_speed,
-                        lambda: zombie_move(self, games))
+            games.after(self.attack_speed, lambda: zombie_move(self, games))
         else:
-            self.button.destroy()     
-        return        
+            self.button.destroy()
+        return
 
     i, j = self.rows, self.columns
     self.button.grid(row=i, column=j)
@@ -72,17 +69,18 @@ def pole_zombies_move(self,
 
 
 撑杆僵尸 = zombies2(name='撑杆僵尸',
-               img='Pole_Vaulting_Zombie1.png',
-               hp=17,
-               price=75,
-               move_speed=6,
-               attack=1,
-               attack_speed=1000,
-               attack_sound=regular_attack_sound,
-               dead_sound=regular_dead_sound,
-               hit_sound=regular_hit_sound,
-               start_func=pole_zombies_move,
-               eachtime_func=lambda self, games: next_to_plant(self, games, move_func=pole_zombies_move),
-               repause_func=repause,
-               other_sound=['sounds/polevault.ogg'])
+                img='Pole_Vaulting_Zombie1.png',
+                hp=17,
+                price=75,
+                move_speed=6,
+                attack=1,
+                attack_speed=1000,
+                attack_sound=regular_attack_sound,
+                dead_sound=regular_dead_sound,
+                hit_sound=regular_hit_sound,
+                start_func=pole_zombies_move,
+                eachtime_func=lambda self, games: next_to_plant(
+                    self, games, move_func=pole_zombies_move),
+                repause_func=repause,
+                other_sound=['sounds/polevault.ogg'])
 撑杆僵尸.has_pole = 1

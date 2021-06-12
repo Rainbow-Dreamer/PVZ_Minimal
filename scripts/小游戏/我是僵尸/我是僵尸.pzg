@@ -6,7 +6,7 @@ with open('config.py', encoding='utf-8') as f:
 
 def go_back():
     pygame.mixer.quit()
-    root.destroy()    
+    root.destroy()
     os.chdir('..')
     os.startfile('pvz极简版.exe')
 
@@ -18,7 +18,7 @@ class Root(Tk):
         self.title('我是僵尸')
         self.minsize(*screen_size)
         self.back_button = ttk.Button(self, text='返回', command=go_back)
-        self.back_button.place(x=screen_size[0]-100, y=0)
+        self.back_button.place(x=screen_size[0] - 100, y=0)
         self.make_label = ttk.Label
         self.make_button = ttk.Button
         self.get_zombies = get_zombies

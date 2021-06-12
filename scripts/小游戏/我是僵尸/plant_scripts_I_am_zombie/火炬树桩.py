@@ -1,10 +1,12 @@
 from plant2 import *
+
 火炬树桩 = plant2(name='火炬树桩',
-             img='火炬树桩.png',
-             price=175,
-             hp=5,
-             cooling_time=7.5,
-             bullet_img='FirePea.png')
+              img='火炬树桩.png',
+              price=175,
+              hp=5,
+              cooling_time=7.5,
+              bullet_img='FirePea.png')
+
 
 def fire_update(self, obj):
     if obj.attributes == 0:
