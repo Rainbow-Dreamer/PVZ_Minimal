@@ -6,6 +6,10 @@ Plants vs Zombies Minimal Edition, with the greatest freedom of game customizati
 
 I recently wrote a minimalist version of Plants vs Zombies using tkinter in python, and it's almost finished. In this version, you can very simply modify all the plants and zombies game parameters, you can customize the level, you can make your own new plants, new zombies, and all the things in the game screen can be changed, including the map, background music and all the game sound, how to modify I will say next. I kind of wrote a pvz from scratch, all the game layout and zombie and plant game logic algorithm, all the game interface design, data structure are their own original, no reference to any source code. Not all the plants and zombies algorithms have been written yet, but it will be soon.
 
+![image](resource/preview1.jpg)
+
+![image](resource/preview2.jpg)
+
 The upper left corner is the current sunlight obtained, and the upper right corner is the sunlight falling from the sky. Because it is a minimalist version, players can get sunlight by clicking directly on the sunlight when it appears in the upper right corner. The number of horizontal and vertical grids in the meadow can be modified by yourself. It is worth mentioning that this minimalist version has a current status bar at the bottom of the screen compared to the original version, which shows what you are currently doing (such as what plants are planted where, which grid has no plants, what plants are there), which plant in your current location has been eaten, whether you have enough sunlight to plant a plant, whether the plant is still cooling, etc. This status bar will give players a better idea of the overall situation of the game they are playing. Another difference is that the right side of this status bar will show the current number of zombies you have killed.
 
 The zombie progress bar directly below is similar to the original design, and will change accordingly as you customize your level.
