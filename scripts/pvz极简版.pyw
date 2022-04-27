@@ -22,21 +22,15 @@ with open(config_path, encoding='utf-8') as f:
 whole_plants_img = [x[1] for x in whole_plants]
 whole_plants = [[x[0], 0] for x in whole_plants]
 
-try:
-    with open('../memory.txt') as f:
-        last_place = f.read()
-except:
-    last_place = '.'
-
 
 class Root(Tk):
+
     def __init__(self):
         super(Root, self).__init__()
         self.wm_iconbitmap(icon_name)
         self.title(title_name)
         self.minsize(*screen_size)
         self.sound_volume = 1
-        self.last_place = last_place
         self.music_flag = 0
         self.is_stop = False
         self.wiki = ttk.Button(self, text='图鉴', command=self.open_wiki)
@@ -227,17 +221,12 @@ class Root(Tk):
             config_window.go_back_button.place(x=400, y=20)
 
     def change_bg(self, config_window):
-        filename = filedialog.askopenfilename(initialdir=self.last_place,
-                                              title="选择你想播放的背景音乐",
+        filename = filedialog.askopenfilename(title="选择你想播放的背景音乐",
                                               parent=config_window,
                                               filetype=(("音乐文件",
                                                          "*.mp3;*.ogg;*.wav"),
                                                         ("所有文件", "*.*")))
         if filename:
-            self.last_place = os.path.dirname(filename)
-            with open('../memory.txt', 'w') as f:
-                f.write(self.last_place)
-
             if self.music_flag == 1:
                 global background_music
                 background_music = filename

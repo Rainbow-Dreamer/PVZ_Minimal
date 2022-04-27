@@ -1,11 +1,6 @@
 os.chdir('传送带测试')
 with open('config.py', encoding='utf-8') as f:
     exec(f.read())
-try:
-    with open('../memory.txt') as f:
-        last_place = f.read()
-except:
-    last_place = '.'
 
 
 def go_back():
@@ -21,7 +16,6 @@ class Root(Tk):
         self.wm_iconbitmap(icon_name)
         self.title('传送带测试')
         self.minsize(*screen_size)
-        self.last_place = last_place
         self.paused_time = 0
         self.sound_volume = 1
         self.music_flag = 1
@@ -325,16 +319,11 @@ class Root(Tk):
             config_window.go_back_button.place(x=400, y=20)
 
     def change_bg(self, config_window):
-        filename = filedialog.askopenfilename(initialdir=self.last_place,
-                                              title="选择你想播放的背景音乐",
+        filename = filedialog.askopenfilename(title="选择你想播放的背景音乐",
                                               filetype=(("音乐文件",
                                                          "*.mp3;*.ogg;*.wav"),
                                                         ("所有文件", "*.*")))
         if filename:
-            self.last_place = os.path.dirname(filename)
-            with open('../memory.txt', 'w') as f:
-                f.write(self.last_place)
-
             if self.music_flag == 1:
                 global background_music
                 background_music = filename
