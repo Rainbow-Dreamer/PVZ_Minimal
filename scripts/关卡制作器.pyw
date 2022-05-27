@@ -1,4 +1,5 @@
 class stage_part:
+
     def __init__(self,
                  types=None,
                  names=None,
@@ -41,6 +42,7 @@ def get_whole_types(obj):
 
 
 class Root3(Toplevel):
+
     def __init__(self):
         super(Root3, self).__init__()
         self.protocol('WM_DELETE_WINDOW', self.close_make_stage_window)

@@ -12,6 +12,7 @@ def go_back():
 
 
 class Root(Tk):
+
     def __init__(self):
         super(Root, self).__init__()
         self.wm_iconbitmap(icon_name)

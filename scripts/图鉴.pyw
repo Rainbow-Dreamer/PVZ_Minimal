@@ -35,6 +35,7 @@ os.chdir('../../resource')
 
 
 class Root2(Toplevel):
+
     def __init__(self):
         super(Root2, self).__init__()
         self.protocol('WM_DELETE_WINDOW', self.close_wiki_window)

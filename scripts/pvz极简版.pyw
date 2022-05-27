@@ -155,8 +155,8 @@ class Root(Tk):
     def open_little_game(self):
         filename = filedialog.askopenfilename(initialdir='../scripts/小游戏',
                                               title="选择游戏脚本文件",
-                                              filetype=(("游戏脚本文件", "*.pzg;"),
-                                                        ("所有文件", "*.*")))
+                                              filetypes=(("游戏脚本文件", ".py"),
+                                                         ("所有文件", "*")))
         if filename:
             quit()
             read_little_games(filename)
@@ -223,9 +223,9 @@ class Root(Tk):
     def change_bg(self, config_window):
         filename = filedialog.askopenfilename(title="选择你想播放的背景音乐",
                                               parent=config_window,
-                                              filetype=(("音乐文件",
-                                                         "*.mp3;*.ogg;*.wav"),
-                                                        ("所有文件", "*.*")))
+                                              filetypes=(("音乐文件",
+                                                          ".mp3 .ogg .wav"),
+                                                         ("所有文件", "*")))
         if filename:
             if self.music_flag == 1:
                 global background_music

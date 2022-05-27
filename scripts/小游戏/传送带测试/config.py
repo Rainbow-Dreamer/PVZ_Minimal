@@ -28,6 +28,7 @@ def get_plant(plant_obj, rows=None, columns=None):
 
 
 class Stage:
+
     def __init__(self, num_of_waves):
         # number of waves means number of flags (when a big wave of zombies will come)
         self.num_of_waves = num_of_waves
@@ -58,6 +59,7 @@ class Stage:
 
 
 class lawnmower:
+
     def __init__(self, rows, columns, mode=0, move_speed=500, attack=None):
         # if mode == 0, the lawn mower will kill all zombies in the row by setting their hp to 0
         # if mode == 1, the lawn mower will have only give an attack to all of the zombies i the row
@@ -69,6 +71,7 @@ class lawnmower:
 
 
 class belt:
+
     def __init__(self,
                  plants_base,
                  show_length=10,
