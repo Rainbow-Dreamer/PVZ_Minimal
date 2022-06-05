@@ -126,7 +126,7 @@ for x in whole_plants_name:
 whole_plants = [eval(x) for x in whole_plants_name]
 pre_transparent = ['豌豆射手.png', '番薯.png']
 choose_plant_bg = 'Almanac_GroundDay.png'
-os.chdir('../resource')
+os.chdir('../resources')
 lawnmower_rows = [0, 1, 2, 3, 4]
 lawnmower_mode = 0
 lawnmower_speed = 200

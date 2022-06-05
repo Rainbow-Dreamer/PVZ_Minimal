@@ -2,8 +2,8 @@ with open('scripts/wiki_config.py', encoding='utf-8') as f:
     exec(f.read(), globals())
 pygame.mixer.init()
 paper_sound = [
-    pygame.mixer.Sound('resource/sounds/paper.ogg'),
-    pygame.mixer.Sound('resource/sounds/seedlift.ogg')
+    pygame.mixer.Sound('resources/sounds/paper.ogg'),
+    pygame.mixer.Sound('resources/sounds/seedlift.ogg')
 ]
 for each in paper_sound:
     each.set_volume(sound_volume)
@@ -31,7 +31,7 @@ for k in filename:
     with open(k, encoding='utf-8') as f:
         exec(f.read(), globals())
 zombies_ls = [eval(i) for i in zombies_name]
-os.chdir('../../resource')
+os.chdir('../../resources')
 
 
 class Root2(Toplevel):

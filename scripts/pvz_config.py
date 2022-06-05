@@ -113,7 +113,7 @@ stage_file = os.listdir('scripts/stages')
 stage_file.remove('__init__.py')
 stage_file = [x[:-3] for x in stage_file]
 
-os.chdir('resource/')
+os.chdir('resources/')
 
 lawnmower_rows = [0, 1, 2, 3, 4]
 default_lawnmower_rows = deepcopy(lawnmower_rows)

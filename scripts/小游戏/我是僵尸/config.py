@@ -151,7 +151,7 @@ plants_num = len(whole_plants)
 stage_file = '我是僵尸关卡.py'
 with open(stage_file, encoding='utf-8') as f:
     stage_file_contents = f.read()
-os.chdir('../../../resource/')
+os.chdir('../../../resources/')
 exec(stage_file_contents)
 
 modified_file = None

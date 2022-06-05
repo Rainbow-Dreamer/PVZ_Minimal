@@ -8,9 +8,9 @@ You can download the latest version [here](https://www.jianguoyun.com/p/Dfm6ocYQ
 
 I recently wrote a minimalist version of Plants vs Zombies using tkinter in python, and it's almost finished. In this version, you can very simply modify all the plants and zombies game parameters, you can customize the level, you can make your own new plants, new zombies, and all the things in the game screen can be changed, including the map, background music and all the game sound, how to modify I will say next. I kind of wrote a pvz from scratch, all the game layout and zombie and plant game logic algorithm, all the game interface design, data structure are their own original, no reference to any source code. Not all the plants and zombies algorithms have been written yet, but it will be soon.
 
-![image](resource/preview1.jpg)
+![image](resources/preview1.jpg)
 
-![image](resource/preview2.jpg)
+![image](resources/preview2.jpg)
 
 The upper left corner is the current sunlight obtained, and the upper right corner is the sunlight falling from the sky. Because it is a minimalist version, players can get sunlight by clicking directly on the sunlight when it appears in the upper right corner. The number of horizontal and vertical grids in the meadow can be modified by yourself. It is worth mentioning that this minimalist version has a current status bar at the bottom of the screen compared to the original version, which shows what you are currently doing (such as what plants are planted where, which grid has no plants, what plants are there), which plant in your current location has been eaten, whether you have enough sunlight to plant a plant, whether the plant is still cooling, etc. This status bar will give players a better idea of the overall situation of the game they are playing. Another difference is that the right side of this status bar will show the current number of zombies you have killed.
 
@@ -22,11 +22,11 @@ plant_scripts folder, and all zombie scripts are placed in the zombie_scripts fo
 
 Each level also corresponds to a separate script file, and the script files for all levels are placed in the stages folder.
 
-The resource folder is where all the game's images, music and sound effects are stored, i.e. the game's resources folder.
+The resources folder is where all the game's images, music and sound effects are stored, i.e. the game's resources folder.
 
 If you have scripts that need to modify parameters in bulk, you need to put them here, and then change modified_file to the script file name in the pvz_config configuration file.
 
-In the resource folder there is also a common.py file, this is when reading the level, will go to the resource folder, this common.py script file
+In the resources folder there is also a common.py file, this is when reading the level, will go to the resources folder, this common.py script file
 
 will do the pre-processing of the sound resources for each zombie.
 
@@ -96,9 +96,9 @@ hp_img is the picture that changes if a plant's life value is reduced to a certa
 
 ((percentage of life left 1, corresponding image path 1), (percentage of life left 2, corresponding image path 2), ...)
 
-Here the percentage is not multiplied by 100, for example, the nut will become a gnawed picture when there are two-thirds left, that is, 66% of the blood, if the picture path is in "resource/bite.png", then here write ((2/3, "resource/bite.png"),).
+Here the percentage is not multiplied by 100, for example, the nut will become a gnawed picture when there are two-thirds left, that is, 66% of the blood, if the picture path is in "resources/bite.png", then here write ((2/3, "resources/bite.png"),).
 
-If there is a plant that turns into half.png when it has half blood left, then it is ((0.5, "resource/half.png"),).
+If there is a plant that turns into half.png when it has half blood left, then it is ((0.5, "resources/half.png"),).
 
 attack_interval is the attack interval of the plant in seconds, for example, a pea shooter fires a pea every 2 seconds, so here it is 2.
 
@@ -288,9 +288,9 @@ pvz极简版，完全原创，自由度最大的植物大战僵尸
 
 最近用python的tkinter写了一个极简版的植物大战僵尸，目前完成度差不多了。在这个版本里，大家可以非常简单随意地修改所有植物和僵尸的游戏参数，可以自己定制关卡，可以自己制作新植物，新僵尸，而且所有游戏画面里的东西都可以改，也包括地图，背景音乐和所有游戏音效，如何修改我接下来会说。我算是从零开始写了一个pvz，一切游戏布局和僵尸和植物的游戏逻辑算法，全部的游戏界面设计，数据结构都是自己原创，没有参考任何源代码。目前还没有把所有的植物和僵尸的算法都写完，不过很快的。
 
-![image](resource/preview1.jpg)
+![image](resources/preview1.jpg)
 
-![image](resource/preview2.jpg)
+![image](resources/preview2.jpg)
 
 左上角是当前得到的阳光，右上角是天上落下的阳光，因为是极简版，所以玩家直接在右上角出现阳光的时候点击就可以获得阳光。草地的横向纵向格子数量都可以自己修改。非常值得一提的是，这个极简版和原版相比，多了屏幕下方的一个当前状态显示栏，可以显示你当前正在做什么事情（比如在哪里种了什么植物，哪个格子上有没有植物，有什么植物），你当前哪个位置的植物被吃掉了，你的阳光够不够一个植物的种植，这个植物是否还在冷却等等。这个状态栏会让玩家更清楚自己正在玩的游戏的整体形势。另一个不一样的地方是这个状态栏右边会显示当前你杀死的僵尸数量。
 
@@ -376,9 +376,9 @@ hp_img是如果一个植物的生命值减少到一定量后，图片会发生�
 
 ((生命值剩下的百分比1, 对应的图片路径1), (生命值剩下的百分比2, 对应的图片路径2), ...)
 
-这里的百分比没有乘上100，比如坚果剩下三分之二，也就是66%的血的时候会变成被啃的图片，假如这个图片路径在"resource/bite.png"，那么这里就写((2/3, "resource/bite.png"),)。
+这里的百分比没有乘上100，比如坚果剩下三分之二，也就是66%的血的时候会变成被啃的图片，假如这个图片路径在"resources/bite.png"，那么这里就写((2/3, "resources/bite.png"),)。
 
-假如有个植物剩下一半血的时候会变成half.png这个图片，那么就是((0.5,"resource/half.png"),)。
+假如有个植物剩下一半血的时候会变成half.png这个图片，那么就是((0.5,"resources/half.png"),)。
 
 attack_interval是植物的攻击间隔，单位为秒，比如豌豆射手每隔2秒发射一个豌豆，那么这里就是2。
 

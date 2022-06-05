@@ -4,7 +4,7 @@ for x in zombies_names:
 zombies_sample = [eval(j) for j in zombies_names]
 for each in zombies_sample:
     each.move_speed /= 1.4
-os.chdir('../../../resource/')
+os.chdir('../../../resources/')
 for current_zombies in zombies_sample:
     current_zombies.attack_sound = [
         sounds(j) for j in current_zombies.attack_sound

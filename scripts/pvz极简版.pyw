@@ -395,7 +395,7 @@ class Root(Tk):
             eval(f'importlib.import_module("plant_scripts.{x}").{x}')
             for x in choosed_plants
         ])
-        os.chdir('../resource')
+        os.chdir('../resources')
         if modified_file:
             with open(modified_file, encoding='utf-8') as f:
                 exec(f.read())

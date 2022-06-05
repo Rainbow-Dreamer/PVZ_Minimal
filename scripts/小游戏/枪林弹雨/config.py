@@ -76,7 +76,7 @@ with open(stage_file, encoding='utf-8') as f:
     stage_file_contents = f.read()
 
 peashooter_default = eval(f'importlib.import_module("豌豆射手_枪林弹雨").豌豆射手_枪林弹雨')
-os.chdir('../../../resource/')
+os.chdir('../../../resources/')
 peashooter_obj = get_plant(peashooter_default, 2, 0)
 lawnmower_rows = [0, 1, 2, 3, 4]
 lawnmower_mode = 0
