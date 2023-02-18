@@ -43,7 +43,7 @@ class Root(Tk):
 
         self.configs = ttk.Button(self,
                                   text='设置',
-                                  command=self.make_config_window)
+                                  command=self.open_config_window)
         self.little_game = ttk.Button(self,
                                       text='小游戏',
                                       command=self.open_little_game)
@@ -125,10 +125,12 @@ class Root(Tk):
         self.choose_stages_bar.place(x=610, y=340, height=170, anchor=CENTER)
         self.choose_stages = Listbox(self,
                                      yscrollcommand=self.choose_stages_bar.set)
+        self.choose_stages.configure(activestyle='none')
         for k in stage_file:
             self.choose_stages.insert(END, k)
         self.choose_stages.place(x=450, y=250)
         self.choose_stages_bar.config(command=self.choose_stages.yview)
+        self.make_config_window()
         self.open_config_window = False
         self.open_wiki_window = False
         self.open_make_stage_window = False
@@ -165,60 +167,67 @@ class Root(Tk):
         self.config_window.destroy()
         self.open_config_window = False
 
-    def make_config_window(self):
+    def open_config_window(self):
         if self.open_config_window:
             self.config_window.focus_set()
-            return
         else:
+            self.make_config_window()
+            self.config_window.deiconify()
             self.open_config_window = True
-        config_window = Toplevel(self)
-        self.config_window = config_window
-        config_window.protocol('WM_DELETE_WINDOW', self.close_config_window)
-        config_window.title('设置')
-        config_window.minsize(500, 300)
-        config_window.bg_volume_text = ttk.Label(config_window, text='背景音乐音量')
-        config_window.bg_volume = Scale(
-            config_window,
+
+    def make_config_window(self):
+        self.config_window = Toplevel(self)
+        self.config_window.withdraw()
+        self.config_window.protocol('WM_DELETE_WINDOW',
+                                    self.close_config_window)
+        self.config_window.title('设置')
+        self.config_window.minsize(500, 300)
+        self.config_window.bg_volume_text = ttk.Label(self.config_window,
+                                                      text='背景音乐音量')
+        self.config_window.bg_volume = Scale(
+            self.config_window,
             from_=0,
             to=100,
             orient=HORIZONTAL,
             resolution=5,
             length=200,
-            command=lambda e: self.change_bg_volume(config_window))
-        config_window.bg_volume.set(int(pygame.mixer.music.get_volume() * 100))
-        config_window.bg_volume_text.place(x=0, y=20)
-        config_window.bg_volume.place(x=100, y=0)
-        config_window.bg_text = ttk.Label(config_window, text='背景音乐')
-        config_window.bg = Text(config_window, width=55, height=5)
-        config_window.bg_button = ttk.Button(
-            config_window,
+            command=lambda e: self.change_bg_volume(self.config_window))
+        self.config_window.bg_volume.set(
+            int(pygame.mixer.music.get_volume() * 100))
+        self.config_window.bg_volume_text.place(x=0, y=20)
+        self.config_window.bg_volume.place(x=100, y=0)
+        self.config_window.bg_text = ttk.Label(self.config_window, text='背景音乐')
+        self.config_window.bg = Text(self.config_window, width=55, height=5)
+        self.config_window.bg_button = ttk.Button(
+            self.config_window,
             text='更改',
-            command=lambda: self.change_bg(config_window))
+            command=lambda: self.change_bg(self.config_window))
         if self.music_flag == 1:
-            config_window.bg.insert(END, background_music)
+            self.config_window.bg.insert(END, background_music)
         elif self.music_flag == 0:
-            config_window.bg.insert(END, choose_plants_music)
-        config_window.bg_text.place(x=0, y=60)
-        config_window.bg.place(x=0, y=80)
-        config_window.bg_button.place(x=400, y=80)
-        config_window.sound_volume_text = ttk.Label(config_window, text='音效音量')
-        config_window.sound_volume = Scale(
-            config_window,
+            self.config_window.bg.insert(END, choose_plants_music)
+        self.config_window.bg_text.place(x=0, y=60)
+        self.config_window.bg.place(x=0, y=80)
+        self.config_window.bg_button.place(x=400, y=80)
+        self.config_window.sound_volume_text = ttk.Label(self.config_window,
+                                                         text='音效音量')
+        self.config_window.sound_volume = Scale(
+            self.config_window,
             from_=0,
             to=100,
             orient=HORIZONTAL,
             resolution=5,
             length=200,
-            command=lambda e: self.change_sound_volume(config_window))
-        config_window.sound_volume.set(int(self.sound_volume * 100))
-        config_window.sound_volume_text.place(x=0, y=180)
-        config_window.sound_volume.place(x=100, y=160)
+            command=lambda e: self.change_sound_volume(self.config_window))
+        self.config_window.sound_volume.set(int(self.sound_volume * 100))
+        self.config_window.sound_volume_text.place(x=0, y=180)
+        self.config_window.sound_volume.place(x=100, y=160)
         if self.music_flag == 1:
-            config_window.go_back_button = ttk.Button(
-                config_window,
+            self.config_window.go_back_button = ttk.Button(
+                self.config_window,
                 text='返回主界面',
-                command=lambda: self.go_back(config_window))
-            config_window.go_back_button.place(x=400, y=20)
+                command=lambda: self.go_back(self.config_window))
+            self.config_window.go_back_button.place(x=400, y=20)
 
     def change_bg(self, config_window):
         filename = filedialog.askopenfilename(title="选择你想播放的背景音乐",
@@ -1177,10 +1186,12 @@ class Root(Tk):
         self.choose_stages_bar.place(x=610, y=340, height=170, anchor=CENTER)
         self.choose_stages = Listbox(self,
                                      yscrollcommand=self.choose_stages_bar.set)
+        self.choose_stages.configure(activestyle='none')
         for k in stage_file:
             self.choose_stages.insert(END, k)
         self.choose_stages.place(x=450, y=250)
         self.choose_stages_bar.config(command=self.choose_stages.yview)
+        self.open_config_window = False
 
     def ask_if_continue(self):
         self.is_stop = True

@@ -591,7 +591,9 @@ class Root3(Toplevel):
             output_text += f"current_stage.set_normal_all({','.join(available_normals)})\n"
         if available_waves:
             output_text += f"current_stage.set_waves_all({','.join(available_waves)})"
-        with open(f'../stages/{stage_name}.py', 'w', encoding='utf-8') as f:
+        print(111, os.getcwd(), flush=True)
+        with open(f'../scripts/stages/{stage_name}.py', 'w',
+                  encoding='utf-8') as f:
             f.write(output_text)
         success = ttk.Label(self, text='成功生成脚本文件,请到stages文件夹里查看')
         success.place(x=0, y=50)

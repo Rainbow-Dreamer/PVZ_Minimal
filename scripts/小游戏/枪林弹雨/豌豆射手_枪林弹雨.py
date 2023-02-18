@@ -5,7 +5,7 @@ import random, time
 def peashooter_check(self, games):
     i, j = self.rows, self.columns
     self.time = games.current_time
-    new_pea = games.make_label(games.maps, image=self.bullet_img)
+    new_pea = games.make_label(games.maps, image=self.other_img[0][0])
     new_pea.image = self.bullet_img
     new_pea.bullet_img_name = self.bullet_img_name
     new_pea.bullet_speed = self.bullet_speed
@@ -78,6 +78,8 @@ def cat_check(self, games):
         inds = distances.index(min(distances))
         target_zombies = now_zombies[inds]
         shoot(self, games, target_zombies)
+    else:
+        peashooter_check(self, games)
 
 
 def shoot(self, games, target):

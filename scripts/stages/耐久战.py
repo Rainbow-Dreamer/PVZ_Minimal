@@ -5,58 +5,58 @@ with open('common.py', encoding='utf-8') as f:
 start_time = 5
 part1 = [
     get_zombies(random.choice([普通僵尸, 路障僵尸]), random.randint(0, 4), 8,
-                random.randint(1, 120)) for i in range(80)
+                random.randint(1, 120)) for i in range(40)
 ]
 
 part2 = [
     get_zombies(random.choice([普通僵尸, 路障僵尸, 撑杆僵尸]), random.randint(0, 4), 8,
-                random.randint(1, 120)) for i in range(80)
+                random.randint(1, 120)) for i in range(40)
 ]
 
 part3 = [
     get_zombies(random.choice([普通僵尸, 路障僵尸, 铁桶僵尸]), random.randint(0, 4), 8,
-                random.randint(1, 120)) for i in range(120)
+                random.randint(1, 120)) for i in range(60)
 ]
 part4 = [
     get_zombies(random.choice([普通僵尸, 路障僵尸, 铁桶僵尸, 撑杆僵尸]), random.randint(0, 4),
-                8, random.randint(1, 120)) for i in range(120)
+                8, random.randint(1, 120)) for i in range(60)
 ]
 part5 = [
     get_zombies(random.choice([普通僵尸, 路障僵尸, 铁桶僵尸, 撑杆僵尸, 舞王僵尸]),
-                random.randint(0, 4), 8, random.randint(1, 120))
+                random.randint(0, 4), 8, random.randint(1, 60))
     for i in range(180)
 ]
 part6 = [
     get_zombies(random.choice([路障僵尸, 铁桶僵尸, 撑杆僵尸, 舞王僵尸]), random.randint(0, 4),
-                8, random.randint(1, 120)) for i in range(180)
+                8, random.randint(1, 120)) for i in range(80)
 ]
 part7 = [
     get_zombies(random.choice([铁桶僵尸, 撑杆僵尸, 舞王僵尸]), random.randint(0, 4), 8,
-                random.randint(1, 120)) for i in range(300)
+                random.randint(1, 120)) for i in range(100)
 ]
 big_wave1 = [
     get_zombies(random.choice([普通僵尸, 路障僵尸]), random.randint(0, 4), 8,
-                random.randint(1, 10)) for i in range(200)
+                random.randint(1, 10)) for i in range(100)
 ]
 big_wave2 = [
     get_zombies(random.choice([普通僵尸, 路障僵尸, 撑杆僵尸]), random.randint(0, 4), 8,
-                random.randint(1, 10)) for i in range(200)
+                random.randint(1, 10)) for i in range(100)
 ]
 big_wave3 = [
     get_zombies(random.choice([撑杆僵尸, 路障僵尸, 铁桶僵尸]), random.randint(0, 4), 8,
-                random.randint(1, 10)) for i in range(300)
+                random.randint(1, 10)) for i in range(150)
 ]
 big_wave4 = [
     get_zombies(random.choice([撑杆僵尸, 铁桶僵尸, 舞王僵尸]), random.randint(0, 4), 8,
-                random.randint(1, 10)) for i in range(300)
+                random.randint(1, 10)) for i in range(150)
 ]
 big_wave5 = [
     get_zombies(random.choice([铁桶僵尸, 舞王僵尸]), random.randint(0, 4), 8,
-                random.randint(1, 20)) for i in range(450)
+                random.randint(1, 20)) for i in range(170)
 ]
 big_wave6 = [
     get_zombies(random.choice([撑杆僵尸, 路障僵尸, 铁桶僵尸, 舞王僵尸]), random.randint(0, 4),
-                8, random.randint(1, 20)) for i in range(600)
+                8, random.randint(1, 20)) for i in range(200)
 ]
 current_stage = Stage(6)
 current_stage.set_normal_all(part1, part2, part3, part4, part5, part6, part7)

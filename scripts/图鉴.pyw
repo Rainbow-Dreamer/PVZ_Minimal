@@ -8,7 +8,7 @@ paper_sound = [
 for each in paper_sound:
     each.set_volume(sound_volume)
 os.chdir('scripts/plant_scripts')
-sys.path.append('.')
+sys.path.append(os.getcwd())
 filename = os.listdir()
 remove_ls = ['__pycache__', '__init__.py', 'plant.py', 'bullets.py']
 for each in remove_ls:
@@ -20,7 +20,7 @@ for k in filename:
         exec(f.read(), globals())
 plants_ls = [eval(i) for i in plants_name]
 os.chdir('../zombie_scripts')
-sys.path.append('.')
+sys.path.append(os.getcwd())
 filename = os.listdir()
 remove_ls = ['__pycache__', '__init__.py', 'regular.py', 'zombies.py']
 for each in remove_ls:
