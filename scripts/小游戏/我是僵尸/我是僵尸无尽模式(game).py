@@ -33,7 +33,7 @@ class Root(Tk):
         self.paused_time = 0
         lawn_size = 250 // map_size[0]
         self.lawn_photo = self.lawn_photo.resize((lawn_size, lawn_size),
-                                                 Image.ANTIALIAS)
+                                                 Image.Resampling.LANCZOS)
         self.background_img = self.lawn_photo.copy()
         self.lawn_photo = ImageTk.PhotoImage(self.lawn_photo)
         self.lawn_width, self.lawn_height = self.lawn_photo.width(
@@ -72,11 +72,11 @@ class Root(Tk):
         self.brains_show = []
         self.brain_img = Image.open(brain_img)
         self.brain_img = self.brain_img.resize(
-            (self.lawn_width, self.lawn_height), Image.ANTIALIAS)
+            (self.lawn_width, self.lawn_height), Image.Resampling.LANCZOS)
         self.brain_img = ImageTk.PhotoImage(self.brain_img)
         self.no_brain_img = Image.open(no_lawnmower_img)
         self.no_brain_img = self.no_brain_img.resize(
-            (self.lawn_width, self.lawn_height), Image.ANTIALIAS)
+            (self.lawn_width, self.lawn_height), Image.Resampling.LANCZOS)
         self.no_brain_img = ImageTk.PhotoImage(self.no_brain_img)
         self.brain_part = ttk.LabelFrame(self)
         self.brain_part.place(x=0, y=100)
@@ -99,7 +99,7 @@ class Root(Tk):
         self.bind("<space>", lambda e: self.pause())
         self.zombie_explode_img = Image.open(zombie_explode)
         self.zombie_explode_img = self.zombie_explode_img.resize(
-            (self.lawn_width, self.lawn_height), Image.ANTIALIAS)
+            (self.lawn_width, self.lawn_height), Image.Resampling.LANCZOS)
         self.zombie_explode_img = ImageTk.PhotoImage(self.zombie_explode_img)
 
         self.killed_zombies = 0
@@ -164,7 +164,7 @@ class Root(Tk):
             current_img = current_img.resize(
                 (int(current_img.width * ratio / resize_num),
                  int(current_img.height * ratio / resize_num)),
-                Image.ANTIALIAS)
+                Image.Resampling.LANCZOS)
             center_width = int(self.lawn_width / 2 - current_img.width / 2)
             temp = self.background_img.copy()
             temp.paste(current_img, (center_width, 0), current_img)
@@ -173,20 +173,21 @@ class Root(Tk):
         else:
             current_img = current_img.resize(
                 (int(self.lawn_width / resize_num),
-                 int(self.lawn_height / resize_num)), Image.ANTIALIAS)
+                 int(self.lawn_height / resize_num)), Image.Resampling.LANCZOS)
             each.img = ImageTk.PhotoImage(current_img)
         try:
             if each.bullet_img:
                 if not each.is_bullet:
                     current_img = Image.open(each.bullet_img)
                     current_img = current_img.resize(
-                        (self.lawn_width, self.lawn_height), Image.ANTIALIAS)
+                        (self.lawn_width, self.lawn_height),
+                        Image.Resampling.LANCZOS)
                     each.bullet_img = ImageTk.PhotoImage(current_img)
                 else:
                     each.bullet_img = ImageTk.PhotoImage(
                         Image.open(each.bullet_img).resize(
                             (self.lawn_width // 3, self.lawn_height // 3),
-                            Image.ANTIALIAS))
+                            Image.Resampling.LANCZOS))
             if each.other_img:
                 for j in range(len(each.other_img)):
                     current_other_img_ls = each.other_img[j]
@@ -199,7 +200,8 @@ class Root(Tk):
                     current_other_img = Image.open(img_name)
                     current_other_img = current_other_img.resize(
                         (int(self.lawn_width / resize_num),
-                         int(self.lawn_height / resize_num)), Image.ANTIALIAS)
+                         int(self.lawn_height / resize_num)),
+                        Image.Resampling.LANCZOS)
                     current_other_img_ls[1] = img_name
                     current_other_img_ls[0] = ImageTk.PhotoImage(
                         current_other_img)
@@ -224,7 +226,7 @@ class Root(Tk):
     def init_sunshine(self):
         sun_photo = ImageTk.PhotoImage(
             Image.open(sunshine_img).resize(
-                (self.lawn_width, self.lawn_height), Image.ANTIALIAS))
+                (self.lawn_width, self.lawn_height), Image.Resampling.LANCZOS))
         self.sunshine = init_sunshine
         self.sunshine_text = StringVar()
         self.sunshine_text.set(self.sunshine)
@@ -236,10 +238,10 @@ class Root(Tk):
         self.sunshine_show.grid(row=0, column=0)
         self.fall_sunshine_img = ImageTk.PhotoImage(
             Image.open(fall_sunshine_img).resize(
-                (self.lawn_width, self.lawn_height), Image.ANTIALIAS))
+                (self.lawn_width, self.lawn_height), Image.Resampling.LANCZOS))
         self.flower_sunshine_img = ImageTk.PhotoImage(
             Image.open(fall_sunshine_img).resize(
-                (self.lawn_width, self.lawn_height), Image.ANTIALIAS))
+                (self.lawn_width, self.lawn_height), Image.Resampling.LANCZOS))
 
     def init_zombies(self):
         self.zombies_num = len(choosed_zombies)
@@ -519,7 +521,7 @@ class Root(Tk):
                                     current.plants.hp_img[0][1])
                                 new_hp_img = new_hp_img.resize(
                                     (self.lawn_width, self.lawn_height),
-                                    Image.ANTIALIAS)
+                                    Image.Resampling.LANCZOS)
                                 new_hp_img = ImageTk.PhotoImage(new_hp_img)
                                 current.configure(image=new_hp_img)
                                 current.plants.img = new_hp_img
@@ -560,7 +562,7 @@ class Root(Tk):
                                 new_hp_img = Image.open(each.hp_img[0][1])
                                 new_hp_img = new_hp_img.resize(
                                     (self.lawn_width, self.lawn_height),
-                                    Image.ANTIALIAS)
+                                    Image.Resampling.LANCZOS)
                                 new_hp_img = ImageTk.PhotoImage(new_hp_img)
                                 each.button.configure(image=new_hp_img)
                                 each.button.image = new_hp_img

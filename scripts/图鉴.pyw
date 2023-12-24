@@ -60,7 +60,8 @@ class Root2(Toplevel):
             current_img = Image.open(current.img)
             ratio = current_img.height / height
             current_img = current_img.resize(
-                (int(current_img.width / ratio), height), Image.ANTIALIAS)
+                (int(current_img.width / ratio), height),
+                Image.Resampling.LANCZOS)
             current.img = ImageTk.PhotoImage(current_img)
             current.button = ttk.Button(self.plants_frame,
                                         image=current.img,
@@ -70,7 +71,8 @@ class Root2(Toplevel):
             current_img = Image.open(current.img)
             ratio = current_img.height / height
             current_img = current_img.resize(
-                (int(current_img.width / ratio), height), Image.ANTIALIAS)
+                (int(current_img.width / ratio), height),
+                Image.Resampling.LANCZOS)
             current.img = ImageTk.PhotoImage(current_img)
             current.button = ttk.Button(self.plants_frame,
                                         image=current.img,

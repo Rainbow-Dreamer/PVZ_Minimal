@@ -26,7 +26,7 @@ class Root(Tk):
 
         lawn_size = 250 // map_size[0]
         self.lawn_photo = self.lawn_photo.resize((lawn_size, lawn_size),
-                                                 Image.ANTIALIAS)
+                                                 Image.Resampling.LANCZOS)
         self.background_img = self.lawn_photo.copy()
         self.lawn_photo = ImageTk.PhotoImage(self.lawn_photo)
         self.lawn_width, self.lawn_height = self.lawn_photo.width(
@@ -55,11 +55,11 @@ class Root(Tk):
         self.lawnmowers = [0 for j in range(map_size[0])]
         self.lawnmower_img = Image.open(lawnmower_img)
         self.lawnmower_img = self.lawnmower_img.resize(
-            (self.lawn_width, self.lawn_height), Image.ANTIALIAS)
+            (self.lawn_width, self.lawn_height), Image.Resampling.LANCZOS)
         self.lawnmower_img = ImageTk.PhotoImage(self.lawnmower_img)
         self.no_lawnmower_img = Image.open(no_lawnmower_img)
         self.no_lawnmower_img = self.no_lawnmower_img.resize(
-            (self.lawn_width, self.lawn_height), Image.ANTIALIAS)
+            (self.lawn_width, self.lawn_height), Image.Resampling.LANCZOS)
         self.no_lawnmower_img = ImageTk.PhotoImage(self.no_lawnmower_img)
         if lawnmower_rows:
             self.mower_part = ttk.LabelFrame(self)
@@ -84,7 +84,7 @@ class Root(Tk):
         self.bind("<Button-3>", lambda e: self.action_text.set(''))
         self.zombie_explode_img = Image.open(zombie_explode)
         self.zombie_explode_img = self.zombie_explode_img.resize(
-            (self.lawn_width, self.lawn_height), Image.ANTIALIAS)
+            (self.lawn_width, self.lawn_height), Image.Resampling.LANCZOS)
         self.zombie_explode_img = ImageTk.PhotoImage(self.zombie_explode_img)
         self.normal_zombies_num = 0
         self.big_waves_zombies_num = 0
@@ -101,15 +101,18 @@ class Root(Tk):
                                        anchor='center')
         self.flag_img = Image.open(flag_img)
         self.flag_img = self.flag_img.resize(
-            (self.lawn_width // 2, self.lawn_height // 2), Image.ANTIALIAS)
+            (self.lawn_width // 2, self.lawn_height // 2),
+            Image.Resampling.LANCZOS)
         self.flag_img = ImageTk.PhotoImage(self.flag_img)
         self.damaged_flag_img = Image.open(damaged_flag_img)
         self.damaged_flag_img = self.damaged_flag_img.resize(
-            (self.lawn_width // 2, self.lawn_height // 2), Image.ANTIALIAS)
+            (self.lawn_width // 2, self.lawn_height // 2),
+            Image.Resampling.LANCZOS)
         self.damaged_flag_img = ImageTk.PhotoImage(self.damaged_flag_img)
         self.head_img = Image.open(zombie_head_img)
         self.head_img = self.head_img.resize(
-            (self.lawn_width // 2, self.lawn_height // 2), Image.ANTIALIAS)
+            (self.lawn_width // 2, self.lawn_height // 2),
+            Image.Resampling.LANCZOS)
         self.head_img = ImageTk.PhotoImage(self.head_img)
         self.zombie_bar = ttk.LabelFrame(self)
         self.zombie_bar_normal_labels = []
@@ -167,7 +170,7 @@ class Root(Tk):
     def init_sunshine(self):
         sun_photo = ImageTk.PhotoImage(
             Image.open(sunshine_img).resize(
-                (self.lawn_width, self.lawn_height), Image.ANTIALIAS))
+                (self.lawn_width, self.lawn_height), Image.Resampling.LANCZOS))
         self.sunshine = init_sunshine
         self.sunshine_text = StringVar()
         self.sunshine_text.set(self.sunshine)
@@ -179,10 +182,10 @@ class Root(Tk):
         self.sunshine_show.grid(row=0, column=0)
         self.fall_sunshine_img = ImageTk.PhotoImage(
             Image.open(fall_sunshine_img).resize(
-                (self.lawn_width, self.lawn_height), Image.ANTIALIAS))
+                (self.lawn_width, self.lawn_height), Image.Resampling.LANCZOS))
         self.flower_sunshine_img = ImageTk.PhotoImage(
             Image.open(fall_sunshine_img).resize(
-                (self.lawn_width, self.lawn_height), Image.ANTIALIAS))
+                (self.lawn_width, self.lawn_height), Image.Resampling.LANCZOS))
 
     def init_map(self, rows, columns):
         lawn_photo = self.lawn_photo
@@ -250,7 +253,7 @@ class Root(Tk):
             ]
         zombie_img = Image.open(current_zombies.img)
         zombie_img = zombie_img.resize((self.lawn_width, self.lawn_height),
-                                       Image.ANTIALIAS)
+                                       Image.Resampling.LANCZOS)
         zombie_img = ImageTk.PhotoImage(zombie_img)
         current_zombies_button = ttk.Button(
             self.maps,
@@ -376,7 +379,7 @@ class Root(Tk):
                                 new_hp_img = Image.open(each.hp_img[0][1])
                                 new_hp_img = new_hp_img.resize(
                                     (self.lawn_width, self.lawn_height),
-                                    Image.ANTIALIAS)
+                                    Image.Resampling.LANCZOS)
                                 new_hp_img = ImageTk.PhotoImage(new_hp_img)
                                 each.button.configure(image=new_hp_img)
                                 each.button.image = new_hp_img

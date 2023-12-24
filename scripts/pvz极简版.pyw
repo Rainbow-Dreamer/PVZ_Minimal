@@ -11,16 +11,29 @@ from tkinter import filedialog
 from tkinter.scrolledtext import ScrolledText
 from PIL import Image, ImageTk
 from copy import deepcopy
+import json
 
 pygame.mixer.init()
 sys.path.append(os.path.dirname(__file__))
 current_dir = os.getcwd()
 config_path = os.path.join(current_dir, "scripts/pvz_config.py")
+json_config_path = os.path.join(current_dir, "scripts/game_config.json")
 with open(config_path, encoding='utf-8') as f:
     datas = f.read()
     exec(datas, globals())
+with open(json_config_path, encoding='utf-8') as f:
+    current_config = json.load(f)
 whole_plants_img = [x[1] for x in whole_plants]
 whole_plants = [[x[0], 0] for x in whole_plants]
+
+
+def update_config():
+    with open(json_config_path, 'w', encoding='utf-8') as f:
+        json.dump(current_config,
+                  f,
+                  indent=4,
+                  separators=(',', ': '),
+                  ensure_ascii=False)
 
 
 class Root(Tk):
@@ -30,7 +43,7 @@ class Root(Tk):
         self.wm_iconbitmap(icon_name)
         self.title(title_name)
         self.minsize(*screen_size)
-        self.sound_volume = 1
+        self.sound_volume = current_config['whole_sound_volume']
         self.music_flag = 0
         self.is_stop = False
         self.wiki = ttk.Button(self, text='图鉴', command=self.open_wiki)
@@ -66,7 +79,7 @@ class Root(Tk):
             default_lawn_size = deepcopy(lawn_size)
         self.lawn_photo = Image.open(lawn_photo)
         self.lawn_photo = self.lawn_photo.resize((lawn_size, lawn_size),
-                                                 Image.ANTIALIAS)
+                                                 Image.Resampling.LANCZOS)
         self.background_img = self.lawn_photo.copy()
         self.lawn_photo = ImageTk.PhotoImage(self.lawn_photo)
         self.action_text = StringVar()
@@ -75,8 +88,14 @@ class Root(Tk):
                                     y=action_text_place_y,
                                     anchor='center')
         pygame.mixer.music.load(choose_plants_music)
-        pygame.mixer.music.set_volume(choose_seed_volume)
+        pygame.mixer.music.set_volume(current_config['choose_seed_volume'])
         pygame.mixer.music.play(loops=-1)
+        for each in whole_sounds:
+            if type(each) == list:
+                for i in each:
+                    i.set_volume(self.sound_volume)
+            else:
+                each.set_volume(self.sound_volume)
         self.plants_already_choosed = ttk.LabelFrame(self, height=200)
         self.plants_already_choosed.grid(sticky='w')
         self.choose_plants_screen = ttk.LabelFrame(self)
@@ -87,7 +106,7 @@ class Root(Tk):
             average_height = lawn_size
         self.choose_plant_bg = Image.open(choose_plant_bg)
         self.choose_plant_bg = self.choose_plant_bg.resize(
-            (lawn_size, lawn_size), Image.ANTIALIAS)
+            (lawn_size, lawn_size), Image.Resampling.LANCZOS)
         for i in range(self.num_plants):
             current_plant = whole_plants[i]
             current_img = whole_plants_img[i]
@@ -98,7 +117,8 @@ class Root(Tk):
                             lawn_size / current_img.width)
                 current_img = current_img.resize(
                     (int(current_img.width * ratio),
-                     int(current_img.height * ratio)), Image.ANTIALIAS)
+                     int(current_img.height * ratio)),
+                    Image.Resampling.LANCZOS)
                 center_width = int(lawn_size / 2 - current_img.width / 2)
                 temp = self.choose_plant_bg.copy()
                 temp.paste(current_img, (center_width, 0), current_img)
@@ -107,7 +127,7 @@ class Root(Tk):
             else:
                 current_img = Image.open(current_img)
                 current_img = current_img.resize(
-                    (int(lawn_size), int(lawn_size)), Image.ANTIALIAS)
+                    (int(lawn_size), int(lawn_size)), Image.Resampling.LANCZOS)
                 current_img = ImageTk.PhotoImage(current_img)
             current_button = ttk.Button(
                 self.choose_plants_screen,
@@ -258,11 +278,11 @@ class Root(Tk):
         if new_volume != int(pygame.mixer.music.get_volume() * 100):
             pygame.mixer.music.set_volume(new_volume / 100)
             if self.music_flag == 1:
-                global background_volume
-                background_volume = new_volume / 100
+                current_config['background_volume'] = new_volume / 100
+                update_config()
             elif self.music_flag == 0:
-                global choose_seed_volume
-                choose_seed_volume = new_volume / 100
+                current_config['choose_seed_volume'] = new_volume / 100
+                update_config()
 
     def change_sound_volume(self, config_window):
         new_volume = config_window.sound_volume.get()
@@ -274,7 +294,9 @@ class Root(Tk):
                         i.set_volume(new_set_volume)
                 else:
                     each.set_volume(new_set_volume)
-            self.sound_volume = new_set_volume
+            current_config['whole_sound_volume'] = new_set_volume
+            self.sound_volume = current_config['whole_sound_volume']
+            update_config()
 
     def make_img(self, each, resize_num=1, types=None):
         current_img = Image.open(each.img).convert('RGBA')
@@ -284,7 +306,7 @@ class Root(Tk):
             current_img = current_img.resize(
                 (int(current_img.width * ratio / resize_num),
                  int(current_img.height * ratio / resize_num)),
-                Image.ANTIALIAS)
+                Image.Resampling.LANCZOS)
             center_width = int(lawn_size / 2 - current_img.width / 2)
             if types:
                 temp = self.background_dict[types].copy()
@@ -296,14 +318,14 @@ class Root(Tk):
         else:
             current_img = current_img.resize(
                 (int(lawn_size / resize_num), int(lawn_size / resize_num)),
-                Image.ANTIALIAS)
+                Image.Resampling.LANCZOS)
             each.img = ImageTk.PhotoImage(current_img)
         try:
             if each.bullet_img:
                 if not each.is_bullet:
                     current_img = Image.open(each.bullet_img)
                     current_img = current_img.resize((lawn_size, lawn_size),
-                                                     Image.ANTIALIAS)
+                                                     Image.Resampling.LANCZOS)
                     each.bullet_img = ImageTk.PhotoImage(current_img)
                 else:
                     each.bullet_img = Image.open(each.bullet_img)
@@ -313,7 +335,7 @@ class Root(Tk):
                         each.bullet_img.resize(
                             (int(each.bullet_img.width * ratio),
                              int(each.bullet_img.height * ratio)),
-                            Image.ANTIALIAS))
+                            Image.Resampling.LANCZOS))
             if each.other_img:
                 for j in range(len(each.other_img)):
                     current_other_img_ls = each.other_img[j]
@@ -330,7 +352,7 @@ class Root(Tk):
                     current_other_img = current_other_img.resize(
                         (int(current_other_img.width * ratio),
                          int(current_other_img.height * ratio)),
-                        Image.ANTIALIAS)
+                        Image.Resampling.LANCZOS)
                     current_other_img_ls[1] = img_name
                     current_other_img_ls[0] = ImageTk.PhotoImage(
                         current_other_img)
@@ -378,13 +400,13 @@ class Root(Tk):
         exec(stage_file_contents, globals())
         if lawn_size != default_lawn_size:
             self.background_img = self.background_img.resize(
-                (int(lawn_size), int(lawn_size)), Image.ANTIALIAS)
+                (int(lawn_size), int(lawn_size)), Image.Resampling.LANCZOS)
         self.stage_name = ttk.Label(self, text=choosed_stage)
         self.stage_name.place(x=10, y=screen_size[1] - 50)
         global choosed_plants
         pygame.mixer.music.stop()
         bg_music = pygame.mixer.music.load(background_music)
-        pygame.mixer.music.set_volume(background_volume)
+        pygame.mixer.music.set_volume(current_config['background_volume'])
         pygame.mixer.music.play(loops=-1)
         self.music_flag = 1
         self.plants_already_choosed.destroy()
@@ -425,12 +447,12 @@ class Root(Tk):
         self.lawnmower_frame = ttk.LabelFrame(self.whole_map)
         self.lawnmowers = [0 for j in range(map_size[0])]
         self.lawnmower_img = Image.open(lawnmower_img)
-        self.lawnmower_img = self.lawnmower_img.resize((lawn_size, lawn_size),
-                                                       Image.ANTIALIAS)
+        self.lawnmower_img = self.lawnmower_img.resize(
+            (lawn_size, lawn_size), Image.Resampling.LANCZOS)
         self.lawnmower_img = ImageTk.PhotoImage(self.lawnmower_img)
         self.no_lawnmower_img = Image.open(no_lawnmower_img)
         self.no_lawnmower_img = self.no_lawnmower_img.resize(
-            (lawn_size, lawn_size), Image.ANTIALIAS)
+            (lawn_size, lawn_size), Image.Resampling.LANCZOS)
         self.no_lawnmower_img = ImageTk.PhotoImage(self.no_lawnmower_img)
 
         if lawnmower_rows:
@@ -455,7 +477,7 @@ class Root(Tk):
         self.bind("<space>", lambda e: self.pause())
         self.zombie_explode_img = Image.open(zombie_explode)
         self.zombie_explode_img = self.zombie_explode_img.resize(
-            (lawn_size, lawn_size), Image.ANTIALIAS)
+            (lawn_size, lawn_size), Image.Resampling.LANCZOS)
         self.zombie_explode_img = ImageTk.PhotoImage(self.zombie_explode_img)
         self.check_plants()
         self.normal_zombies_num = 0
@@ -473,15 +495,15 @@ class Root(Tk):
                                        anchor='center')
         self.flag_img = Image.open(flag_img)
         self.flag_img = self.flag_img.resize((lawn_size // 2, lawn_size // 2),
-                                             Image.ANTIALIAS)
+                                             Image.Resampling.LANCZOS)
         self.flag_img = ImageTk.PhotoImage(self.flag_img)
         self.damaged_flag_img = Image.open(damaged_flag_img)
         self.damaged_flag_img = self.damaged_flag_img.resize(
-            (lawn_size // 2, lawn_size // 2), Image.ANTIALIAS)
+            (lawn_size // 2, lawn_size // 2), Image.Resampling.LANCZOS)
         self.damaged_flag_img = ImageTk.PhotoImage(self.damaged_flag_img)
         self.head_img = Image.open(zombie_head_img)
         self.head_img = self.head_img.resize((lawn_size // 2, lawn_size // 2),
-                                             Image.ANTIALIAS)
+                                             Image.Resampling.LANCZOS)
         self.head_img = ImageTk.PhotoImage(self.head_img)
         self.zombie_bar = ttk.LabelFrame(self)
         self.zombie_bar_normal_labels = []
@@ -549,7 +571,7 @@ class Root(Tk):
     def init_sunshine(self):
         sun_photo = ImageTk.PhotoImage(
             Image.open(sunshine_img).resize((lawn_size, lawn_size),
-                                            Image.ANTIALIAS))
+                                            Image.Resampling.LANCZOS))
         self.sunshine = init_sunshine
         self.sunshine_text = StringVar()
         self.sunshine_text.set(self.sunshine)
@@ -561,10 +583,10 @@ class Root(Tk):
         self.sunshine_show.grid(row=0, column=0)
         self.fall_sunshine_img = ImageTk.PhotoImage(
             Image.open(fall_sunshine_img).resize((lawn_size, lawn_size),
-                                                 Image.ANTIALIAS))
+                                                 Image.Resampling.LANCZOS))
         self.flower_sunshine_img = ImageTk.PhotoImage(
             Image.open(fall_sunshine_img).resize((lawn_size, lawn_size),
-                                                 Image.ANTIALIAS))
+                                                 Image.Resampling.LANCZOS))
 
     def init_plants(self):
         self.bullets_ls = []
@@ -595,7 +617,7 @@ class Root(Tk):
     def init_shovel(self):
         shovel_photo = ImageTk.PhotoImage(
             Image.open(shovel_img).resize((lawn_size, lawn_size),
-                                          Image.ANTIALIAS))
+                                          Image.Resampling.LANCZOS))
         self.shovel_button = ttk.Button(
             self.choose,
             image=shovel_photo,
@@ -607,7 +629,7 @@ class Root(Tk):
         self.background_dict = {}
         for each_type in self.map_img_dict:
             current_bg = Image.open(self.map_img_dict[each_type]).resize(
-                (lawn_size, lawn_size), Image.ANTIALIAS)
+                (lawn_size, lawn_size), Image.Resampling.LANCZOS)
             self.background_dict[each_type] = current_bg.copy()
             self.map_img_dict[each_type] = ImageTk.PhotoImage(current_bg)
         rows, columns = len(map_content), len(map_content[0])
@@ -962,7 +984,8 @@ class Root(Tk):
                                 new_hp_img = Image.open(
                                     current.plants.hp_img[0][1])
                                 new_hp_img = new_hp_img.resize(
-                                    (lawn_size, lawn_size), Image.ANTIALIAS)
+                                    (lawn_size, lawn_size),
+                                    Image.Resampling.LANCZOS)
                                 new_hp_img = ImageTk.PhotoImage(new_hp_img)
                                 current.configure(image=new_hp_img)
                                 current.plants.img = new_hp_img
@@ -1057,7 +1080,8 @@ class Root(Tk):
                                             each.full_hp - each.hp >= hp_tol):
                                 new_hp_img = Image.open(each.hp_img[0][1])
                                 new_hp_img = new_hp_img.resize(
-                                    (lawn_size, lawn_size), Image.ANTIALIAS)
+                                    (lawn_size, lawn_size),
+                                    Image.Resampling.LANCZOS)
                                 new_hp_img = ImageTk.PhotoImage(new_hp_img)
                                 each.button.configure(image=new_hp_img)
                                 each.button.image = new_hp_img
@@ -1122,11 +1146,12 @@ class Root(Tk):
         global lawn_size
         if lawn_size != default_lawn_size:
             self.background_img = self.background_img.resize(
-                (default_lawn_size, default_lawn_size), Image.ANTIALIAS)
+                (default_lawn_size, default_lawn_size),
+                Image.Resampling.LANCZOS)
         lawn_size = deepcopy(default_lawn_size)
         self.lawn_photo = self.background_img.copy()
         self.lawn_photo = self.lawn_photo.resize((lawn_size, lawn_size),
-                                                 Image.ANTIALIAS)
+                                                 Image.Resampling.LANCZOS)
         self.lawn_photo = ImageTk.PhotoImage(self.lawn_photo)
         self.map_img_dict = deepcopy(default_map_img_dict)
         obj.destroy()
@@ -1139,7 +1164,7 @@ class Root(Tk):
         self.stage_name.destroy()
         self.music_flag = 0
         pygame.mixer.music.load(choose_plants_music)
-        pygame.mixer.music.set_volume(choose_seed_volume)
+        pygame.mixer.music.set_volume(current_config['choose_seed_volume'])
         pygame.mixer.music.play(loops=-1)
         self.plants_already_choosed = ttk.LabelFrame(self, height=200)
         self.plants_already_choosed.grid(sticky='w')
@@ -1160,7 +1185,8 @@ class Root(Tk):
                             lawn_size / current_img.width)
                 current_img = current_img.resize(
                     (int(current_img.width * ratio),
-                     int(current_img.height * ratio)), Image.ANTIALIAS)
+                     int(current_img.height * ratio)),
+                    Image.Resampling.LANCZOS)
                 center_width = int(lawn_size / 2 - current_img.width / 2)
                 temp = self.choose_plant_bg.copy()
                 temp.paste(current_img, (center_width, 0), current_img)
@@ -1169,7 +1195,7 @@ class Root(Tk):
             else:
                 current_img = Image.open(current_img)
                 current_img = current_img.resize(
-                    (int(lawn_size), int(lawn_size)), Image.ANTIALIAS)
+                    (int(lawn_size), int(lawn_size)), Image.Resampling.LANCZOS)
                 current_img = ImageTk.PhotoImage(current_img)
             current_button = ttk.Button(
                 self.choose_plants_screen,
