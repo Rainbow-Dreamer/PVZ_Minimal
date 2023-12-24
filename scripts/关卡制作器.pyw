@@ -21,26 +21,6 @@ class stage_part:
         self.probs = probs
 
 
-def zombie_get(name, row, column, appear_time, config):
-    if column == '':
-        column = 'map_size[1]-1'
-    result = f'get_zombies({name}, {row}, {column}, {appear_time})'
-    if config:
-        result += f'.configure({config})'
-    return result
-
-
-def get_whole_types(obj):
-    whole = obj.normals + obj.waves
-    whole_zombie_text = [
-        x.names.replace(' ', '').split(',')
-        for x in whole if x.types == 1 and x.names
-    ] + [[y[0] for y in x.zombie_ls if y]
-         for x in whole if x.types == 2 and x.zombie_ls]
-    whole_types = list(set([i for j in whole_zombie_text for i in j]))
-    return whole_types
-
-
 class Root3(Toplevel):
 
     def __init__(self):
@@ -604,6 +584,26 @@ class Root3(Toplevel):
         self.destroy()
 
 
+def zombie_get(name, row, column, appear_time, config):
+    if column == '':
+        column = 'map_size[1]-1'
+    result = f'get_zombies({name}, {row}, {column}, {appear_time})'
+    if config:
+        result += f'.configure({config})'
+    return result
+
+
+def get_whole_types(obj):
+    whole = obj.normals + obj.waves
+    whole_zombie_text = [
+        x.names.replace(' ', '').split(',')
+        for x in whole if x.types == 1 and x.names
+    ] + [[y[0] for y in x.zombie_ls if y]
+         for x in whole if x.types == 2 and x.zombie_ls]
+    whole_types = list(set([i for j in whole_zombie_text for i in j]))
+    return whole_types
+
+
 def random_from(ls_text, probs):
     if ls_text:
         if probs:
@@ -636,4 +636,5 @@ def get_appear_times(appear_time):
         return '0'
 
 
-make_stage_window = Root3()
+if __name__ == '__main__':
+    make_stage_window = Root3()

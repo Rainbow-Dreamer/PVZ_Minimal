@@ -13,19 +13,6 @@ from PIL import Image, ImageTk
 from copy import deepcopy
 import json
 
-pygame.mixer.init()
-sys.path.append(os.path.dirname(__file__))
-current_dir = os.getcwd()
-config_path = os.path.join(current_dir, "scripts/pvz_config.py")
-json_config_path = os.path.join(current_dir, "scripts/game_config.json")
-with open(config_path, encoding='utf-8') as f:
-    datas = f.read()
-    exec(datas, globals())
-with open(json_config_path, encoding='utf-8') as f:
-    current_config = json.load(f)
-whole_plants_img = [x[1] for x in whole_plants]
-whole_plants = [[x[0], 0] for x in whole_plants]
-
 
 def update_config():
     with open(json_config_path, 'w', encoding='utf-8') as f:
@@ -34,6 +21,127 @@ def update_config():
                   indent=4,
                   separators=(',', ': '),
                   ensure_ascii=False)
+
+
+def quit():
+    pygame.mixer.quit()
+    root.destroy()
+
+
+def read_little_games(filename):
+    os.chdir('../scripts/小游戏')
+    with open(filename, encoding='utf-8') as f:
+        exec(f.read(), globals())
+
+
+def sounds(x):
+    return pygame.mixer.Sound(x).get_raw()
+
+
+def get_plant(plant_obj, rows=None, columns=None):
+    result = deepcopy(plant_obj)
+    if result.bullet_sound:
+        result.bullet_sound = [
+            pygame.mixer.Sound(j)
+            if type(j) != list else [pygame.mixer.Sound(k) for k in j]
+            for j in result.bullet_sound
+        ]
+        whole_sounds.extend(result.bullet_sound)
+    if result.bullet_sound and result.sound_volume:
+        for j in range(len(result.bullet_sound)):
+            result.bullet_sound[j].set_volume(result.sound_volume[j])
+    result.rows = rows
+    result.columns = columns
+    return result
+
+
+def get_zombies(zombies_obj, rows=None, columns=None, appear_time=None):
+    result = deepcopy(zombies_obj)
+    result.rows = rows
+    result.columns = columns
+    result.appear_time = appear_time
+    return result
+
+
+def init_whole_plants_name():
+    whole_plants_name = os.listdir('scripts/plant_scripts')
+    except_ls = ['__pycache__', '__init__.py', 'plant.py', 'bullets.py']
+    for each in except_ls:
+        if each in whole_plants_name:
+            whole_plants_name.remove(each)
+    whole_plants_name = [x[:-3] for x in whole_plants_name]
+    whole_plants = [(x, f"{x}.png") for x in whole_plants_name]
+    return whole_plants_name, whole_plants
+
+
+class Stage:
+
+    def __init__(self, num_of_waves):
+        # number of waves means number of flags (when a big wave of zombies will come)
+        self.num_of_waves = num_of_waves
+        self.normal_zombies = [[] for i in range(num_of_waves + 1)]
+        self.big_waves_zombies = [[] for i in range(num_of_waves)]
+
+    def set_normal(self, num, zombie_ls):
+        if num in range(self.num_of_waves + 1):
+            self.normal_zombies[num] = zombie_ls
+
+    def set_waves(self, num, zombie_ls):
+        if num in range(self.num_of_waves):
+            self.big_waves_zombies[num] = zombie_ls
+
+    def set_normal_all(self, *zombie_ls):
+        for k in range(len(zombie_ls)):
+            self.normal_zombies[k] = zombie_ls[k]
+
+    def set_waves_all(self, *zombie_ls):
+        for k in range(len(zombie_ls)):
+            self.big_waves_zombies[k] = zombie_ls[k]
+
+    def get(self, num, mode=0):
+        if mode == 0:
+            return self.normal_zombies[num]
+        elif mode == 1:
+            return self.big_waves_zombies[num]
+
+
+class lawnmower:
+
+    def __init__(self, rows, columns, mode=0, move_speed=500, attack=None):
+        # if mode == 0, the lawn mower will kill all zombies in the row by setting their hp to 0
+        # if mode == 1, the lawn mower will have only give an attack to all of the zombies i the row
+        self.rows = rows
+        self.columns = columns
+        self.mode = mode
+        self.move_speed = move_speed
+        self.attack = attack
+
+
+class belt:
+
+    def __init__(self,
+                 plants_base,
+                 show_length=10,
+                 new_plant_speed=4,
+                 move_speed=2,
+                 belt_x=100,
+                 belt_y=40,
+                 resize_num=1,
+                 img='belt.png',
+                 offset=10):
+        self.plants_base = plants_base
+        self.show_length = show_length
+        self.new_plant_speed = new_plant_speed
+        self.move_speed = move_speed
+        self.belt_x = belt_x
+        self.belt_y = belt_y
+        self.resize_num = resize_num
+        self.img = img
+        self.offset = offset
+
+    def choose(self):
+        result = random.choose(self.plants_base)
+        return result
 
 
 class Root(Tk):
@@ -68,7 +176,7 @@ class Root(Tk):
         self.get_zombies = get_zombies
         self.plant_bite_sound = plant_bite_sound
         self.unset_plants_sound = unset_plants_sound
-        self.NULL, self.PLACE, self.REMOVE, self.PAUSE = 0, 1, 2, 3
+        self.NULL, self.PLACE, self.REMOVE, self.PAUSE = NULL, PLACE, REMOVE, PAUSE
         self.map_img_dict = map_img_dict
         global lawn_size
         if not lawn_size:
@@ -1241,19 +1349,105 @@ class Root(Tk):
         ask_window.quit_button.place(x=100, y=30)
 
 
-root = Root()
+if __name__ == '__main__':
+    pygame.mixer.init()
+    sys.path.append(os.path.dirname(__file__))
+    abs_path = os.getcwd()
+    json_config_path = os.path.join(abs_path, "scripts/game_config.json")
+    with open(json_config_path, encoding='utf-8') as f:
+        current_config = json.load(f)
+    whole_plants_name, whole_plants = init_whole_plants_name()
+    whole_plants_img = [x[1] for x in whole_plants]
+    whole_plants = [[x[0], 0] for x in whole_plants]
+    pre_transparent = current_config['pre_transparent']
+    choose_plant_bg = current_config['choose_plant_bg']
+    modified_file = current_config['modified_file']
+    stage_file = os.listdir('scripts/stages')
+    stage_file.remove('__init__.py')
+    stage_file = [x[:-3] for x in stage_file]
 
+    os.chdir('resources/')
 
-def quit():
-    pygame.mixer.quit()
-    root.destroy()
+    lawnmower_rows = current_config['lawnmower_rows']
+    default_lawnmower_rows = deepcopy(lawnmower_rows)
+    lawnmower_mode = current_config['lawnmower_mode']
+    lawnmower_speed = current_config['lawnmower_speed']
+    lawnmower_atack = current_config['lawnmower_atack']
+    lawnmower_img = current_config['lawnmower_img']
+    no_lawnmower_img = current_config['no_lawnmower_img']
 
+    background_music = current_config['background_music']
+    action_text_place_x, action_text_place_y = current_config[
+        'action_text_place_x'], current_config['action_text_place_y']
+    lawn_size = current_config['lawn_size']
+    default_lawn_size = deepcopy(lawn_size)
+    icon_name = current_config['icon_name']
+    title_name = current_config['title_name']
+    screen_size = current_config['screen_size']
+    sunshine_img = current_config['sunshine_img']
+    fall_sunshine_img = current_config['fall_sunshine_img']
+    shovel_img = current_config['shovel_img']
+    paused_img = current_config['paused_img']
+    map_size = current_config['map_size']
+    default_map_size = deepcopy(map_size)
+    first_time = current_config['first_time']
+    lawn_photo = current_config['lawn_photo']
+    map_img_dict = current_config['map_img_dict']
+    default_map_img_dict = deepcopy(map_img_dict)
+    map_content = current_config['map_content']
+    default_map_content = deepcopy(map_content)
+    init_sunshine = current_config['init_sunshine']
+    sunshine_cooling_time = current_config['sunshine_cooling_time']
+    zombie_explode = current_config['zombie_explode']
+    flag_img = current_config['flag_img']
+    damaged_flag_img = current_config['damaged_flag_img']
+    zombie_head_img = current_config['zombie_head_img']
+    sky_sunshine = current_config['sky_sunshine']
 
-def read_little_games(filename):
-    os.chdir('../scripts/小游戏')
-    with open(filename, encoding='utf-8') as f:
-        exec(f.read(), globals())
+    choose_seed_volume = current_config['choose_seed_volume']
+    background_volume = current_config['background_volume']
+    sunshine_not_enough = pygame.mixer.Sound(
+        current_config['sunshine_not_enough'])
+    choose_plants_sound = pygame.mixer.Sound(
+        current_config['choose_plants_sound'])
+    set_plants_sound = pygame.mixer.Sound(current_config['set_plants_sound'])
+    unset_plants_sound = pygame.mixer.Sound(
+        current_config['unset_plants_sound'])
+    pick_shovel_sound = pygame.mixer.Sound(current_config['pick_shovel_sound'])
+    get_sunshine_sound = pygame.mixer.Sound(
+        current_config['get_sunshine_sound'])
+    plant_bite_sound = pygame.mixer.Sound(current_config['plant_bite_sound'])
 
+    reset_sound = [
+        pygame.mixer.Sound(current_config['reset_sound'][0]),
+        pygame.mixer.Sound(current_config['reset_sound'][1])
+    ]
+    pause_sound = pygame.mixer.Sound(current_config['pause_sound'])
+    lose_sound = pygame.mixer.Sound(current_config['lose_sound'])
+    choose_plants_music = current_config['choose_plants_music']
+    choose_plant_sound = pygame.mixer.Sound(
+        current_config['choose_plant_sound'])
+    zombies_coming_sound = pygame.mixer.Sound(
+        current_config['zombies_coming_sound'])
+    huge_wave_sound = pygame.mixer.Sound(current_config['huge_wave_sound'])
+    lawnmower_sound = pygame.mixer.Sound(current_config['lawnmower_sound'])
+    win_sound = pygame.mixer.Sound(current_config['win_sound'])
 
-root.protocol('WM_DELETE_WINDOW', quit)
-root.mainloop()
+    NULL, PLACE, REMOVE, PAUSE = current_config['NULL'], current_config[
+        'PLACE'], current_config['REMOVE'], current_config['PAUSE']
+    show_zombies = current_config['show_zombies']
+    choosed_plants = []
+    whole_sounds = [
+        sunshine_not_enough, choose_plants_sound, set_plants_sound,
+        unset_plants_sound, pick_shovel_sound, get_sunshine_sound,
+        plant_bite_sound, reset_sound, pause_sound, lose_sound,
+        choose_plant_sound, zombies_coming_sound, huge_wave_sound,
+        lawnmower_sound, win_sound
+    ]
+    msg_box = current_config['msg_box']
+    msg_box_x, msg_box_y = current_config['msg_box_x'], current_config[
+        'msg_box_y']
+    msg_lines_limit = current_config['msg_lines_limit']
+    root = Root()
+    root.protocol('WM_DELETE_WINDOW', quit)
+    root.mainloop()

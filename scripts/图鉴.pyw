@@ -1,39 +1,3 @@
-with open('scripts/wiki_config.py', encoding='utf-8') as f:
-    exec(f.read(), globals())
-pygame.mixer.init()
-paper_sound = [
-    pygame.mixer.Sound('resources/sounds/paper.ogg'),
-    pygame.mixer.Sound('resources/sounds/seedlift.ogg')
-]
-for each in paper_sound:
-    each.set_volume(sound_volume)
-os.chdir('scripts/plant_scripts')
-sys.path.append(os.getcwd())
-filename = os.listdir()
-remove_ls = ['__pycache__', '__init__.py', 'plant.py', 'bullets.py']
-for each in remove_ls:
-    if each in filename:
-        filename.remove(each)
-plants_name = [x[:-3] for x in filename]
-for k in filename:
-    with open(k, encoding='utf-8') as f:
-        exec(f.read(), globals())
-plants_ls = [eval(i) for i in plants_name]
-os.chdir('../zombie_scripts')
-sys.path.append(os.getcwd())
-filename = os.listdir()
-remove_ls = ['__pycache__', '__init__.py', 'regular.py', 'zombies.py']
-for each in remove_ls:
-    if each in filename:
-        filename.remove(each)
-zombies_name = [x[:-3] for x in filename]
-for k in filename:
-    with open(k, encoding='utf-8') as f:
-        exec(f.read(), globals())
-zombies_ls = [eval(i) for i in zombies_name]
-os.chdir('../../resources')
-
-
 class Root2(Toplevel):
 
     def __init__(self):
@@ -186,4 +150,45 @@ class Root2(Toplevel):
         self.destroy()
 
 
-wiki_window = Root2()
+if __name__ == '__main__':
+    json_config_path = os.path.join(abs_path, "scripts/game_config.json")
+    with open(json_config_path, encoding='utf-8') as f:
+        current_config = json.load(f)
+    height = current_config['wiki']['height']
+    num_each_row = current_config['wiki']['num_each_row']
+    screen_size = current_config['wiki']['screen_size']
+    max_rows = current_config['wiki']['max_rows']
+    sound_volume = current_config['wiki']['sound_volume']
+    pygame.mixer.init()
+    paper_sound = [
+        pygame.mixer.Sound('resources/sounds/paper.ogg'),
+        pygame.mixer.Sound('resources/sounds/seedlift.ogg')
+    ]
+    for each in paper_sound:
+        each.set_volume(sound_volume)
+    os.chdir('scripts/plant_scripts')
+    sys.path.append(os.getcwd())
+    filename = os.listdir()
+    remove_ls = ['__pycache__', '__init__.py', 'plant.py', 'bullets.py']
+    for each in remove_ls:
+        if each in filename:
+            filename.remove(each)
+    plants_name = [x[:-3] for x in filename]
+    for k in filename:
+        with open(k, encoding='utf-8') as f:
+            exec(f.read(), globals())
+    plants_ls = [eval(i) for i in plants_name]
+    os.chdir('../zombie_scripts')
+    sys.path.append(os.getcwd())
+    filename = os.listdir()
+    remove_ls = ['__pycache__', '__init__.py', 'regular.py', 'zombies.py']
+    for each in remove_ls:
+        if each in filename:
+            filename.remove(each)
+    zombies_name = [x[:-3] for x in filename]
+    for k in filename:
+        with open(k, encoding='utf-8') as f:
+            exec(f.read(), globals())
+    zombies_ls = [eval(i) for i in zombies_name]
+    os.chdir('../../resources')
+    wiki_window = Root2()
