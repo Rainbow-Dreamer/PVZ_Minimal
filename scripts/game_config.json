@@ -1,6 +1,6 @@
 {
-    "background_volume": 0.0,
-    "choose_seed_volume": 0.0,
+    "background_volume": 0.3,
+    "choose_seed_volume": 0.3,
     "whole_sound_volume": 0.3,
     "pre_transparent": [
         "豌豆射手.png",

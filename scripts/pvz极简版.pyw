@@ -177,7 +177,7 @@ class Root(Tk):
         self.plant_bite_sound = plant_bite_sound
         self.unset_plants_sound = unset_plants_sound
         self.NULL, self.PLACE, self.REMOVE, self.PAUSE = NULL, PLACE, REMOVE, PAUSE
-        self.map_img_dict = map_img_dict
+        self.map_img_dict = deepcopy(map_img_dict)
         global lawn_size
         if not lawn_size:
             lawn_size = 250 / map_size[0]
