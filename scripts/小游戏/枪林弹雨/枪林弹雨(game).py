@@ -43,7 +43,7 @@ class Root(Tk):
                                     y=self.action_text_place_y,
                                     anchor='center')
 
-        bg_music = pygame.mixer.music.load(background_music)
+        pygame.mixer.music.load(background_music)
         pygame.mixer.music.set_volume(background_volume)
         pygame.mixer.music.play(loops=-1)
         game_start_time = time.time()

@@ -55,7 +55,7 @@ def get_plant(plant_obj, rows=None, columns=None):
     return result
 
 
-def get_zombies(zombies_obj, rows=None, columns=None, appear_time=None):
+def get_zombies(zombies_obj, rows, columns, appear_time):
     result = deepcopy(zombies_obj)
     result.rows = rows
     result.columns = columns
@@ -94,11 +94,37 @@ class temp_config:
 
 class Stage:
 
-    def __init__(self, num_of_waves):
+    def __init__(self, stages):
         # number of waves means number of flags (when a big wave of zombies will come)
-        self.num_of_waves = num_of_waves
-        self.normal_zombies = [[] for i in range(num_of_waves + 1)]
-        self.big_waves_zombies = [[] for i in range(num_of_waves)]
+        normals = []
+        waves = []
+        for stage in stages:
+            current_zombies = [
+                get_zombies(
+                    random.choice(
+                        [globals()[each] for each in stage['zombies']]),
+                    random.randint(*stage['appear_rows_range'])
+                    if len(stage['appear_rows_range']) == 2 else
+                    stage['appear_rows_range'][0],
+                    random.randint(*stage['appear_columns_range'])
+                    if len(stage['appear_columns_range']) == 2 else
+                    stage['appear_columns_range'][0],
+                    random.randint(*stage['appear_times_range'])
+                    if len(stage['appear_times_range']) == 2 else
+                    stage['appear_times_range'][0])
+                for i in range(stage['quantity'])
+            ]
+            if not stage['is_big_wave']:
+                normals.append(current_zombies)
+            else:
+                waves.append(current_zombies)
+
+        self.num_of_waves = len(waves)
+        self.normal_zombies = [[]
+                               for i in range(len(stages) - self.num_of_waves)]
+        self.big_waves_zombies = [[] for i in range(self.num_of_waves)]
+        self.set_normal_all(normals)
+        self.set_waves_all(waves)
 
     def set_normal(self, num, zombie_ls):
         if num in range(self.num_of_waves + 1):
@@ -108,11 +134,11 @@ class Stage:
         if num in range(self.num_of_waves):
             self.big_waves_zombies[num] = zombie_ls
 
-    def set_normal_all(self, *zombie_ls):
+    def set_normal_all(self, zombie_ls):
         for k in range(len(zombie_ls)):
             self.normal_zombies[k] = zombie_ls[k]
 
-    def set_waves_all(self, *zombie_ls):
+    def set_waves_all(self, zombie_ls):
         for k in range(len(zombie_ls)):
             self.big_waves_zombies[k] = zombie_ls[k]
 
@@ -535,19 +561,21 @@ class Root(Tk):
             self.msg_box_text.place(x=current_config.msg_box_x,
                                     y=current_config.msg_box_y)
         choosed_stage = self.choose_stages.get(ACTIVE)
-        with open(f'../scripts/stages/{choosed_stage}.py',
-                  encoding='utf-8') as f:
-            stage_file_contents = f.read()
-        exec(stage_file_contents, globals())
-        current_temp_config.map_content = map_content
-        if current_temp_config.lawn_size != current_temp_config.default_lawn_size:
+        current_choosed_stage_file = f'../scripts/stages/{choosed_stage}.json'
+        self.stage_file_contents = json_module(current_choosed_stage_file)
+        current_temp_config.map_content = self.stage_file_contents.map_content
+        for each in self.stage_file_contents.apply_scripts:
+            with open(each, encoding='utf-8') as f:
+                exec(f.read(), globals())
+        if self.stage_file_contents.lawn_size != current_temp_config.default_lawn_size:
             self.background_img = self.background_img.resize(
-                (int(current_temp_config.lawn_size),
-                 int(current_temp_config.lawn_size)), Image.Resampling.LANCZOS)
+                (int(self.stage_file_contents.lawn_size),
+                 int(self.stage_file_contents.lawn_size)),
+                Image.Resampling.LANCZOS)
         self.stage_name = ttk.Label(self, text=choosed_stage)
         self.stage_name.place(x=10, y=current_config.screen_size[1] - 50)
         pygame.mixer.music.stop()
-        bg_music = pygame.mixer.music.load(current_config.background_music)
+        pygame.mixer.music.load(current_config.background_music)
         pygame.mixer.music.set_volume(current_config.background_volume)
         pygame.mixer.music.play(loops=-1)
         self.music_flag = 1
@@ -589,51 +617,53 @@ class Root(Tk):
         self.whole_map.grid(row=1, sticky='W')
         self.maps = ttk.LabelFrame(self.whole_map)
         self.lawnmower_frame = ttk.LabelFrame(self.whole_map)
-        self.lawnmowers = [0 for j in range(current_temp_config.map_size[0])]
+        self.lawnmowers = [
+            0 for j in range(self.stage_file_contents.map_size[0])
+        ]
         self.lawnmower_img = Image.open(current_config.lawnmower_img)
         self.lawnmower_img = self.lawnmower_img.resize(
-            (current_temp_config.lawn_size, current_temp_config.lawn_size),
-            Image.Resampling.LANCZOS)
+            (self.stage_file_contents.lawn_size,
+             self.stage_file_contents.lawn_size), Image.Resampling.LANCZOS)
         self.lawnmower_img = ImageTk.PhotoImage(self.lawnmower_img)
         self.no_lawnmower_img = Image.open(current_config.no_lawnmower_img)
         self.no_lawnmower_img = self.no_lawnmower_img.resize(
-            (current_temp_config.lawn_size, current_temp_config.lawn_size),
-            Image.Resampling.LANCZOS)
+            (self.stage_file_contents.lawn_size,
+             self.stage_file_contents.lawn_size), Image.Resampling.LANCZOS)
         self.no_lawnmower_img = ImageTk.PhotoImage(self.no_lawnmower_img)
 
-        if current_temp_config.lawnmower_rows:
-            for k in current_temp_config.lawnmower_rows:
-                current_mower = lawnmower(k, 0, current_config.lawnmower_mode,
-                                          current_config.lawnmower_speed,
-                                          current_config.lawnmower_atack)
-                current_mower.show = ttk.Button(
-                    self.lawnmower_frame,
-                    image=self.lawnmower_img,
-                    command=lambda: self.action_text.set('我是一辆小推车'))
-                current_mower.show.grid(row=k, column=0, sticky='W')
-                self.lawnmowers[k] = current_mower
+        for k in self.stage_file_contents.lawnmower_rows:
+            current_mower = lawnmower(k, 0, current_config.lawnmower_mode,
+                                      current_config.lawnmower_speed,
+                                      current_config.lawnmower_atack)
+            current_mower.show = ttk.Button(
+                self.lawnmower_frame,
+                image=self.lawnmower_img,
+                command=lambda: self.action_text.set('我是一辆小推车'))
+            current_mower.show.grid(row=k, column=0, sticky='W')
+            self.lawnmowers[k] = current_mower
 
         self.init_map()
         self.lawnmower_frame.grid(row=0, column=0, sticky='W')
         self.maps.grid(row=0, column=1, sticky='W')
         self.choosed_plant = None
         self.sunshine_ls = []
-        self.map_rows, self.map_columns = current_temp_config.map_size
+        self.map_rows, self.map_columns = self.stage_file_contents.map_size
 
         self.bind("<Button-3>", lambda e: self.reset())
         self.bind("<space>", lambda e: self.pause())
         self.zombie_explode_img = Image.open(current_config.zombie_explode)
         self.zombie_explode_img = self.zombie_explode_img.resize(
-            (current_temp_config.lawn_size, current_temp_config.lawn_size),
-            Image.Resampling.LANCZOS)
+            (self.stage_file_contents.lawn_size,
+             self.stage_file_contents.lawn_size), Image.Resampling.LANCZOS)
         self.zombie_explode_img = ImageTk.PhotoImage(self.zombie_explode_img)
         self.check_plants()
         self.normal_zombies_num = 0
         self.big_waves_zombies_num = 0
         self.normal_or_wave = 0
-        self.whole_zombies = current_stage.get(0)
+        self.current_stage = Stage(self.stage_file_contents.stages)
+        self.whole_zombies = self.current_stage.get(0)
         self.killed_zombies = 0
-        self.zombie_time = self.game_start_time + start_time
+        self.zombie_time = self.game_start_time + self.stage_file_contents.start_time
         self.killed_zombies_text = StringVar()
         self.killed_zombies_text.set(f'杀死僵尸数: {self.killed_zombies}')
         self.killed_zombies_show = ttk.Label(
@@ -644,28 +674,31 @@ class Root(Tk):
                                        anchor='center')
         self.flag_img = Image.open(current_config.flag_img)
         self.flag_img = self.flag_img.resize(
-            (current_temp_config.lawn_size // 2,
-             current_temp_config.lawn_size // 2), Image.Resampling.LANCZOS)
+            (self.stage_file_contents.lawn_size // 2,
+             self.stage_file_contents.lawn_size // 2),
+            Image.Resampling.LANCZOS)
         self.flag_img = ImageTk.PhotoImage(self.flag_img)
         self.damaged_flag_img = Image.open(current_config.damaged_flag_img)
         self.damaged_flag_img = self.damaged_flag_img.resize(
-            (current_temp_config.lawn_size // 2,
-             current_temp_config.lawn_size // 2), Image.Resampling.LANCZOS)
+            (self.stage_file_contents.lawn_size // 2,
+             self.stage_file_contents.lawn_size // 2),
+            Image.Resampling.LANCZOS)
         self.damaged_flag_img = ImageTk.PhotoImage(self.damaged_flag_img)
         self.head_img = Image.open(current_config.zombie_head_img)
         self.head_img = self.head_img.resize(
-            (current_temp_config.lawn_size // 2,
-             current_temp_config.lawn_size // 2), Image.Resampling.LANCZOS)
+            (self.stage_file_contents.lawn_size // 2,
+             self.stage_file_contents.lawn_size // 2),
+            Image.Resampling.LANCZOS)
         self.head_img = ImageTk.PhotoImage(self.head_img)
         self.zombie_bar = ttk.LabelFrame(self)
         self.zombie_bar_normal_labels = []
         self.zombie_bar_wave_labels = []
-        unit_width = int(50 / (current_stage.num_of_waves +
-                               (current_stage.num_of_waves + 1) * 5))
+        unit_width = int(50 / (self.current_stage.num_of_waves +
+                               (self.current_stage.num_of_waves + 1) * 5))
         long_width = unit_width * 5
         short_width = unit_width
-        counter = 6 * current_stage.num_of_waves + 4
-        for k in range(current_stage.num_of_waves * 2 + 1):
+        counter = 6 * self.current_stage.num_of_waves + 4
+        for k in range(self.current_stage.num_of_waves * 2 + 1):
             if k % 2 == 0:
                 normal_labels = []
                 for j in range(5):
@@ -688,9 +721,11 @@ class Root(Tk):
         self.current_zombies_num = len(self.whole_zombies)
         self.current_killed_zombies = 0
         self._zombie1 = self.after(
-            int(start_time * 1000),
+            int(self.stage_file_contents.start_time * 1000),
             current_temp_config.zombies_coming_sound.play)
-        self._zombie2 = self.after(int(start_time * 1000), self.check_zombies)
+        self._zombie2 = self.after(
+            int(self.stage_file_contents.start_time * 1000),
+            self.check_zombies)
         first_time = False
 
     def pause(self):
@@ -1183,13 +1218,13 @@ class Root(Tk):
                 self.zombie_time = current_time
                 if self.normal_or_wave == 0:
                     self.normal_or_wave = 1
-                    if self.normal_zombies_num == current_stage.num_of_waves:
+                    if self.normal_zombies_num == self.current_stage.num_of_waves:
                         self.action_text.set('你赢了！')
                         #self.mode = current_config.PAUSE
                         self.win()
                         return
                     self.normal_zombies_num += 1
-                    self.whole_zombies = current_stage.get(
+                    self.whole_zombies = self.current_stage.get(
                         self.big_waves_zombies_num, 1)
                     self.current_zombies_num = len(self.whole_zombies)
                     self.after(2000, current_temp_config.huge_wave_sound.play)
@@ -1215,7 +1250,7 @@ class Root(Tk):
                 elif self.normal_or_wave == 1:
                     self.normal_or_wave = 0
                     self.big_waves_zombies_num += 1
-                    self.whole_zombies = current_stage.get(
+                    self.whole_zombies = self.current_stage.get(
                         self.normal_zombies_num)
                     self.current_zombies_num = len(self.whole_zombies)
 
@@ -1423,7 +1458,9 @@ if __name__ == '__main__':
     ]
     stage_file = os.listdir('scripts/stages')
     stage_file.remove('__init__.py')
-    current_temp_config.stage_file = [x[:-3] for x in stage_file]
+    current_temp_config.stage_file = [
+        os.path.splitext(x)[0] for x in stage_file
+    ]
     os.chdir('resources/')
     current_temp_config.lawnmower_rows = deepcopy(
         current_config.lawnmower_rows)

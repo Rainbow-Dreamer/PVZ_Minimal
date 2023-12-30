@@ -44,7 +44,7 @@ class Root(Tk):
                                     anchor='center')
 
         global choosed_zombies
-        bg_music = pygame.mixer.music.load(background_music)
+        pygame.mixer.music.load(background_music)
         pygame.mixer.music.set_volume(background_volume)
         pygame.mixer.music.play(loops=-1)
         game_start_time = time.time()
