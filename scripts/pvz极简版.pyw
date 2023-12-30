@@ -16,7 +16,7 @@ import json
 
 def update_config():
     with open(json_config_path, 'w', encoding='utf-8') as f:
-        json.dump(current_config,
+        json.dump(current_config.to_json(),
                   f,
                   indent=4,
                   separators=(',', ': '),
@@ -46,7 +46,7 @@ def get_plant(plant_obj, rows=None, columns=None):
             if type(j) != list else [pygame.mixer.Sound(k) for k in j]
             for j in result.bullet_sound
         ]
-        whole_sounds.extend(result.bullet_sound)
+        current_temp_config.whole_sounds.extend(result.bullet_sound)
     if result.bullet_sound and result.sound_volume:
         for j in range(len(result.bullet_sound)):
             result.bullet_sound[j].set_volume(result.sound_volume[j])
@@ -70,8 +70,26 @@ def init_whole_plants_name():
         if each in whole_plants_name:
             whole_plants_name.remove(each)
     whole_plants_name = [x[:-3] for x in whole_plants_name]
-    whole_plants = [(x, f"{x}.png") for x in whole_plants_name]
-    return whole_plants_name, whole_plants
+    current_temp_config.whole_plants = [(x, f"{x}.png")
+                                        for x in whole_plants_name]
+    return whole_plants_name, current_temp_config.whole_plants
+
+
+class json_module:
+
+    def __init__(self, file, text=None):
+        if text is None:
+            with open(file, encoding='utf-8') as f:
+                text = json.load(f)
+        for i, j in text.items():
+            setattr(self, i, j)
+
+    def to_json(self):
+        return vars(self)
+
+
+class temp_config:
+    pass
 
 
 class Stage:
@@ -148,19 +166,22 @@ class Root(Tk):
 
     def __init__(self):
         super(Root, self).__init__()
-        self.wm_iconbitmap(icon_name)
-        self.title(title_name)
-        self.minsize(*screen_size)
-        self.sound_volume = current_config['whole_sound_volume']
+        self.protocol('WM_DELETE_WINDOW', quit)
+        self.wm_iconbitmap(current_config.icon_name)
+        self.title(current_config.title_name)
+        self.minsize(*current_config.screen_size)
+        self.sound_volume = current_config.whole_sound_volume
         self.music_flag = 0
         self.is_stop = False
         self.wiki = ttk.Button(self, text='图鉴', command=self.open_wiki)
-        self.wiki.place(x=screen_size[0] - 100, y=screen_size[1] - 180)
+        self.wiki.place(x=current_config.screen_size[0] - 100,
+                        y=current_config.screen_size[1] - 180)
 
         self.make_stage = ttk.Button(self,
                                      text='制作关卡',
                                      command=self.open_make_stage)
-        self.make_stage.place(x=screen_size[0] - 100, y=screen_size[1] - 140)
+        self.make_stage.place(x=current_config.screen_size[0] - 100,
+                              y=current_config.screen_size[1] - 140)
 
         self.configs = ttk.Button(self,
                                   text='设置',
@@ -168,37 +189,38 @@ class Root(Tk):
         self.little_game = ttk.Button(self,
                                       text='小游戏',
                                       command=self.open_little_game)
-        self.little_game.place(x=screen_size[0] - 100, y=screen_size[1] - 100)
+        self.little_game.place(x=current_config.screen_size[0] - 100,
+                               y=current_config.screen_size[1] - 100)
 
-        self.configs.place(x=screen_size[0] - 100, y=screen_size[1] - 60)
+        self.configs.place(x=current_config.screen_size[0] - 100,
+                           y=current_config.screen_size[1] - 60)
         self.make_label = ttk.Label
         self.make_button = ttk.Button
         self.get_zombies = get_zombies
-        self.plant_bite_sound = plant_bite_sound
-        self.unset_plants_sound = unset_plants_sound
-        self.NULL, self.PLACE, self.REMOVE, self.PAUSE = NULL, PLACE, REMOVE, PAUSE
-        self.map_img_dict = deepcopy(map_img_dict)
-        global lawn_size
-        if not lawn_size:
-            lawn_size = 250 / map_size[0]
-        lawn_size = int(lawn_size)
-        global default_lawn_size
-        if not default_lawn_size:
-            default_lawn_size = deepcopy(lawn_size)
-        self.lawn_photo = Image.open(lawn_photo)
-        self.lawn_photo = self.lawn_photo.resize((lawn_size, lawn_size),
-                                                 Image.Resampling.LANCZOS)
+        self.plant_bite_sound = current_temp_config.plant_bite_sound
+        self.unset_plants_sound = current_temp_config.unset_plants_sound
+        self.NULL, self.PLACE, self.REMOVE, self.PAUSE = current_config.NULL, current_config.PLACE, current_config.REMOVE, current_config.PAUSE
+        self.map_img_dict = deepcopy(current_temp_config.map_img_dict)
+        if not current_temp_config.lawn_size:
+            current_temp_config.lawn_size = int(
+                250 / current_temp_config.map_size[0])
+        current_temp_config.default_lawn_size = deepcopy(
+            current_temp_config.lawn_size)
+        self.lawn_photo = Image.open(current_config.lawn_photo)
+        self.lawn_photo = self.lawn_photo.resize(
+            (current_temp_config.lawn_size, current_temp_config.lawn_size),
+            Image.Resampling.LANCZOS)
         self.background_img = self.lawn_photo.copy()
         self.lawn_photo = ImageTk.PhotoImage(self.lawn_photo)
         self.action_text = StringVar()
         self.action_text_show = ttk.Label(self, textvariable=self.action_text)
-        self.action_text_show.place(x=action_text_place_x,
-                                    y=action_text_place_y,
+        self.action_text_show.place(x=current_config.action_text_place_x,
+                                    y=current_config.action_text_place_y,
                                     anchor='center')
-        pygame.mixer.music.load(choose_plants_music)
-        pygame.mixer.music.set_volume(current_config['choose_seed_volume'])
+        pygame.mixer.music.load(current_config.choose_plants_music)
+        pygame.mixer.music.set_volume(current_config.choose_seed_volume)
         pygame.mixer.music.play(loops=-1)
-        for each in whole_sounds:
+        for each in current_temp_config.whole_sounds:
             if type(each) == list:
                 for i in each:
                     i.set_volume(self.sound_volume)
@@ -208,26 +230,28 @@ class Root(Tk):
         self.plants_already_choosed.grid(sticky='w')
         self.choose_plants_screen = ttk.LabelFrame(self)
         self.choose_buttons = []
-        self.num_plants = len(whole_plants)
+        self.num_plants = len(current_temp_config.whole_plants)
         average_height = 200 / (self.num_plants / 5)
-        if lawn_size <= average_height:
-            average_height = lawn_size
-        self.choose_plant_bg = Image.open(choose_plant_bg)
+        if current_temp_config.lawn_size <= average_height:
+            average_height = current_temp_config.lawn_size
+        self.choose_plant_bg = Image.open(current_config.choose_plant_bg)
         self.choose_plant_bg = self.choose_plant_bg.resize(
-            (lawn_size, lawn_size), Image.Resampling.LANCZOS)
+            (current_temp_config.lawn_size, current_temp_config.lawn_size),
+            Image.Resampling.LANCZOS)
         for i in range(self.num_plants):
-            current_plant = whole_plants[i]
-            current_img = whole_plants_img[i]
+            current_plant = current_temp_config.whole_plants[i]
+            current_img = current_temp_config.whole_plants_img[i]
             current_plant[1] = i
-            if current_img in pre_transparent:
+            if current_img in current_config.pre_transparent:
                 current_img = Image.open(current_img)
-                ratio = min(lawn_size / current_img.height,
-                            lawn_size / current_img.width)
+                ratio = min(current_temp_config.lawn_size / current_img.height,
+                            current_temp_config.lawn_size / current_img.width)
                 current_img = current_img.resize(
                     (int(current_img.width * ratio),
                      int(current_img.height * ratio)),
                     Image.Resampling.LANCZOS)
-                center_width = int(lawn_size / 2 - current_img.width / 2)
+                center_width = int(current_temp_config.lawn_size / 2 -
+                                   current_img.width / 2)
                 temp = self.choose_plant_bg.copy()
                 temp.paste(current_img, (center_width, 0), current_img)
                 current_img = ImageTk.PhotoImage(temp)
@@ -235,7 +259,9 @@ class Root(Tk):
             else:
                 current_img = Image.open(current_img)
                 current_img = current_img.resize(
-                    (int(lawn_size), int(lawn_size)), Image.Resampling.LANCZOS)
+                    (int(current_temp_config.lawn_size),
+                     int(current_temp_config.lawn_size)),
+                    Image.Resampling.LANCZOS)
                 current_img = ImageTk.PhotoImage(current_img)
             current_button = ttk.Button(
                 self.choose_plants_screen,
@@ -254,7 +280,7 @@ class Root(Tk):
         self.choose_stages = Listbox(self,
                                      yscrollcommand=self.choose_stages_bar.set)
         self.choose_stages.configure(activestyle='none')
-        for k in stage_file:
+        for k in current_temp_config.stage_file:
             self.choose_stages.insert(END, k)
         self.choose_stages.place(x=450, y=250)
         self.choose_stages_bar.config(command=self.choose_stages.yview)
@@ -331,9 +357,10 @@ class Root(Tk):
             text='更改',
             command=lambda: self.change_bg(self.config_window))
         if self.music_flag == 1:
-            self.config_window.bg.insert(END, background_music)
+            self.config_window.bg.insert(END, current_config.background_music)
         elif self.music_flag == 0:
-            self.config_window.bg.insert(END, choose_plants_music)
+            self.config_window.bg.insert(END,
+                                         current_config.choose_plants_music)
         self.config_window.bg_text.place(x=0, y=60)
         self.config_window.bg.place(x=0, y=80)
         self.config_window.bg_button.place(x=400, y=80)
@@ -365,7 +392,6 @@ class Root(Tk):
                                                          ("所有文件", "*")))
         if filename:
             if self.music_flag == 1:
-                global background_music
                 background_music = filename
                 pygame.mixer.music.stop()
                 pygame.mixer.music.load(background_music)
@@ -373,7 +399,6 @@ class Root(Tk):
                 config_window.bg.delete('1.0', END)
                 config_window.bg.insert(END, background_music)
             elif self.music_flag == 0:
-                global choose_plants_music
                 choose_plants_music = filename
                 pygame.mixer.music.stop()
                 pygame.mixer.music.load(choose_plants_music)
@@ -386,36 +411,37 @@ class Root(Tk):
         if new_volume != int(pygame.mixer.music.get_volume() * 100):
             pygame.mixer.music.set_volume(new_volume / 100)
             if self.music_flag == 1:
-                current_config['background_volume'] = new_volume / 100
+                current_config.background_volume = new_volume / 100
                 update_config()
             elif self.music_flag == 0:
-                current_config['choose_seed_volume'] = new_volume / 100
+                current_config.choose_seed_volume = new_volume / 100
                 update_config()
 
     def change_sound_volume(self, config_window):
         new_volume = config_window.sound_volume.get()
         if new_volume != int(self.sound_volume * 100):
             new_set_volume = new_volume / 100
-            for each in whole_sounds:
+            for each in current_temp_config.whole_sounds:
                 if type(each) == list:
                     for i in each:
                         i.set_volume(new_set_volume)
                 else:
                     each.set_volume(new_set_volume)
-            current_config['whole_sound_volume'] = new_set_volume
-            self.sound_volume = current_config['whole_sound_volume']
+            current_config.whole_sound_volume = new_set_volume
+            self.sound_volume = current_config.whole_sound_volume
             update_config()
 
     def make_img(self, each, resize_num=1, types=None):
         current_img = Image.open(each.img).convert('RGBA')
         if each.img_transparent:
-            ratio = min(lawn_size / current_img.height,
-                        lawn_size / current_img.width)
+            ratio = min(current_temp_config.lawn_size / current_img.height,
+                        current_temp_config.lawn_size / current_img.width)
             current_img = current_img.resize(
                 (int(current_img.width * ratio / resize_num),
                  int(current_img.height * ratio / resize_num)),
                 Image.Resampling.LANCZOS)
-            center_width = int(lawn_size / 2 - current_img.width / 2)
+            center_width = int(current_temp_config.lawn_size / 2 -
+                               current_img.width / 2)
             if types:
                 temp = self.background_dict[types].copy()
             else:
@@ -425,20 +451,25 @@ class Root(Tk):
 
         else:
             current_img = current_img.resize(
-                (int(lawn_size / resize_num), int(lawn_size / resize_num)),
+                (int(current_temp_config.lawn_size / resize_num),
+                 int(current_temp_config.lawn_size / resize_num)),
                 Image.Resampling.LANCZOS)
             each.img = ImageTk.PhotoImage(current_img)
         try:
             if each.bullet_img:
                 if not each.is_bullet:
                     current_img = Image.open(each.bullet_img)
-                    current_img = current_img.resize((lawn_size, lawn_size),
-                                                     Image.Resampling.LANCZOS)
+                    current_img = current_img.resize(
+                        (current_temp_config.lawn_size,
+                         current_temp_config.lawn_size),
+                        Image.Resampling.LANCZOS)
                     each.bullet_img = ImageTk.PhotoImage(current_img)
                 else:
                     each.bullet_img = Image.open(each.bullet_img)
-                    ratio = min((lawn_size / 3) / each.bullet_img.height,
-                                (lawn_size / 3) / each.bullet_img.width)
+                    ratio = min((current_temp_config.lawn_size / 3) /
+                                each.bullet_img.height,
+                                (current_temp_config.lawn_size / 3) /
+                                each.bullet_img.width)
                     each.bullet_img = ImageTk.PhotoImage(
                         each.bullet_img.resize(
                             (int(each.bullet_img.width * ratio),
@@ -454,9 +485,10 @@ class Root(Tk):
                     elif current_len == 3:
                         img_name, resize_num, as_bullet = current_other_img_ls
                     current_other_img = Image.open(img_name)
-                    ratio = min(
-                        (lawn_size / resize_num) / current_other_img.height,
-                        (lawn_size / resize_num) / current_other_img.width)
+                    ratio = min((current_temp_config.lawn_size / resize_num) /
+                                current_other_img.height,
+                                (current_temp_config.lawn_size / resize_num) /
+                                current_other_img.width)
                     current_other_img = current_other_img.resize(
                         (int(current_other_img.width * ratio),
                          int(current_other_img.height * ratio)),
@@ -472,8 +504,8 @@ class Root(Tk):
     def draw_choosed_plants(self):
         for each in self.plants_already_choosed.grid_slaves():
             each.destroy()
-        for q in range(len(choosed_plants)):
-            the_append_plant, number = choosed_plants[q]
+        for q in range(len(current_temp_config.choosed_plants)):
+            the_append_plant, number = current_temp_config.choosed_plants[q]
             append_button = ttk.Button(self.plants_already_choosed,
                                        image=self.choose_buttons[number].image)
             append_button.configure(
@@ -481,16 +513,16 @@ class Root(Tk):
             append_button.grid(row=0, column=q)
 
     def append_plants(self, i):
-        the_append_plant = whole_plants[i]
+        the_append_plant = current_temp_config.whole_plants[i]
         self.action_text.set(f'你选择了{the_append_plant[0]}')
-        choose_plant_sound.play()
-        choosed_plants.append(the_append_plant)
+        current_temp_config.choose_plant_sound.play()
+        current_temp_config.choosed_plants.append(the_append_plant)
         self.choose_buttons[i].grid_forget()
         self.draw_choosed_plants()
 
     def remove_plants(self, q, x):
-        self.action_text.set(f'你取消选择了{whole_plants[x][0]}')
-        del choosed_plants[q]
+        self.action_text.set(f'你取消选择了{current_temp_config.whole_plants[x][0]}')
+        del current_temp_config.choosed_plants[q]
         self.draw_choosed_plants()
         self.choose_buttons[x].grid(row=x // 6, column=x % 6)
 
@@ -499,22 +531,24 @@ class Root(Tk):
         self.msg_text = StringVar()
         self.msg_box_text = ttk.Label(self, textvariable=self.msg_text)
         self.msg_lines = 0
-        if msg_box:
-            self.msg_box_text.place(x=msg_box_x, y=msg_box_y)
+        if current_config.msg_box:
+            self.msg_box_text.place(x=current_config.msg_box_x,
+                                    y=current_config.msg_box_y)
         choosed_stage = self.choose_stages.get(ACTIVE)
         with open(f'../scripts/stages/{choosed_stage}.py',
                   encoding='utf-8') as f:
             stage_file_contents = f.read()
         exec(stage_file_contents, globals())
-        if lawn_size != default_lawn_size:
+        current_temp_config.map_content = map_content
+        if current_temp_config.lawn_size != current_temp_config.default_lawn_size:
             self.background_img = self.background_img.resize(
-                (int(lawn_size), int(lawn_size)), Image.Resampling.LANCZOS)
+                (int(current_temp_config.lawn_size),
+                 int(current_temp_config.lawn_size)), Image.Resampling.LANCZOS)
         self.stage_name = ttk.Label(self, text=choosed_stage)
-        self.stage_name.place(x=10, y=screen_size[1] - 50)
-        global choosed_plants
+        self.stage_name.place(x=10, y=current_config.screen_size[1] - 50)
         pygame.mixer.music.stop()
-        bg_music = pygame.mixer.music.load(background_music)
-        pygame.mixer.music.set_volume(current_config['background_volume'])
+        bg_music = pygame.mixer.music.load(current_config.background_music)
+        pygame.mixer.music.set_volume(current_config.background_volume)
         pygame.mixer.music.play(loops=-1)
         self.music_flag = 1
         self.plants_already_choosed.destroy()
@@ -524,22 +558,24 @@ class Root(Tk):
         self.choose_stages.destroy()
         self.choose_stages_bar.destroy()
         self.game_start_time = time.time()
-        self.mode = NULL
+        self.mode = current_config.NULL
         self.blocks = []
         self.moving_bullets = []
         self.sunshine_time = self.game_start_time
-        choosed_plants = [x[0] for x in choosed_plants]
+        current_temp_config.choosed_plants = [
+            x[0] for x in current_temp_config.choosed_plants
+        ]
         os.chdir('../scripts')
-        choosed_plants = deepcopy([
+        current_temp_config.choosed_plants = deepcopy([
             eval(f'importlib.import_module("plant_scripts.{x}").{x}')
-            for x in choosed_plants
+            for x in current_temp_config.choosed_plants
         ])
         os.chdir('../resources')
-        if modified_file:
-            with open(modified_file, encoding='utf-8') as f:
+        if current_config.modified_file:
+            with open(current_config.modified_file, encoding='utf-8') as f:
                 exec(f.read())
 
-        self.plants_generate = deepcopy(choosed_plants)
+        self.plants_generate = deepcopy(current_temp_config.choosed_plants)
         self.paused_time = 0
         self.get_plant = get_plant
         self.choose = ttk.LabelFrame(self)
@@ -547,26 +583,29 @@ class Root(Tk):
         self.init_sunshine()
         self.init_plants()
         self.init_shovel()
-        self.choosed_plants = choosed_plants
+        self.choosed_plants = current_temp_config.choosed_plants
         self.choose.grid(row=0, sticky='W')
         self.whole_map = LabelFrame(self, borderwidth=0, highlightthickness=0)
         self.whole_map.grid(row=1, sticky='W')
         self.maps = ttk.LabelFrame(self.whole_map)
         self.lawnmower_frame = ttk.LabelFrame(self.whole_map)
-        self.lawnmowers = [0 for j in range(map_size[0])]
-        self.lawnmower_img = Image.open(lawnmower_img)
+        self.lawnmowers = [0 for j in range(current_temp_config.map_size[0])]
+        self.lawnmower_img = Image.open(current_config.lawnmower_img)
         self.lawnmower_img = self.lawnmower_img.resize(
-            (lawn_size, lawn_size), Image.Resampling.LANCZOS)
+            (current_temp_config.lawn_size, current_temp_config.lawn_size),
+            Image.Resampling.LANCZOS)
         self.lawnmower_img = ImageTk.PhotoImage(self.lawnmower_img)
-        self.no_lawnmower_img = Image.open(no_lawnmower_img)
+        self.no_lawnmower_img = Image.open(current_config.no_lawnmower_img)
         self.no_lawnmower_img = self.no_lawnmower_img.resize(
-            (lawn_size, lawn_size), Image.Resampling.LANCZOS)
+            (current_temp_config.lawn_size, current_temp_config.lawn_size),
+            Image.Resampling.LANCZOS)
         self.no_lawnmower_img = ImageTk.PhotoImage(self.no_lawnmower_img)
 
-        if lawnmower_rows:
-            for k in lawnmower_rows:
-                current_mower = lawnmower(k, 0, lawnmower_mode,
-                                          lawnmower_speed, lawnmower_atack)
+        if current_temp_config.lawnmower_rows:
+            for k in current_temp_config.lawnmower_rows:
+                current_mower = lawnmower(k, 0, current_config.lawnmower_mode,
+                                          current_config.lawnmower_speed,
+                                          current_config.lawnmower_atack)
                 current_mower.show = ttk.Button(
                     self.lawnmower_frame,
                     image=self.lawnmower_img,
@@ -579,13 +618,14 @@ class Root(Tk):
         self.maps.grid(row=0, column=1, sticky='W')
         self.choosed_plant = None
         self.sunshine_ls = []
-        self.map_rows, self.map_columns = map_size
+        self.map_rows, self.map_columns = current_temp_config.map_size
 
         self.bind("<Button-3>", lambda e: self.reset())
         self.bind("<space>", lambda e: self.pause())
-        self.zombie_explode_img = Image.open(zombie_explode)
+        self.zombie_explode_img = Image.open(current_config.zombie_explode)
         self.zombie_explode_img = self.zombie_explode_img.resize(
-            (lawn_size, lawn_size), Image.Resampling.LANCZOS)
+            (current_temp_config.lawn_size, current_temp_config.lawn_size),
+            Image.Resampling.LANCZOS)
         self.zombie_explode_img = ImageTk.PhotoImage(self.zombie_explode_img)
         self.check_plants()
         self.normal_zombies_num = 0
@@ -598,20 +638,24 @@ class Root(Tk):
         self.killed_zombies_text.set(f'杀死僵尸数: {self.killed_zombies}')
         self.killed_zombies_show = ttk.Label(
             textvariable=self.killed_zombies_text)
-        self.killed_zombies_show.place(x=action_text_place_x + 200,
-                                       y=action_text_place_y,
+        self.killed_zombies_show.place(x=current_config.action_text_place_x +
+                                       200,
+                                       y=current_config.action_text_place_y,
                                        anchor='center')
-        self.flag_img = Image.open(flag_img)
-        self.flag_img = self.flag_img.resize((lawn_size // 2, lawn_size // 2),
-                                             Image.Resampling.LANCZOS)
+        self.flag_img = Image.open(current_config.flag_img)
+        self.flag_img = self.flag_img.resize(
+            (current_temp_config.lawn_size // 2,
+             current_temp_config.lawn_size // 2), Image.Resampling.LANCZOS)
         self.flag_img = ImageTk.PhotoImage(self.flag_img)
-        self.damaged_flag_img = Image.open(damaged_flag_img)
+        self.damaged_flag_img = Image.open(current_config.damaged_flag_img)
         self.damaged_flag_img = self.damaged_flag_img.resize(
-            (lawn_size // 2, lawn_size // 2), Image.Resampling.LANCZOS)
+            (current_temp_config.lawn_size // 2,
+             current_temp_config.lawn_size // 2), Image.Resampling.LANCZOS)
         self.damaged_flag_img = ImageTk.PhotoImage(self.damaged_flag_img)
-        self.head_img = Image.open(zombie_head_img)
-        self.head_img = self.head_img.resize((lawn_size // 2, lawn_size // 2),
-                                             Image.Resampling.LANCZOS)
+        self.head_img = Image.open(current_config.zombie_head_img)
+        self.head_img = self.head_img.resize(
+            (current_temp_config.lawn_size // 2,
+             current_temp_config.lawn_size // 2), Image.Resampling.LANCZOS)
         self.head_img = ImageTk.PhotoImage(self.head_img)
         self.zombie_bar = ttk.LabelFrame(self)
         self.zombie_bar_normal_labels = []
@@ -637,36 +681,36 @@ class Root(Tk):
                 current_bar.grid(row=0, column=counter)
                 self.zombie_bar_wave_labels.append(current_bar)
                 counter -= 1
-        self.zombie_bar.place(x=action_text_place_x,
-                              y=action_text_place_y + 50,
+        self.zombie_bar.place(x=current_config.action_text_place_x,
+                              y=current_config.action_text_place_y + 50,
                               anchor='center')
         self.current_ind = -1
         self.current_zombies_num = len(self.whole_zombies)
         self.current_killed_zombies = 0
-        self._zombie1 = self.after(int(start_time * 1000),
-                                   zombies_coming_sound.play)
+        self._zombie1 = self.after(
+            int(start_time * 1000),
+            current_temp_config.zombies_coming_sound.play)
         self._zombie2 = self.after(int(start_time * 1000), self.check_zombies)
-        global first_time
         first_time = False
 
     def pause(self):
-        if self.mode != PAUSE:
-            self.mode = PAUSE
+        if self.mode != current_config.PAUSE:
+            self.mode = current_config.PAUSE
             self.action_text.set("游戏暂停,按P继续")
             pygame.mixer.music.pause()
-            pause_sound.play()
+            current_temp_config.pause_sound.play()
             self.paused_start = time.time()
 
     def reset(self):
-        if self.mode == PLACE or self.mode == REMOVE:
-            random.choice(reset_sound).play()
-        self.change_mode(NULL)
+        if self.mode == current_config.PLACE or self.mode == current_config.REMOVE:
+            current_temp_config.reset_sound.play()
+        self.change_mode(current_config.NULL)
 
     def msg_refresh(self):
         self.msg_text.set('')
 
     def msg_write(self, text, newline=True):
-        if self.msg_lines >= msg_lines_limit:
+        if self.msg_lines >= current_config.msg_lines_limit:
             self.msg_refresh()
             self.msg_lines = 0
         content = self.msg_text.get()
@@ -678,9 +722,10 @@ class Root(Tk):
 
     def init_sunshine(self):
         sun_photo = ImageTk.PhotoImage(
-            Image.open(sunshine_img).resize((lawn_size, lawn_size),
-                                            Image.Resampling.LANCZOS))
-        self.sunshine = init_sunshine
+            Image.open(current_config.sunshine_img).resize(
+                (current_temp_config.lawn_size, current_temp_config.lawn_size),
+                Image.Resampling.LANCZOS))
+        self.sunshine = current_config.init_sunshine
         self.sunshine_text = StringVar()
         self.sunshine_text.set(self.sunshine)
         self.sunshine_show = ttk.Label(self.choose,
@@ -690,17 +735,19 @@ class Root(Tk):
         self.sunshine_show.image = sun_photo
         self.sunshine_show.grid(row=0, column=0)
         self.fall_sunshine_img = ImageTk.PhotoImage(
-            Image.open(fall_sunshine_img).resize((lawn_size, lawn_size),
-                                                 Image.Resampling.LANCZOS))
+            Image.open(current_config.fall_sunshine_img).resize(
+                (current_temp_config.lawn_size, current_temp_config.lawn_size),
+                Image.Resampling.LANCZOS))
         self.flower_sunshine_img = ImageTk.PhotoImage(
-            Image.open(fall_sunshine_img).resize((lawn_size, lawn_size),
-                                                 Image.Resampling.LANCZOS))
+            Image.open(current_config.fall_sunshine_img).resize(
+                (current_temp_config.lawn_size, current_temp_config.lawn_size),
+                Image.Resampling.LANCZOS))
 
     def init_plants(self):
         self.bullets_ls = []
-        self.plants_num = len(choosed_plants)
+        self.plants_num = len(current_temp_config.choosed_plants)
         for i in range(self.plants_num):
-            plants_info = choosed_plants[i]
+            plants_info = current_temp_config.choosed_plants[i]
             self.make_img(plants_info)
             if plants_info.bullet_img and plants_info.is_bullet:
                 self.bullets_ls.append(plants_info.bullet_img_name)
@@ -714,7 +761,7 @@ class Root(Tk):
                 image=plants_info.img,
                 textvariable=current_text,
                 compound=TOP,
-                command=lambda i=i: self.change_mode(PLACE, i))
+                command=lambda i=i: self.change_mode(current_config.PLACE, i))
             current_button.image = plants_info.img
             current_button.textvariable = current_text
             current_button.grid(row=0, column=i + 1)
@@ -724,12 +771,13 @@ class Root(Tk):
 
     def init_shovel(self):
         shovel_photo = ImageTk.PhotoImage(
-            Image.open(shovel_img).resize((lawn_size, lawn_size),
-                                          Image.Resampling.LANCZOS))
+            Image.open(current_config.shovel_img).resize(
+                (current_temp_config.lawn_size, current_temp_config.lawn_size),
+                Image.Resampling.LANCZOS))
         self.shovel_button = ttk.Button(
             self.choose,
             image=shovel_photo,
-            command=lambda: self.change_mode(REMOVE))
+            command=lambda: self.change_mode(current_config.REMOVE))
         self.shovel_button.image = shovel_photo
         self.shovel_button.grid(row=0, column=self.plants_num + 1)
 
@@ -737,14 +785,16 @@ class Root(Tk):
         self.background_dict = {}
         for each_type in self.map_img_dict:
             current_bg = Image.open(self.map_img_dict[each_type]).resize(
-                (lawn_size, lawn_size), Image.Resampling.LANCZOS)
+                (current_temp_config.lawn_size, current_temp_config.lawn_size),
+                Image.Resampling.LANCZOS)
             self.background_dict[each_type] = current_bg.copy()
             self.map_img_dict[each_type] = ImageTk.PhotoImage(current_bg)
-        rows, columns = len(map_content), len(map_content[0])
+        rows, columns = len(current_temp_config.map_content), len(
+            current_temp_config.map_content[0])
         for j in range(rows):
             block_row = []
             for k in range(columns):
-                current_type = map_content[j][k]
+                current_type = current_temp_config.map_content[j][k]
                 lawn_photo = self.map_img_dict[current_type]
                 current_block = ttk.Button(
                     self.maps,
@@ -758,35 +808,35 @@ class Root(Tk):
             self.blocks.append(block_row)
 
     def change_mode(self, num, plant=None):
-        if self.mode != PAUSE:
+        if self.mode != current_config.PAUSE:
             self.mode = num
-            if num == PLACE:
-                current_plant = choosed_plants[plant]
+            if num == current_config.PLACE:
+                current_plant = current_temp_config.choosed_plants[plant]
                 if current_plant.enable == 0:
-                    sunshine_not_enough.play()
+                    current_temp_config.sunshine_not_enough.play()
                     self.action_text.set(f'{current_plant.name}正在冷却中')
-                    self.mode = NULL
+                    self.mode = current_config.NULL
                 elif self.sunshine < current_plant.price:
-                    sunshine_not_enough.play()
+                    current_temp_config.sunshine_not_enough.play()
                     self.action_text.set('阳光不够哦')
-                    self.mode = NULL
+                    self.mode = current_config.NULL
                 else:
-                    choose_plants_sound.play()
+                    current_temp_config.choose_plants_sound.play()
                     self.action_text.set(f'你选择了{current_plant.name}')
                     self.choosed_plant = plant
 
-            elif num == REMOVE:
-                pick_shovel_sound.play()
+            elif num == current_config.REMOVE:
+                current_temp_config.pick_shovel_sound.play()
                 self.action_text.set('请选择一个草地上的植物铲除')
-            elif num == NULL:
+            elif num == current_config.NULL:
                 self.action_text.set('')
 
     def block_action(self, j, k=None, mode=0):
-        if self.mode != PAUSE:
+        if self.mode != current_config.PAUSE:
             if mode == 1:
                 dim = j.rows, j.columns
                 j, k = dim
-            if self.mode == PLACE:
+            if self.mode == current_config.PLACE:
                 current = self.blocks[j][k]
                 choose_plant = self.plants_generate[self.choosed_plant]
                 if any(
@@ -809,9 +859,10 @@ class Root(Tk):
 
                     ready_plants.time = current_time
                     current_plant_name = ready_plants.name
-                    current_choosed_plants = choosed_plants[self.choosed_plant]
+                    current_choosed_plants = current_temp_config.choosed_plants[
+                        self.choosed_plant]
                     ready_plants.button = current_choosed_plants.button
-                    set_plants_sound.play()
+                    current_temp_config.set_plants_sound.play()
                     self.action_text.set(
                         f'你成功放置了{current_plant_name}在第{j+1}行，第{k+1}列')
                     ready_plants.button.textvariable.set(
@@ -825,12 +876,12 @@ class Root(Tk):
                     else:
                         ready_plants.plant_func(self, current, ready_plants)
                     self.choosed_plant = None
-                    self.mode = NULL
+                    self.mode = current_config.NULL
                 else:
                     if current.plants:
                         self.action_text.set('这里已经有植物了，要种的话请先铲掉')
 
-            elif self.mode == REMOVE:
+            elif self.mode == current_config.REMOVE:
                 block = self.blocks[j][k]
                 if block.plants is not None:
                     if block.plants.away_func:
@@ -839,7 +890,7 @@ class Root(Tk):
                         block.plants.away_self_func(block.plants, self, block)
                     else:
                         block.configure(image=self.map_img_dict[block.types])
-                        unset_plants_sound.play()
+                        current_temp_config.unset_plants_sound.play()
                         self.action_text.set(
                             f'你铲除了第{j+1}行，第{k+1}列的植物{block.plants.name}')
 
@@ -847,9 +898,9 @@ class Root(Tk):
                         block.plants = None
                 else:
                     self.action_text.set('这里并没有植物，请问您要铲什么？')
-                self.mode = NULL
+                self.mode = current_config.NULL
             else:
-                if mode == 1 and show_zombies:
+                if mode == 1 and current_config.show_zombies:
                     current_block_zombies = [
                         x.name for x in self.whole_zombies
                         if x.status == 1 and x.rows == j and x.columns == k
@@ -878,7 +929,7 @@ class Root(Tk):
                         )
 
     def appear_sunshine(self):
-        if self.mode != PAUSE:
+        if self.mode != current_config.PAUSE:
             sunshine_appear = ttk.Button(self.choose,
                                          image=self.fall_sunshine_img,
                                          command=self.get_sunshine)
@@ -887,19 +938,19 @@ class Root(Tk):
             self.sunshine_ls.append(sunshine_appear)
 
     def get_sunshine(self):
-        if self.mode != PAUSE:
-            self.sunshine += sky_sunshine
+        if self.mode != current_config.PAUSE:
+            self.sunshine += current_config.sky_sunshine
             self.sunshine_text.set(self.sunshine)
-            get_sunshine_sound.play()
-            self.action_text.set(f'成功拿到了{sky_sunshine}点阳光')
+            current_temp_config.get_sunshine_sound.play()
+            self.action_text.set(f'成功拿到了{current_config.sky_sunshine}点阳光')
             if self.sunshine_ls:
                 self.sunshine_ls.pop().destroy()
 
     def flower_get_sunshine(self, sun, obj):
-        if self.mode != PAUSE:
+        if self.mode != current_config.PAUSE:
             self.sunshine += obj.bullet_attack
             self.sunshine_text.set(self.sunshine)
-            get_sunshine_sound.play()
+            current_temp_config.get_sunshine_sound.play()
             self.action_text.set(f'成功拿到了{obj.bullet_attack}点阳光')
             sun.destroy()
 
@@ -909,7 +960,7 @@ class Root(Tk):
         ]
         for each in current_zombies.attack_sound:
             each.set_volume(self.sound_volume)
-        whole_sounds.extend(current_zombies.attack_sound)
+        current_temp_config.whole_sounds.extend(current_zombies.attack_sound)
         current_zombies.dead_sound = [
             pygame.mixer.Sound(j)
             if type(j) != list else [pygame.mixer.Sound(k) for k in j]
@@ -921,13 +972,13 @@ class Root(Tk):
             else:
                 for i in each:
                     i.set_volume(self.sound_volume)
-        whole_sounds.extend(current_zombies.dead_sound)
+        current_temp_config.whole_sounds.extend(current_zombies.dead_sound)
         current_zombies.hit_sound = [
             pygame.mixer.Sound(j) for j in current_zombies.hit_sound
         ]
         for each in current_zombies.hit_sound:
             each.set_volume(self.sound_volume)
-        whole_sounds.extend(current_zombies.hit_sound)
+        current_temp_config.whole_sounds.extend(current_zombies.hit_sound)
         if current_zombies.hit_sound_ls:
             for k in range(len(current_zombies.hit_sound_ls)):
                 current = current_zombies.hit_sound_ls[k][1]
@@ -941,14 +992,16 @@ class Root(Tk):
                 else:
                     for i in each[1]:
                         i.set_volume(self.sound_volume)
-            whole_sounds.extend([i[1] for i in current_zombies.hit_sound_ls])
+            current_temp_config.whole_sounds.extend(
+                [i[1] for i in current_zombies.hit_sound_ls])
         if current_zombies.other_sound:
             current_zombies.other_sound = [
                 pygame.mixer.Sound(k) for k in current_zombies.other_sound
             ]
             for each in current_zombies.other_sound:
                 each.set_volume(self.sound_volume)
-            whole_sounds.extend(current_zombies.other_sound)
+            current_temp_config.whole_sounds.extend(
+                current_zombies.other_sound)
         self.make_img(current_zombies,
                       types=self.blocks[current_zombies.rows][
                           current_zombies.columns].types)
@@ -988,7 +1041,7 @@ class Root(Tk):
         if self.is_stop:
             return
         if obj.columns == 0:
-            lawnmower_sound.play()
+            current_temp_config.lawnmower_sound.play()
         if obj.columns >= self.map_columns:
             obj.destroy()
             return
@@ -1026,21 +1079,21 @@ class Root(Tk):
     def check_plants(self):
         if self.is_stop:
             return
-        if self.mode == PAUSE:
+        if self.mode == current_config.PAUSE:
             if keyboard.is_pressed('p'):
-                self.mode = NULL
+                self.mode = current_config.NULL
                 self.action_text.set('游戏继续')
                 pygame.mixer.music.unpause()
                 repause_current_time = time.time()
                 self.paused_time = repause_current_time - self.paused_start
                 self.sunshine_time += self.paused_time
                 self.paused_start = None
-                for i in range(map_size[0]):
-                    for j in range(map_size[1]):
+                for i in range(current_temp_config.map_size[0]):
+                    for j in range(current_temp_config.map_size[1]):
                         block_here = self.blocks[i][j]
                         if block_here.plants != None:
                             block_here.plants.time += self.paused_time
-                for each in choosed_plants:
+                for each in current_temp_config.choosed_plants:
                     each.counter += self.paused_time
                 for k in self.whole_zombies:
                     if k.status == 0 and k.hp > 0:
@@ -1054,12 +1107,12 @@ class Root(Tk):
                 self.moving_bullets = []
                 self.paused_time = 0
         else:
-            nrow, ncol = map_size
+            nrow, ncol = current_temp_config.map_size
             self.current_time = time.time()
-            if self.current_time - self.sunshine_time >= sunshine_cooling_time:
+            if self.current_time - self.sunshine_time >= current_config.sunshine_cooling_time:
                 self.appear_sunshine()
                 self.sunshine_time = self.current_time
-            for each_plant in choosed_plants:
+            for each_plant in current_temp_config.choosed_plants:
                 if self.current_time - each_plant.counter > each_plant.cooling_time:
                     each_plant.enable = 1
                     each_plant.button.textvariable.set(f'${each_plant.price}')
@@ -1070,7 +1123,7 @@ class Root(Tk):
                     if current.plants is not None:
                         if current.plants.hp <= 0:
                             if current.plants.dead_normal:
-                                plant_bite_sound.play()
+                                current_temp_config.plant_bite_sound.play()
                                 self.action_text.set(
                                     f'第{i+1}行，第{j+1}列的植物{current.plants.name}被吃掉了'
                                 )
@@ -1092,7 +1145,8 @@ class Root(Tk):
                                 new_hp_img = Image.open(
                                     current.plants.hp_img[0][1])
                                 new_hp_img = new_hp_img.resize(
-                                    (lawn_size, lawn_size),
+                                    (current_temp_config.lawn_size,
+                                     current_temp_config.lawn_size),
                                     Image.Resampling.LANCZOS)
                                 new_hp_img = ImageTk.PhotoImage(new_hp_img)
                                 current.configure(image=new_hp_img)
@@ -1109,7 +1163,7 @@ class Root(Tk):
     def check_zombies(self):
         if self.is_stop:
             return
-        if self.mode != PAUSE:
+        if self.mode != current_config.PAUSE:
             current_time = self.current_time
             if self.normal_or_wave == 0:
                 new_ind = int(self.current_killed_zombies /
@@ -1131,17 +1185,18 @@ class Root(Tk):
                     self.normal_or_wave = 1
                     if self.normal_zombies_num == current_stage.num_of_waves:
                         self.action_text.set('你赢了！')
-                        #self.mode = PAUSE
+                        #self.mode = current_config.PAUSE
                         self.win()
                         return
                     self.normal_zombies_num += 1
                     self.whole_zombies = current_stage.get(
                         self.big_waves_zombies_num, 1)
                     self.current_zombies_num = len(self.whole_zombies)
-                    self.after(2000, huge_wave_sound.play)
+                    self.after(2000, current_temp_config.huge_wave_sound.play)
                     self.after(2000,
                                lambda: self.action_text.set('一大波僵尸要来袭了！'))
-                    self.after(5000, zombies_coming_sound.play)
+                    self.after(5000,
+                               current_temp_config.zombies_coming_sound.play)
                     self.after(
                         5000, lambda: self.zombie_bar_wave_labels[
                             self.big_waves_zombies_num].configure(
@@ -1188,7 +1243,8 @@ class Root(Tk):
                                             each.full_hp - each.hp >= hp_tol):
                                 new_hp_img = Image.open(each.hp_img[0][1])
                                 new_hp_img = new_hp_img.resize(
-                                    (lawn_size, lawn_size),
+                                    (current_temp_config.lawn_size,
+                                     current_temp_config.lawn_size),
                                     Image.Resampling.LANCZOS)
                                 new_hp_img = ImageTk.PhotoImage(new_hp_img)
                                 each.button.configure(image=new_hp_img)
@@ -1224,44 +1280,42 @@ class Root(Tk):
         self.action_text.set('僵尸进了你的家里！')
         pygame.mixer.stop()
         pygame.mixer.music.stop()
-        lose_sound.play()
+        current_temp_config.lose_sound.play()
         self.after(5000, self.ask_if_continue)
 
     def win(self):
         pygame.mixer.music.stop()
-        win_sound.play()
+        current_temp_config.win_sound.play()
         self.after(5000, self.ask_if_continue)
 
     def go_back(self, obj):
         self.is_stop = True
-        self.mode = PAUSE
+        self.mode = current_config.PAUSE
         if self._zombie1:
             self.after_cancel(self._zombie1)
         if self._zombie2:
             self.after_cancel(self._zombie2)
-        if msg_box:
+        if current_config.msg_box:
             self.msg_box_text.place_forget()
-        global modified_file
-        modified_file = None
-        global map_size
-        map_size = default_map_size
-        global map_content
-        map_content = deepcopy(default_map_content)
-        global lawnmower_rows
-        lawnmower_rows = deepcopy(default_lawnmower_rows)
-        global choosed_plants
-        choosed_plants = []
-        global lawn_size
-        if lawn_size != default_lawn_size:
+        current_temp_config.modified_file = None
+        current_temp_config.map_size = current_temp_config.default_map_size
+        current_temp_config.map_content = deepcopy(
+            current_temp_config.default_map_content)
+        lawnmower_rows = deepcopy(current_temp_config.default_lawnmower_rows)
+        current_temp_config.choosed_plants = []
+        if current_temp_config.lawn_size != current_temp_config.default_lawn_size:
             self.background_img = self.background_img.resize(
-                (default_lawn_size, default_lawn_size),
+                (current_temp_config.default_lawn_size,
+                 current_temp_config.default_lawn_size),
                 Image.Resampling.LANCZOS)
-        lawn_size = deepcopy(default_lawn_size)
+        current_temp_config.lawn_size = deepcopy(
+            current_temp_config.default_lawn_size)
         self.lawn_photo = self.background_img.copy()
-        self.lawn_photo = self.lawn_photo.resize((lawn_size, lawn_size),
-                                                 Image.Resampling.LANCZOS)
+        self.lawn_photo = self.lawn_photo.resize(
+            (current_temp_config.lawn_size, current_temp_config.lawn_size),
+            Image.Resampling.LANCZOS)
         self.lawn_photo = ImageTk.PhotoImage(self.lawn_photo)
-        self.map_img_dict = deepcopy(default_map_img_dict)
+        self.map_img_dict = deepcopy(current_temp_config.default_map_img_dict)
         obj.destroy()
         self.choose.destroy()
         self.whole_map.destroy()
@@ -1271,31 +1325,32 @@ class Root(Tk):
         self.killed_zombies_text.set('')
         self.stage_name.destroy()
         self.music_flag = 0
-        pygame.mixer.music.load(choose_plants_music)
-        pygame.mixer.music.set_volume(current_config['choose_seed_volume'])
+        pygame.mixer.music.load(current_config.choose_plants_music)
+        pygame.mixer.music.set_volume(current_config.choose_seed_volume)
         pygame.mixer.music.play(loops=-1)
         self.plants_already_choosed = ttk.LabelFrame(self, height=200)
         self.plants_already_choosed.grid(sticky='w')
         self.choose_plants_screen = ttk.LabelFrame(self)
         self.choose_plants_screen.place(x=0, y=200)
         self.choose_buttons = []
-        self.num_plants = len(whole_plants)
+        self.num_plants = len(current_temp_config.whole_plants)
         average_height = 200 / (self.num_plants / 5)
-        if lawn_size <= average_height:
-            average_height = lawn_size
+        if current_temp_config.lawn_size <= average_height:
+            average_height = current_temp_config.lawn_size
         for i in range(self.num_plants):
-            current_plant = whole_plants[i]
-            current_img = whole_plants_img[i]
+            current_plant = current_temp_config.whole_plants[i]
+            current_img = current_temp_config.whole_plants_img[i]
             current_plant[1] = i
-            if current_img in pre_transparent:
+            if current_img in current_config.pre_transparent:
                 current_img = Image.open(current_img)
-                ratio = min(lawn_size / current_img.height,
-                            lawn_size / current_img.width)
+                ratio = min(current_temp_config.lawn_size / current_img.height,
+                            current_temp_config.lawn_size / current_img.width)
                 current_img = current_img.resize(
                     (int(current_img.width * ratio),
                      int(current_img.height * ratio)),
                     Image.Resampling.LANCZOS)
-                center_width = int(lawn_size / 2 - current_img.width / 2)
+                center_width = int(current_temp_config.lawn_size / 2 -
+                                   current_img.width / 2)
                 temp = self.choose_plant_bg.copy()
                 temp.paste(current_img, (center_width, 0), current_img)
                 current_img = ImageTk.PhotoImage(temp)
@@ -1303,7 +1358,9 @@ class Root(Tk):
             else:
                 current_img = Image.open(current_img)
                 current_img = current_img.resize(
-                    (int(lawn_size), int(lawn_size)), Image.Resampling.LANCZOS)
+                    (int(current_temp_config.lawn_size),
+                     int(current_temp_config.lawn_size)),
+                    Image.Resampling.LANCZOS)
                 current_img = ImageTk.PhotoImage(current_img)
             current_button = ttk.Button(
                 self.choose_plants_screen,
@@ -1321,7 +1378,7 @@ class Root(Tk):
         self.choose_stages = Listbox(self,
                                      yscrollcommand=self.choose_stages_bar.set)
         self.choose_stages.configure(activestyle='none')
-        for k in stage_file:
+        for k in current_temp_config.stage_file:
             self.choose_stages.insert(END, k)
         self.choose_stages.place(x=450, y=250)
         self.choose_stages_bar.config(command=self.choose_stages.yview)
@@ -1354,100 +1411,50 @@ if __name__ == '__main__':
     sys.path.append(os.path.dirname(__file__))
     abs_path = os.getcwd()
     json_config_path = os.path.join(abs_path, "scripts/game_config.json")
-    with open(json_config_path, encoding='utf-8') as f:
-        current_config = json.load(f)
-    whole_plants_name, whole_plants = init_whole_plants_name()
-    whole_plants_img = [x[1] for x in whole_plants]
-    whole_plants = [[x[0], 0] for x in whole_plants]
-    pre_transparent = current_config['pre_transparent']
-    choose_plant_bg = current_config['choose_plant_bg']
-    modified_file = current_config['modified_file']
+    current_config = json_module(json_config_path)
+    current_temp_config = temp_config()
+    current_temp_config.whole_plants_name, current_temp_config.whole_plants = init_whole_plants_name(
+    )
+    current_temp_config.whole_plants_img = [
+        x[1] for x in current_temp_config.whole_plants
+    ]
+    current_temp_config.whole_plants = [
+        [x[0], 0] for x in current_temp_config.whole_plants
+    ]
     stage_file = os.listdir('scripts/stages')
     stage_file.remove('__init__.py')
-    stage_file = [x[:-3] for x in stage_file]
-
+    current_temp_config.stage_file = [x[:-3] for x in stage_file]
     os.chdir('resources/')
-
-    lawnmower_rows = current_config['lawnmower_rows']
-    default_lawnmower_rows = deepcopy(lawnmower_rows)
-    lawnmower_mode = current_config['lawnmower_mode']
-    lawnmower_speed = current_config['lawnmower_speed']
-    lawnmower_atack = current_config['lawnmower_atack']
-    lawnmower_img = current_config['lawnmower_img']
-    no_lawnmower_img = current_config['no_lawnmower_img']
-
-    background_music = current_config['background_music']
-    action_text_place_x, action_text_place_y = current_config[
-        'action_text_place_x'], current_config['action_text_place_y']
-    lawn_size = current_config['lawn_size']
-    default_lawn_size = deepcopy(lawn_size)
-    icon_name = current_config['icon_name']
-    title_name = current_config['title_name']
-    screen_size = current_config['screen_size']
-    sunshine_img = current_config['sunshine_img']
-    fall_sunshine_img = current_config['fall_sunshine_img']
-    shovel_img = current_config['shovel_img']
-    paused_img = current_config['paused_img']
-    map_size = current_config['map_size']
-    default_map_size = deepcopy(map_size)
-    first_time = current_config['first_time']
-    lawn_photo = current_config['lawn_photo']
-    map_img_dict = current_config['map_img_dict']
-    default_map_img_dict = deepcopy(map_img_dict)
-    map_content = current_config['map_content']
-    default_map_content = deepcopy(map_content)
-    init_sunshine = current_config['init_sunshine']
-    sunshine_cooling_time = current_config['sunshine_cooling_time']
-    zombie_explode = current_config['zombie_explode']
-    flag_img = current_config['flag_img']
-    damaged_flag_img = current_config['damaged_flag_img']
-    zombie_head_img = current_config['zombie_head_img']
-    sky_sunshine = current_config['sky_sunshine']
-
-    choose_seed_volume = current_config['choose_seed_volume']
-    background_volume = current_config['background_volume']
-    sunshine_not_enough = pygame.mixer.Sound(
-        current_config['sunshine_not_enough'])
-    choose_plants_sound = pygame.mixer.Sound(
-        current_config['choose_plants_sound'])
-    set_plants_sound = pygame.mixer.Sound(current_config['set_plants_sound'])
-    unset_plants_sound = pygame.mixer.Sound(
-        current_config['unset_plants_sound'])
-    pick_shovel_sound = pygame.mixer.Sound(current_config['pick_shovel_sound'])
-    get_sunshine_sound = pygame.mixer.Sound(
-        current_config['get_sunshine_sound'])
-    plant_bite_sound = pygame.mixer.Sound(current_config['plant_bite_sound'])
-
-    reset_sound = [
-        pygame.mixer.Sound(current_config['reset_sound'][0]),
-        pygame.mixer.Sound(current_config['reset_sound'][1])
+    current_temp_config.lawnmower_rows = deepcopy(
+        current_config.lawnmower_rows)
+    current_temp_config.default_lawnmower_rows = deepcopy(
+        current_temp_config.lawnmower_rows)
+    current_temp_config.lawn_size = deepcopy(current_config.lawn_size)
+    current_temp_config.default_lawn_size = deepcopy(
+        current_temp_config.lawn_size)
+    current_temp_config.map_size = deepcopy(current_config.map_size)
+    current_temp_config.default_map_size = deepcopy(
+        current_temp_config.map_size)
+    current_temp_config.map_img_dict = deepcopy(current_config.map_img_dict)
+    current_temp_config.default_map_img_dict = deepcopy(
+        current_temp_config.map_img_dict)
+    current_temp_config.map_content = deepcopy(current_config.map_content)
+    current_temp_config.default_map_content = deepcopy(
+        current_temp_config.map_content)
+    current_temp_config.whole_sound_names = [
+        'sunshine_not_enough', 'choose_plants_sound', 'set_plants_sound',
+        'unset_plants_sound', 'pick_shovel_sound', 'get_sunshine_sound',
+        'plant_bite_sound', 'reset_sound', 'pause_sound', 'lose_sound',
+        'choose_plant_sound', 'zombies_coming_sound', 'huge_wave_sound',
+        'lawnmower_sound', 'win_sound'
     ]
-    pause_sound = pygame.mixer.Sound(current_config['pause_sound'])
-    lose_sound = pygame.mixer.Sound(current_config['lose_sound'])
-    choose_plants_music = current_config['choose_plants_music']
-    choose_plant_sound = pygame.mixer.Sound(
-        current_config['choose_plant_sound'])
-    zombies_coming_sound = pygame.mixer.Sound(
-        current_config['zombies_coming_sound'])
-    huge_wave_sound = pygame.mixer.Sound(current_config['huge_wave_sound'])
-    lawnmower_sound = pygame.mixer.Sound(current_config['lawnmower_sound'])
-    win_sound = pygame.mixer.Sound(current_config['win_sound'])
-
-    NULL, PLACE, REMOVE, PAUSE = current_config['NULL'], current_config[
-        'PLACE'], current_config['REMOVE'], current_config['PAUSE']
-    show_zombies = current_config['show_zombies']
-    choosed_plants = []
-    whole_sounds = [
-        sunshine_not_enough, choose_plants_sound, set_plants_sound,
-        unset_plants_sound, pick_shovel_sound, get_sunshine_sound,
-        plant_bite_sound, reset_sound, pause_sound, lose_sound,
-        choose_plant_sound, zombies_coming_sound, huge_wave_sound,
-        lawnmower_sound, win_sound
+    for each in current_temp_config.whole_sound_names:
+        setattr(current_temp_config, each,
+                pygame.mixer.Sound(getattr(current_config, each)))
+    current_temp_config.choosed_plants = []
+    current_temp_config.whole_sounds = [
+        getattr(current_temp_config, i)
+        for i in current_temp_config.whole_sound_names
     ]
-    msg_box = current_config['msg_box']
-    msg_box_x, msg_box_y = current_config['msg_box_x'], current_config[
-        'msg_box_y']
-    msg_lines_limit = current_config['msg_lines_limit']
     root = Root()
-    root.protocol('WM_DELETE_WINDOW', quit)
     root.mainloop()

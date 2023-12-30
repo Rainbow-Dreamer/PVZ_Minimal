@@ -1,0 +1,192 @@
+{
+    "stage_name": "水池预设关卡1",
+    "zombies_names": [
+        "普通僵尸",
+        "路障僵尸",
+        "铁桶僵尸"
+    ],
+    "apply_scripts": [
+        "common.py"
+    ],
+    "start_time": 5,
+    "stages": [
+        {
+            "is_big_wave": false,
+            "zombies": [
+                "普通僵尸",
+                "路障僵尸"
+            ],
+            "appear_rows_range": [
+                0,
+                4
+            ],
+            "appear_columns_range": [
+                8
+            ],
+            "appear_times_range": [
+                1,
+                120
+            ],
+            "quantity": 20
+        },
+        {
+            "is_big_wave": true,
+            "zombies": [
+                "普通僵尸",
+                "路障僵尸"
+            ],
+            "appear_rows_range": [
+                0,
+                4
+            ],
+            "appear_columns_range": [
+                8
+            ],
+            "appear_times_range": [
+                1,
+                5
+            ],
+            "quantity": 25
+        },
+        {
+            "is_big_wave": false,
+            "zombies": [
+                "普通僵尸",
+                "路障僵尸"
+            ],
+            "appear_rows_range": [
+                0,
+                4
+            ],
+            "appear_columns_range": [
+                8
+            ],
+            "appear_times_range": [
+                1,
+                120
+            ],
+            "quantity": 30
+        },
+        {
+            "is_big_wave": true,
+            "zombies": [
+                "普通僵尸",
+                "路障僵尸",
+                "铁桶僵尸"
+            ],
+            "appear_rows_range": [
+                0,
+                4
+            ],
+            "appear_columns_range": [
+                8
+            ],
+            "appear_times_range": [
+                1,
+                120
+            ],
+            "quantity": 25
+        },
+        {
+            "is_big_wave": false,
+            "zombies": [
+                "普通僵尸",
+                "路障僵尸",
+                "铁桶僵尸"
+            ],
+            "appear_rows_range": [
+                0,
+                4
+            ],
+            "appear_columns_range": [
+                8
+            ],
+            "appear_times_range": [
+                1,
+                120
+            ],
+            "quantity": 20
+        }
+    ],
+    "map_size": [
+        6,
+        9
+    ],
+    "lawn_size": 40,
+    "lawnmower_rows": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+    ],
+    "map_content": [
+        [
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day"
+        ],
+        [
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day"
+        ],
+        [
+            "pool",
+            "pool",
+            "pool",
+            "pool",
+            "pool",
+            "pool",
+            "pool",
+            "pool",
+            "pool"
+        ],
+        [
+            "pool",
+            "pool",
+            "pool",
+            "pool",
+            "pool",
+            "pool",
+            "pool",
+            "pool",
+            "pool"
+        ],
+        [
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day"
+        ],
+        [
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day"
+        ]
+    ]
+}

@@ -130,10 +130,7 @@
     "pick_shovel_sound": "sounds/shovel.ogg",
     "get_sunshine_sound": "sounds/points.ogg",
     "plant_bite_sound": "sounds/gulp.ogg",
-    "reset_sound": [
-        "sounds/tap.ogg",
-        "sounds/tap2.ogg"
-    ],
+    "reset_sound": "sounds/tap.ogg",
     "pause_sound": "sounds/pause.ogg",
     "lose_sound": "sounds/losemusic.ogg",
     "choose_plants_music": "sounds/Laura Shigihara - Choose Your Seeds IN-GAME.ogg",
