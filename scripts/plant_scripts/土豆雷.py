@@ -40,7 +40,7 @@ def potato_detect(self, games):
             price=25,
             hp=5,
             cooling_time=30,
-            attack_interval=3,
+            attack_interval=15,
             bullet_img='UnarmedPotatoMine.png',
             bullet_attack=90,
             bullet_sound=('sounds/dirt_rise.ogg', 'sounds/potato_mine.ogg'),

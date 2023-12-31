@@ -1,5 +1,5 @@
 {
-    "stage_name": "水池预设关卡1",
+    "stage_name": "预设关卡1",
     "zombies_names": [
         "普通僵尸",
         "路障僵尸",
@@ -107,86 +107,5 @@
             ],
             "quantity": 20
         }
-    ],
-    "map_size": [
-        6,
-        9
-    ],
-    "lawn_size": 40,
-    "lawnmower_rows": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5
-    ],
-    "map_content": [
-        [
-            "day",
-            "day",
-            "day",
-            "day",
-            "day",
-            "day",
-            "day",
-            "day",
-            "day"
-        ],
-        [
-            "day",
-            "day",
-            "day",
-            "day",
-            "day",
-            "day",
-            "day",
-            "day",
-            "day"
-        ],
-        [
-            "pool",
-            "pool",
-            "pool",
-            "pool",
-            "pool",
-            "pool",
-            "pool",
-            "pool",
-            "pool"
-        ],
-        [
-            "pool",
-            "pool",
-            "pool",
-            "pool",
-            "pool",
-            "pool",
-            "pool",
-            "pool",
-            "pool"
-        ],
-        [
-            "day",
-            "day",
-            "day",
-            "day",
-            "day",
-            "day",
-            "day",
-            "day",
-            "day"
-        ],
-        [
-            "day",
-            "day",
-            "day",
-            "day",
-            "day",
-            "day",
-            "day",
-            "day",
-            "day"
-        ]
     ]
 }

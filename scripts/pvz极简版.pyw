@@ -209,7 +209,6 @@ class Root(Tk):
             [x[0], 0] for x in self.current_temp_config.whole_plants
         ]
         stage_file = os.listdir('scripts/stages')
-        stage_file.remove('__init__.py')
         self.current_temp_config.stage_file = [
             os.path.splitext(x)[0] for x in stage_file
         ]
@@ -626,14 +625,21 @@ class Root(Tk):
         choosed_stage = self.choose_stages.get(ACTIVE)
         current_choosed_stage_file = f'../scripts/stages/{choosed_stage}.json'
         self.stage_file_contents = json_module(current_choosed_stage_file)
-        self.current_temp_config.map_content = self.stage_file_contents.map_content
+        if hasattr(self.stage_file_contents, 'map_content'):
+            self.current_temp_config.map_content = self.stage_file_contents.map_content
+        if hasattr(self.stage_file_contents, 'lawn_size'):
+            self.current_temp_config.lawn_size = self.stage_file_contents.lawn_size
+        if hasattr(self.stage_file_contents, 'map_size'):
+            self.current_temp_config.map_size = self.stage_file_contents.map_size
+        if hasattr(self.stage_file_contents, 'lawnmower_rows'):
+            self.current_temp_config.lawnmower_rows = self.stage_file_contents.lawnmower_rows
         for each in self.stage_file_contents.apply_scripts:
             with open(each, encoding='utf-8') as f:
                 exec(f.read(), globals())
-        if self.stage_file_contents.lawn_size != self.current_temp_config.default_lawn_size:
+        if self.current_temp_config.lawn_size != self.current_temp_config.default_lawn_size:
             self.background_img = self.background_img.resize(
-                (int(self.stage_file_contents.lawn_size),
-                 int(self.stage_file_contents.lawn_size)),
+                (int(self.current_temp_config.lawn_size),
+                 int(self.current_temp_config.lawn_size)),
                 Image.Resampling.LANCZOS)
         self.stage_name = ttk.Label(self, text=choosed_stage)
         self.stage_name.place(x=10, y=self.current_config.screen_size[1] - 50)
@@ -662,16 +668,17 @@ class Root(Tk):
             for x in self.current_temp_config.choosed_plants
         ])
         os.chdir('../resources')
-        if self.current_config.modified_file:
-            with open(self.current_config.modified_file,
-                      encoding='utf-8') as f:
+        current_modified_file = self.current_config.modified_file
+        if hasattr(self.stage_file_contents, 'modified_file'):
+            current_modified_file = self.stage_file_contents.modified_file
+        if current_modified_file:
+            with open(current_modified_file, encoding='utf-8') as f:
                 exec(f.read())
 
         self.plants_generate = deepcopy(
             self.current_temp_config.choosed_plants)
         self.paused_time = 0
         self.choose = ttk.LabelFrame(self)
-
         self.init_sunshine()
         self.init_plants()
         self.init_shovel()
@@ -682,21 +689,21 @@ class Root(Tk):
         self.maps = ttk.LabelFrame(self.whole_map)
         self.lawnmower_frame = ttk.LabelFrame(self.whole_map)
         self.lawnmowers = [
-            0 for j in range(self.stage_file_contents.map_size[0])
+            0 for j in range(self.current_temp_config.map_size[0])
         ]
         self.lawnmower_img = Image.open(self.current_config.lawnmower_img)
         self.lawnmower_img = self.lawnmower_img.resize(
-            (self.stage_file_contents.lawn_size,
-             self.stage_file_contents.lawn_size), Image.Resampling.LANCZOS)
+            (self.current_temp_config.lawn_size,
+             self.current_temp_config.lawn_size), Image.Resampling.LANCZOS)
         self.lawnmower_img = ImageTk.PhotoImage(self.lawnmower_img)
         self.no_lawnmower_img = Image.open(
             self.current_config.no_lawnmower_img)
         self.no_lawnmower_img = self.no_lawnmower_img.resize(
-            (self.stage_file_contents.lawn_size,
-             self.stage_file_contents.lawn_size), Image.Resampling.LANCZOS)
+            (self.current_temp_config.lawn_size,
+             self.current_temp_config.lawn_size), Image.Resampling.LANCZOS)
         self.no_lawnmower_img = ImageTk.PhotoImage(self.no_lawnmower_img)
 
-        for k in self.stage_file_contents.lawnmower_rows:
+        for k in self.current_temp_config.lawnmower_rows:
             current_mower = lawnmower(k, 0, self.current_config.lawnmower_mode,
                                       self.current_config.lawnmower_speed,
                                       self.current_config.lawnmower_atack)
@@ -712,15 +719,15 @@ class Root(Tk):
         self.maps.grid(row=0, column=1, sticky='W')
         self.choosed_plant = None
         self.sunshine_ls = []
-        self.map_rows, self.map_columns = self.stage_file_contents.map_size
+        self.map_rows, self.map_columns = self.current_temp_config.map_size
 
         self.bind("<Button-3>", lambda e: self.reset())
         self.bind("<space>", lambda e: self.pause())
         self.zombie_explode_img = Image.open(
             self.current_config.zombie_explode)
         self.zombie_explode_img = self.zombie_explode_img.resize(
-            (self.stage_file_contents.lawn_size,
-             self.stage_file_contents.lawn_size), Image.Resampling.LANCZOS)
+            (self.current_temp_config.lawn_size,
+             self.current_temp_config.lawn_size), Image.Resampling.LANCZOS)
         self.zombie_explode_img = ImageTk.PhotoImage(self.zombie_explode_img)
         self.check_plants()
         self.normal_zombies_num = 0
@@ -740,21 +747,21 @@ class Root(Tk):
             anchor='center')
         self.flag_img = Image.open(self.current_config.flag_img)
         self.flag_img = self.flag_img.resize(
-            (self.stage_file_contents.lawn_size // 2,
-             self.stage_file_contents.lawn_size // 2),
+            (self.current_temp_config.lawn_size // 2,
+             self.current_temp_config.lawn_size // 2),
             Image.Resampling.LANCZOS)
         self.flag_img = ImageTk.PhotoImage(self.flag_img)
         self.damaged_flag_img = Image.open(
             self.current_config.damaged_flag_img)
         self.damaged_flag_img = self.damaged_flag_img.resize(
-            (self.stage_file_contents.lawn_size // 2,
-             self.stage_file_contents.lawn_size // 2),
+            (self.current_temp_config.lawn_size // 2,
+             self.current_temp_config.lawn_size // 2),
             Image.Resampling.LANCZOS)
         self.damaged_flag_img = ImageTk.PhotoImage(self.damaged_flag_img)
         self.head_img = Image.open(self.current_config.zombie_head_img)
         self.head_img = self.head_img.resize(
-            (self.stage_file_contents.lawn_size // 2,
-             self.stage_file_contents.lawn_size // 2),
+            (self.current_temp_config.lawn_size // 2,
+             self.current_temp_config.lawn_size // 2),
             Image.Resampling.LANCZOS)
         self.head_img = ImageTk.PhotoImage(self.head_img)
         self.zombie_bar = ttk.LabelFrame(self)
@@ -828,7 +835,10 @@ class Root(Tk):
                 (self.current_temp_config.lawn_size,
                  self.current_temp_config.lawn_size),
                 Image.Resampling.LANCZOS))
-        self.sunshine = self.current_config.init_sunshine
+        if hasattr(self.stage_file_contents, 'init_sunshine'):
+            self.sunshine = self.stage_file_contents.init_sunshine
+        else:
+            self.sunshine = self.current_config.init_sunshine
         self.sunshine_text = StringVar()
         self.sunshine_text.set(self.sunshine)
         self.sunshine_show = ttk.Label(self.choose,
@@ -1294,7 +1304,6 @@ class Root(Tk):
                     self.normal_or_wave = 1
                     if self.normal_zombies_num == self.current_stage.num_of_waves:
                         self.action_text.set('你赢了！')
-                        #self.mode = self.current_config.PAUSE
                         self.win()
                         return
                     self.normal_zombies_num += 1

@@ -1,0 +1,278 @@
+{
+    "stage_name": "耐久战",
+    "zombies_names": [
+        "普通僵尸",
+        "路障僵尸",
+        "铁桶僵尸",
+        "舞王僵尸",
+        "撑杆僵尸"
+    ],
+    "apply_scripts": [
+        "common.py"
+    ],
+    "start_time": 5,
+    "stages": [
+        {
+            "is_big_wave": false,
+            "zombies": [
+                "普通僵尸",
+                "路障僵尸"
+            ],
+            "appear_rows_range": [
+                0,
+                4
+            ],
+            "appear_columns_range": [
+                8
+            ],
+            "appear_times_range": [
+                1,
+                120
+            ],
+            "quantity": 40
+        },
+        {
+            "is_big_wave": true,
+            "zombies": [
+                "普通僵尸",
+                "路障僵尸"
+            ],
+            "appear_rows_range": [
+                0,
+                4
+            ],
+            "appear_columns_range": [
+                8
+            ],
+            "appear_times_range": [
+                1,
+                10
+            ],
+            "quantity": 100
+        },
+        {
+            "is_big_wave": false,
+            "zombies": [
+                "普通僵尸",
+                "路障僵尸",
+                "撑杆僵尸"
+            ],
+            "appear_rows_range": [
+                0,
+                4
+            ],
+            "appear_columns_range": [
+                8
+            ],
+            "appear_times_range": [
+                1,
+                120
+            ],
+            "quantity": 40
+        },
+        {
+            "is_big_wave": true,
+            "zombies": [
+                "普通僵尸",
+                "路障僵尸",
+                "撑杆僵尸"
+            ],
+            "appear_rows_range": [
+                0,
+                4
+            ],
+            "appear_columns_range": [
+                8
+            ],
+            "appear_times_range": [
+                1,
+                10
+            ],
+            "quantity": 100
+        },
+        {
+            "is_big_wave": false,
+            "zombies": [
+                "普通僵尸",
+                "路障僵尸",
+                "铁桶僵尸"
+            ],
+            "appear_rows_range": [
+                0,
+                4
+            ],
+            "appear_columns_range": [
+                8
+            ],
+            "appear_times_range": [
+                1,
+                120
+            ],
+            "quantity": 60
+        },
+        {
+            "is_big_wave": true,
+            "zombies": [
+                "撑杆僵尸",
+                "路障僵尸",
+                "铁桶僵尸"
+            ],
+            "appear_rows_range": [
+                0,
+                4
+            ],
+            "appear_columns_range": [
+                8
+            ],
+            "appear_times_range": [
+                1,
+                10
+            ],
+            "quantity": 150
+        },
+        {
+            "is_big_wave": false,
+            "zombies": [
+                "普通僵尸",
+                "撑杆僵尸",
+                "路障僵尸",
+                "铁桶僵尸"
+            ],
+            "appear_rows_range": [
+                0,
+                4
+            ],
+            "appear_columns_range": [
+                8
+            ],
+            "appear_times_range": [
+                1,
+                120
+            ],
+            "quantity": 60
+        },
+        {
+            "is_big_wave": true,
+            "zombies": [
+                "撑杆僵尸",
+                "铁桶僵尸",
+                "舞王僵尸"
+            ],
+            "appear_rows_range": [
+                0,
+                4
+            ],
+            "appear_columns_range": [
+                8
+            ],
+            "appear_times_range": [
+                1,
+                10
+            ],
+            "quantity": 150
+        },
+        {
+            "is_big_wave": false,
+            "zombies": [
+                "普通僵尸",
+                "路障僵尸",
+                "撑杆僵尸",
+                "铁桶僵尸",
+                "舞王僵尸"
+            ],
+            "appear_rows_range": [
+                0,
+                4
+            ],
+            "appear_columns_range": [
+                8
+            ],
+            "appear_times_range": [
+                1,
+                60
+            ],
+            "quantity": 180
+        },
+        {
+            "is_big_wave": true,
+            "zombies": [
+                "铁桶僵尸",
+                "舞王僵尸"
+            ],
+            "appear_rows_range": [
+                0,
+                4
+            ],
+            "appear_columns_range": [
+                8
+            ],
+            "appear_times_range": [
+                1,
+                20
+            ],
+            "quantity": 170
+        },
+        {
+            "is_big_wave": false,
+            "zombies": [
+                "路障僵尸",
+                "撑杆僵尸",
+                "铁桶僵尸",
+                "舞王僵尸"
+            ],
+            "appear_rows_range": [
+                0,
+                4
+            ],
+            "appear_columns_range": [
+                8
+            ],
+            "appear_times_range": [
+                1,
+                120
+            ],
+            "quantity": 80
+        },
+        {
+            "is_big_wave": true,
+            "zombies": [
+                "路障僵尸",
+                "撑杆僵尸",
+                "铁桶僵尸",
+                "舞王僵尸"
+            ],
+            "appear_rows_range": [
+                0,
+                4
+            ],
+            "appear_columns_range": [
+                8
+            ],
+            "appear_times_range": [
+                1,
+                20
+            ],
+            "quantity": 200
+        },
+        {
+            "is_big_wave": false,
+            "zombies": [
+                "撑杆僵尸",
+                "铁桶僵尸",
+                "舞王僵尸"
+            ],
+            "appear_rows_range": [
+                0,
+                4
+            ],
+            "appear_columns_range": [
+                8
+            ],
+            "appear_times_range": [
+                1,
+                120
+            ],
+            "quantity": 100
+        }
+    ]
+}
