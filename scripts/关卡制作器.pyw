@@ -571,7 +571,6 @@ class Root3(Toplevel):
             output_text += f"current_stage.set_normal_all({','.join(available_normals)})\n"
         if available_waves:
             output_text += f"current_stage.set_waves_all({','.join(available_waves)})"
-        print(111, os.getcwd(), flush=True)
         with open(f'../scripts/stages/{stage_name}.py', 'w',
                   encoding='utf-8') as f:
             f.write(output_text)
@@ -637,4 +636,4 @@ def get_appear_times(appear_time):
 
 
 if __name__ == '__main__':
-    make_stage_window = Root3()
+    root.make_stage_window = Root3()

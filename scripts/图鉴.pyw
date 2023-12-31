@@ -191,4 +191,4 @@ if __name__ == '__main__':
             exec(f.read(), globals())
     zombies_ls = [eval(i) for i in zombies_name]
     os.chdir('../../resources')
-    wiki_window = Root2()
+    root.wiki_window = Root2()

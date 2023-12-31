@@ -1,4 +1,3 @@
-for each in choosed_plants:
+for each in root.current_temp_config.choosed_plants:
     each.cooling_time = 0
-global init_sunshine
-init_sunshine = 10000
+root.current_config.init_sunshine = 10000
