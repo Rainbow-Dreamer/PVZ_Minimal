@@ -1,4 +1,4 @@
-from plant_scripts.plant import plant
+from scripts.plant_scripts.plant import plant
 import random, time
 
 
