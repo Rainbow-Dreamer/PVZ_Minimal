@@ -1,4 +1,4 @@
-# 这是一个很简单的预设关卡
+import random
 
 
 def shooting_move(self, games, columns_move=0, rows_move=0):
@@ -81,39 +81,12 @@ def shooting_newspaper(self, games):
                 games.after(500, lambda: reset_func(self, games))
 
 
-zombies_names = ['普通僵尸', '路障僵尸', '读报僵尸', '铁桶僵尸']
-with open('common.py', encoding='utf-8') as f:
-    exec(f.read())
-for each in [普通僵尸, 路障僵尸, 铁桶僵尸]:
-    each.move_speed = 5
-    each.start_func = shooting_move
-    each.eachtime_func = shooting_check
-读报僵尸.start_func = shooting_move
-读报僵尸.eachtime_func = shooting_newspaper
-
-start_time = 2
-part1 = [
-    get_zombies(random.choice([普通僵尸, 路障僵尸, 读报僵尸]), random.randint(0, 4), 8,
-                random.randint(1, 60)) for i in range(20)
-]
-
-part2 = [
-    get_zombies(random.choice([普通僵尸, 路障僵尸, 铁桶僵尸]), random.randint(0, 4), 8,
-                random.randint(1, 60)) for i in range(20)
-]
-
-part3 = [
-    get_zombies(random.choice([普通僵尸, 路障僵尸, 铁桶僵尸, 读报僵尸]), random.randint(0, 4),
-                8, random.randint(1, 60)) for i in range(30)
-]
-big_wave1 = [
-    get_zombies(random.choice([普通僵尸, 路障僵尸, 铁桶僵尸]), random.randint(0, 4), 8,
-                random.randint(1, 5)) for i in range(20)
-]
-big_wave2 = [
-    get_zombies(random.choice([普通僵尸, 路障僵尸, 铁桶僵尸, 读报僵尸]), random.randint(0, 4),
-                8, random.randint(1, 5)) for i in range(20)
-]
-current_stage = Stage(2)
-current_stage.set_normal_all(part1, part2, part3)
-current_stage.set_waves_all(big_wave1, big_wave2)
+for each in zombies_sample:
+    each.move_speed = 2
+    if each.name == '读报僵尸':
+        each.start_func = shooting_move
+        each.eachtime_func = shooting_newspaper
+    else:
+        each.move_speed = 5
+        each.start_func = shooting_move
+        each.eachtime_func = shooting_check

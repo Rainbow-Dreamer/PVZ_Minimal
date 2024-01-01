@@ -1,0 +1,118 @@
+{
+    "stage_name": "预设关卡1",
+    "zombies_names": [
+        "普通僵尸",
+        "路障僵尸",
+        "铁桶僵尸",
+        "读报僵尸"
+    ],
+    "apply_scripts": [
+        "common.py",
+        "枪林弹雨.py"
+    ],
+    "start_time": 5,
+    "stages": [
+        {
+            "is_big_wave": false,
+            "zombies": [
+                "普通僵尸",
+                "路障僵尸",
+                "读报僵尸"
+            ],
+            "appear_rows_range": [
+                0,
+                4
+            ],
+            "appear_columns_range": [
+                8
+            ],
+            "appear_times_range": [
+                1,
+                60
+            ],
+            "quantity": 20
+        },
+        {
+            "is_big_wave": true,
+            "zombies": [
+                "普通僵尸",
+                "路障僵尸",
+                "铁桶僵尸"
+            ],
+            "appear_rows_range": [
+                0,
+                4
+            ],
+            "appear_columns_range": [
+                8
+            ],
+            "appear_times_range": [
+                1,
+                5
+            ],
+            "quantity": 20
+        },
+        {
+            "is_big_wave": false,
+            "zombies": [
+                "普通僵尸",
+                "路障僵尸",
+                "铁桶僵尸"
+            ],
+            "appear_rows_range": [
+                0,
+                4
+            ],
+            "appear_columns_range": [
+                8
+            ],
+            "appear_times_range": [
+                1,
+                60
+            ],
+            "quantity": 20
+        },
+        {
+            "is_big_wave": true,
+            "zombies": [
+                "普通僵尸",
+                "路障僵尸",
+                "铁桶僵尸",
+                "读报僵尸"
+            ],
+            "appear_rows_range": [
+                0,
+                4
+            ],
+            "appear_columns_range": [
+                8
+            ],
+            "appear_times_range": [
+                1,
+                5
+            ],
+            "quantity": 20
+        },
+        {
+            "is_big_wave": false,
+            "zombies": [
+                "普通僵尸",
+                "路障僵尸",
+                "铁桶僵尸",
+                "读报僵尸"
+            ],
+            "appear_rows_range": [
+                0,
+                4
+            ],
+            "appear_columns_range": [
+                8
+            ],
+            "appear_times_range": [
+                1,
+                60
+            ],
+            "quantity": 30
+        }
+    ]
+}
