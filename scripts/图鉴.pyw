@@ -151,7 +151,7 @@ class Root2(Toplevel):
 
 
 if __name__ == '__main__':
-    json_config_path = os.path.join(abs_path, "scripts/game_config.json")
+    json_config_path = os.path.join(root.abs_path, "scripts/game_config.json")
     with open(json_config_path, encoding='utf-8') as f:
         current_config = json.load(f)
     height = current_config['wiki']['height']

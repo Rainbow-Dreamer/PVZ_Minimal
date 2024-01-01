@@ -195,8 +195,8 @@ class Root(Tk):
     def init_config(self):
         pygame.mixer.init()
         sys.path.append(os.path.dirname(__file__))
-        abs_path = os.getcwd()
-        self.json_config_path = os.path.join(abs_path,
+        self.abs_path = os.getcwd()
+        self.json_config_path = os.path.join(self.abs_path,
                                              "scripts/game_config.json")
         self.current_config = json_module(self.json_config_path)
         self.current_temp_config = temp_config()
@@ -260,12 +260,6 @@ class Root(Tk):
         self.wiki.place(x=self.current_config.screen_size[0] - 100,
                         y=self.current_config.screen_size[1] - 180)
 
-        self.make_stage = ttk.Button(self,
-                                     text='制作关卡',
-                                     command=self.open_make_stage)
-        self.make_stage.place(x=self.current_config.screen_size[0] - 100,
-                              y=self.current_config.screen_size[1] - 140)
-
         self.configs = ttk.Button(self,
                                   text='设置',
                                   command=self.open_config_window)
@@ -273,10 +267,10 @@ class Root(Tk):
                                       text='小游戏',
                                       command=self.open_little_game)
         self.little_game.place(x=self.current_config.screen_size[0] - 100,
-                               y=self.current_config.screen_size[1] - 100)
+                               y=self.current_config.screen_size[1] - 140)
 
         self.configs.place(x=self.current_config.screen_size[0] - 100,
-                           y=self.current_config.screen_size[1] - 60)
+                           y=self.current_config.screen_size[1] - 100)
         self.make_label = ttk.Label
         self.make_button = ttk.Button
         self.plant_bite_sound = self.current_temp_config.plant_bite_sound
@@ -370,7 +364,6 @@ class Root(Tk):
         self.make_config_window()
         self.open_config_window = False
         self.open_wiki_window = False
-        self.open_make_stage_window = False
 
     def open_wiki(self):
         if self.open_wiki_window:
@@ -380,15 +373,6 @@ class Root(Tk):
             self.open_wiki_window = True
         os.chdir('..')
         with open('scripts/图鉴.pyw', encoding='utf-8') as f:
-            exec(f.read(), globals())
-
-    def open_make_stage(self):
-        if self.open_make_stage_window:
-            self.make_stage_window.focus_set()
-            return
-        else:
-            self.open_make_stage_window = True
-        with open('../scripts/关卡制作器.pyw', encoding='utf-8') as f:
             exec(f.read(), globals())
 
     def open_little_game(self):
