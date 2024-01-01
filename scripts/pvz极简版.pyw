@@ -332,7 +332,6 @@ class Root(Tk):
                 temp = self.choose_plant_bg.copy()
                 temp.paste(current_img, (center_width, 0), current_img)
                 current_img = ImageTk.PhotoImage(temp)
-
             else:
                 current_img = Image.open(current_img)
                 current_img = current_img.resize(
@@ -349,7 +348,7 @@ class Root(Tk):
             self.choose_buttons.append(current_button)
         self.choose_plants_screen.place(x=0, y=200)
         self.start_game = ttk.Button(text='开始游戏', command=self.start_init)
-        self.start_game.place(x=0, y=500)
+        self.start_game.place(x=0, y=600)
         self.choose_stage_text = ttk.Label(self, text='请选择关卡')
         self.choose_stage_text.place(x=450, y=220)
         self.choose_stages_bar = Scrollbar(self)
@@ -820,9 +819,9 @@ class Root(Tk):
                  self.current_temp_config.lawn_size),
                 Image.Resampling.LANCZOS))
         if hasattr(self.stage_file_contents, 'init_sunshine'):
-            self.sunshine = self.stage_file_contents.init_sunshine
+            self.sunshine = deepcopy(self.stage_file_contents.init_sunshine)
         else:
-            self.sunshine = self.current_config.init_sunshine
+            self.sunshine = deepcopy(self.current_config.init_sunshine)
         self.sunshine_text = StringVar()
         self.sunshine_text.set(self.sunshine)
         self.sunshine_show = ttk.Label(self.choose,
@@ -1477,7 +1476,7 @@ class Root(Tk):
             current_button.grid(row=i // 6, column=i % 6)
             self.choose_buttons.append(current_button)
         self.start_game = ttk.Button(text='开始游戏', command=self.start_init)
-        self.start_game.place(x=0, y=500)
+        self.start_game.place(x=0, y=600)
         self.choose_stage_text = ttk.Label(self, text='请选择关卡')
         self.choose_stage_text.place(x=450, y=220)
         self.choose_stages_bar = Scrollbar(self)
