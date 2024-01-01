@@ -157,7 +157,7 @@ class Root(Tk):
         self.title('传送带测试')
         self.minsize(*self.current_config.screen_size)
         self.paused_time = 0
-        self.sound_volume = 1
+        self.sound_volume = self.current_config.whole_sound_volume
         self.music_flag = 1
         self.bullets_ls = []
         self.back_button = ttk.Button(self, text='返回', command=go_back)
@@ -434,23 +434,12 @@ class Root(Tk):
         result.columns = columns
         return result
 
-    def get_zombies(self, zombies_obj, rows, columns, appear_time):
+    def get_zombies(self, zombies_obj, rows, columns, appear_time=None):
         result = deepcopy(zombies_obj)
         result.rows = rows
         result.columns = columns
         result.appear_time = appear_time
         return result
-
-    def init_whole_plants_name(self):
-        whole_plants_name = os.listdir('scripts/plant_scripts')
-        except_ls = ['__pycache__', '__init__.py', 'plant.py', 'bullets.py']
-        for each in except_ls:
-            if each in whole_plants_name:
-                whole_plants_name.remove(each)
-        whole_plants_name = [x[:-3] for x in whole_plants_name]
-        self.current_config.whole_plants = [(x, f"{x}.png")
-                                            for x in whole_plants_name]
-        return whole_plants_name, self.current_config.whole_plants
 
     def reset(self):
         self.action_text.set('')
@@ -567,10 +556,6 @@ class Root(Tk):
         new_volume = config_window.bg_volume.get()
         if new_volume != int(pygame.mixer.music.get_volume() * 100):
             pygame.mixer.music.set_volume(new_volume / 100)
-            if self.music_flag == 1:
-                background_volume = new_volume / 100
-            elif self.music_flag == 0:
-                choose_seed_volume = new_volume / 100
 
     def change_sound_volume(self, config_window):
         new_volume = config_window.sound_volume.get()

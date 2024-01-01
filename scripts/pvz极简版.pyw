@@ -147,7 +147,7 @@ class Root(Tk):
         result.columns = columns
         return result
 
-    def get_zombies(self, zombies_obj, rows, columns, appear_time):
+    def get_zombies(self, zombies_obj, rows, columns, appear_time=None):
         result = deepcopy(zombies_obj)
         result.rows = rows
         result.columns = columns

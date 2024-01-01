@@ -129,6 +129,8 @@ class Root(Tk):
         self.wm_iconbitmap(self.current_config.icon_name)
         self.title('锤僵尸')
         self.minsize(*self.current_config.screen_size)
+        self.sound_volume = self.current_config.whole_sound_volume
+        self.music_flag = 1
         self.back_button = ttk.Button(self, text='返回', command=go_back)
         self.back_button.place(x=self.current_config.screen_size[0] - 100, y=0)
         self.make_label = ttk.Label
@@ -223,6 +225,13 @@ class Root(Tk):
         self.big_waves_zombies_num = 0
         self.normal_or_wave = 0
 
+        self.configs = ttk.Button(self,
+                                  text='设置',
+                                  command=self.make_config_window)
+
+        self.configs.place(x=self.current_config.screen_size[0] - 100,
+                           y=self.current_config.screen_size[1] - 60)
+
     def init_stage(self):
         current_choosed_stage_file = '../scripts/games/锤僵尸/锤僵尸简单难度.json'
         self.stage_file_contents = json_module(current_choosed_stage_file)
@@ -308,23 +317,93 @@ class Root(Tk):
         result.columns = columns
         return result
 
-    def get_zombies(self, zombies_obj, rows, columns, appear_time):
+    def get_zombies(self, zombies_obj, rows, columns, appear_time=None):
         result = deepcopy(zombies_obj)
         result.rows = rows
         result.columns = columns
         result.appear_time = appear_time
         return result
 
-    def init_whole_plants_name(self):
-        whole_plants_name = os.listdir('scripts/plant_scripts')
-        except_ls = ['__pycache__', '__init__.py', 'plant.py', 'bullets.py']
-        for each in except_ls:
-            if each in whole_plants_name:
-                whole_plants_name.remove(each)
-        whole_plants_name = [x[:-3] for x in whole_plants_name]
-        self.current_config.whole_plants = [(x, f"{x}.png")
-                                            for x in whole_plants_name]
-        return whole_plants_name, self.current_config.whole_plants
+    def make_config_window(self):
+        config_window = Toplevel(self)
+        config_window.title('设置')
+        config_window.minsize(500, 300)
+        config_window.bg_volume_text = ttk.Label(config_window, text='背景音乐音量')
+        config_window.bg_volume = Scale(
+            config_window,
+            from_=0,
+            to=100,
+            orient=HORIZONTAL,
+            resolution=5,
+            length=200,
+            command=lambda e: self.change_bg_volume(config_window))
+        config_window.bg_volume.set(int(pygame.mixer.music.get_volume() * 100))
+        config_window.bg_volume_text.place(x=0, y=20)
+        config_window.bg_volume.place(x=100, y=0)
+        config_window.bg_text = ttk.Label(config_window, text='背景音乐')
+        config_window.bg = Text(config_window, width=55, height=5)
+        config_window.bg_button = ttk.Button(
+            config_window,
+            text='更改',
+            command=lambda: self.change_bg(config_window))
+        if self.music_flag == 1:
+            config_window.bg.insert(END, self.current_config.background_music)
+        elif self.music_flag == 0:
+            config_window.bg.insert(END,
+                                    self.current_config.choose_plants_music)
+        config_window.bg_text.place(x=0, y=60)
+        config_window.bg.place(x=0, y=80)
+        config_window.bg_button.place(x=400, y=80)
+        config_window.sound_volume_text = ttk.Label(config_window, text='音效音量')
+        config_window.sound_volume = Scale(
+            config_window,
+            from_=0,
+            to=100,
+            orient=HORIZONTAL,
+            resolution=5,
+            length=200,
+            command=lambda e: self.change_sound_volume(config_window))
+        config_window.sound_volume.set(int(self.sound_volume * 100))
+        config_window.sound_volume_text.place(x=0, y=180)
+        config_window.sound_volume.place(x=100, y=160)
+
+    def change_bg(self, config_window):
+        filename = filedialog.askopenfilename(title="选择你想播放的背景音乐",
+                                              filetypes=(("音乐文件",
+                                                          ".mp3 .ogg .wav"),
+                                                         ("所有文件", "*.*")))
+        if filename:
+            if self.music_flag == 1:
+                background_music = filename
+                pygame.mixer.music.stop()
+                pygame.mixer.music.load(background_music)
+                pygame.mixer.music.play(loops=-1)
+                config_window.bg.delete('1.0', END)
+                config_window.bg.insert(END, background_music)
+            elif self.music_flag == 0:
+                choose_plants_music = filename
+                pygame.mixer.music.stop()
+                pygame.mixer.music.load(choose_plants_music)
+                pygame.mixer.music.play(loops=-1)
+                config_window.bg.delete('1.0', END)
+                config_window.bg.insert(END, choose_plants_music)
+
+    def change_bg_volume(self, config_window):
+        new_volume = config_window.bg_volume.get()
+        if new_volume != int(pygame.mixer.music.get_volume() * 100):
+            pygame.mixer.music.set_volume(new_volume / 100)
+
+    def change_sound_volume(self, config_window):
+        new_volume = config_window.sound_volume.get()
+        if new_volume != int(self.sound_volume * 100):
+            new_set_volume = new_volume / 100
+            for each in self.current_config.whole_sounds:
+                if type(each) == list:
+                    for i in each:
+                        i.set_volume(new_set_volume)
+                else:
+                    each.set_volume(new_set_volume)
+            self.sound_volume = new_set_volume
 
     def pause(self):
         if self.mode != self.PAUSE:
@@ -412,14 +491,27 @@ class Root(Tk):
         current_zombies.attack_sound = [
             pygame.mixer.Sound(j) for j in current_zombies.attack_sound
         ]
+        for each in current_zombies.attack_sound:
+            each.set_volume(self.sound_volume)
+        self.current_config.whole_sounds.extend(current_zombies.attack_sound)
         current_zombies.dead_sound = [
             pygame.mixer.Sound(j)
             if type(j) != list else [pygame.mixer.Sound(k) for k in j]
             for j in current_zombies.dead_sound
         ]
+        for each in current_zombies.dead_sound:
+            if type(each) != list:
+                each.set_volume(self.sound_volume)
+            else:
+                for i in each:
+                    i.set_volume(self.sound_volume)
+        self.current_config.whole_sounds.extend(current_zombies.dead_sound)
         current_zombies.hit_sound = [
             pygame.mixer.Sound(j) for j in current_zombies.hit_sound
         ]
+        for each in current_zombies.hit_sound:
+            each.set_volume(self.sound_volume)
+        self.current_config.whole_sounds.extend(current_zombies.hit_sound)
         if current_zombies.hit_sound_ls:
             for k in range(len(current_zombies.hit_sound_ls)):
                 current = current_zombies.hit_sound_ls[k][1]
@@ -427,10 +519,22 @@ class Root(Tk):
                     current) if type(current) != list else [
                         pygame.mixer.Sound(y) for y in current
                     ]
+            for each in current_zombies.hit_sound_ls:
+                if type(each[1]) != list:
+                    each[1].set_volume(self.sound_volume)
+                else:
+                    for i in each[1]:
+                        i.set_volume(self.sound_volume)
+            self.current_config.whole_sounds.extend(
+                [i[1] for i in current_zombies.hit_sound_ls])
         if current_zombies.other_sound:
             current_zombies.other_sound = [
                 pygame.mixer.Sound(k) for k in current_zombies.other_sound
             ]
+            for each in current_zombies.other_sound:
+                each.set_volume(self.sound_volume)
+            self.current_config.whole_sounds.extend(
+                current_zombies.other_sound)
         zombie_img = Image.open(current_zombies.img)
         zombie_img = zombie_img.resize((self.lawn_width, self.lawn_height),
                                        Image.Resampling.LANCZOS)

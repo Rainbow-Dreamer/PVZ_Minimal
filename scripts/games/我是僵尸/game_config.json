@@ -1,0 +1,154 @@
+{
+    "background_volume": 0.3,
+    "choose_seed_volume": 0.3,
+    "whole_sound_volume": 0.3,
+    "pre_transparent": [
+        "豌豆射手.png",
+        "番薯.png"
+    ],
+    "wiki": {
+        "height": 60,
+        "num_each_row": 8,
+        "screen_size": [
+            1200,
+            500
+        ],
+        "max_rows": 5,
+        "sound_volume": 0.5
+    },
+    "choose_plant_bg": "Almanac_GroundDay.png",
+    "modified_file": null,
+    "lawnmower_rows": [
+        0,
+        1,
+        2,
+        3,
+        4
+    ],
+    "lawnmower_mode": 0,
+    "lawnmower_speed": 200,
+    "lawnmower_atack": null,
+    "lawnmower_img": "Lawn_mower_2.PNG.png",
+    "no_lawnmower_img": "no_lawnmower.png",
+    "background_music": "sounds/Laura Shigihara - Ultimate Battle IN-GAME.ogg",
+    "action_text_place_x": 270,
+    "action_text_place_y": 500,
+    "lawn_size": null,
+    "icon_name": "pvz.ico",
+    "title_name": "PVZ极简版",
+    "screen_size": [
+        900,
+        650
+    ],
+    "sunshine_img": "sun.png",
+    "fall_sunshine_img": "Sun_PvZ2.png",
+    "shovel_img": "Shovel.png",
+    "paused_img": "paused.png",
+    "map_size": [
+        5,
+        9
+    ],
+    "default_map_size": [
+        5,
+        9
+    ],
+    "first_time": true,
+    "lawn_photo": "Almanac_GroundDay.png",
+    "map_img_dict": {
+        "day": "Almanac_GroundDay.png",
+        "pool": "Almanac_GroundPool.jpg",
+        "empty": "empty.png"
+    },
+    "map_content": [
+        [
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day"
+        ],
+        [
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day"
+        ],
+        [
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day"
+        ],
+        [
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day"
+        ],
+        [
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day",
+            "day"
+        ]
+    ],
+    "init_sunshine": 200,
+    "sunshine_cooling_time": 10,
+    "zombie_explode": "explode.png",
+    "flag_img": "Zombie_flagpole.png",
+    "damaged_flag_img": "Zombie_flagpole2.png",
+    "zombie_head_img": "Zombatar_Normal_Zombie.PNG.png",
+    "brain_img": "BrainPvZH.png",
+    "sky_sunshine": 25,
+    "sunshine_not_enough": "sounds/buzzer.ogg",
+    "choose_plants_sound": "sounds/bleep.ogg",
+    "set_plants_sound": "sounds/plant.ogg",
+    "unset_plants_sound": "sounds/plant2.ogg",
+    "pick_shovel_sound": "sounds/shovel.ogg",
+    "get_sunshine_sound": "sounds/points.ogg",
+    "plant_bite_sound": "sounds/gulp.ogg",
+    "swing_sound": "sounds/swing.ogg",
+    "hammer_sound": "sounds/bonk.ogg",
+    "reset_sound": "sounds/tap.ogg",
+    "pause_sound": "sounds/pause.ogg",
+    "lose_sound": "sounds/losemusic.ogg",
+    "choose_plants_music": "sounds/Laura Shigihara - Choose Your Seeds IN-GAME.ogg",
+    "choose_plant_sound": "sounds/seedlift.ogg",
+    "zombies_coming_sound": "sounds/awooga.ogg",
+    "huge_wave_sound": "sounds/hugewave.ogg",
+    "lawnmower_sound": "sounds/lawnmower.ogg",
+    "win_sound": "sounds/winmusic.ogg",
+    "NULL": 0,
+    "PLACE": 1,
+    "REMOVE": 2,
+    "PAUSE": 3,
+    "show_zombies": true,
+    "msg_box": true,
+    "msg_box_x": 700,
+    "msg_box_y": 100,
+    "msg_lines_limit": 15
+}

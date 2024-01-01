@@ -12,13 +12,19 @@ def zombie_move(self, games, columns_move=0, rows_move=0):
         self.nexted_plants = check_if_plants
         self.adjust_col = -1
         return
-    check_if_plants2 = games.blocks[self.rows][self.columns +
-                                               columns_move].plants
-    if check_if_plants2 is not None:
-        self.next_to_plants = True
-        self.nexted_plants = check_if_plants2
-        self.adjust_col = 0
-        return
+    if self.columns + columns_move >= 0:
+        check_if_plants2 = games.blocks[self.rows][self.columns +
+                                                   columns_move].plants
+        if check_if_plants2 is not None:
+            self.next_to_plants = True
+            self.nexted_plants = check_if_plants2
+            self.adjust_col = 0
+            return
+    else:
+        if games.brains[self.rows] <= 0:
+            self.button.destroy()
+            self.status = 0
+            return
     self.rows += rows_move
     self.columns += columns_move
     if self.columns < 0:
@@ -35,6 +41,7 @@ def zombie_move(self, games, columns_move=0, rows_move=0):
             games.after(self.attack_speed, lambda: zombie_move(self, games))
         else:
             self.button.destroy()
+            self.status = 0
         return
 
     i, j = self.rows, self.columns
