@@ -130,6 +130,8 @@
     "pick_shovel_sound": "sounds/shovel.ogg",
     "get_sunshine_sound": "sounds/points.ogg",
     "plant_bite_sound": "sounds/gulp.ogg",
+    "swing_sound": "sounds/swing.ogg",
+    "hammer_sound": "sounds/bonk.ogg",
     "reset_sound": "sounds/tap.ogg",
     "pause_sound": "sounds/pause.ogg",
     "lose_sound": "sounds/losemusic.ogg",

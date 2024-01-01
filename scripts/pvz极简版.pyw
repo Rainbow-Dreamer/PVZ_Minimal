@@ -20,7 +20,7 @@ def quit():
 
 
 def read_little_games(filename):
-    os.chdir('../scripts/小游戏')
+    os.chdir('../scripts/games')
     with open(filename, encoding='utf-8') as f:
         exec(f.read(), globals())
 

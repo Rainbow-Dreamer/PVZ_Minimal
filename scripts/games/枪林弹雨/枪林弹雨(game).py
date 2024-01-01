@@ -2,7 +2,7 @@ os.chdir('..')
 sys.path.append('.')
 from plant_scripts.plant import plant
 
-os.chdir('小游戏/枪林弹雨')
+os.chdir('games/枪林弹雨')
 sys.path.append('.')
 with open('config.py', encoding='utf-8') as f:
     exec(f.read())

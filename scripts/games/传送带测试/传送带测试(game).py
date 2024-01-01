@@ -1,6 +1,4 @@
 os.chdir('传送带测试')
-with open('config.py', encoding='utf-8') as f:
-    exec(f.read())
 
 
 def go_back():
@@ -10,10 +8,27 @@ def go_back():
     os.startfile('pvz极简版.exe')
 
 
+class json_module:
+
+    def __init__(self, file, text=None):
+        if text is None:
+            with open(file, encoding='utf-8') as f:
+                text = json.load(f)
+        for i, j in text.items():
+            setattr(self, i, j)
+
+    def to_json(self):
+        return vars(self)
+
+
 class Root(Tk):
 
     def __init__(self):
         super(Root, self).__init__()
+        self.json_config_path = os.path.join(self.abs_path,
+                                             "../game_config.json")
+        self.current_config = json_module(self.json_config_path)
+        self.current_temp_config = temp_config()
         self.wm_iconbitmap(icon_name)
         self.title('传送带测试')
         self.minsize(*screen_size)
