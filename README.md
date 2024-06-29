@@ -4,7 +4,7 @@
 
 Plants vs Zombies Minimal Edition, with the greatest freedom of game customization and gameplay designing
 
-You can download the latest version [here](https://www.jianguoyun.com/p/Dfm6ocYQhPG0CBjE3rUEIAA)
+You can download the latest version [here](https://www.jianguoyun.com/p/DcEb38QQt43aDBirycoFIAA)
 
 I recently wrote a minimalist version of Plants vs Zombies using tkinter in python, and it's almost finished. In this version, you can very simply modify all the plants and zombies game parameters, you can customize the level, you can make your own new plants, new zombies, and all the things in the game screen can be changed, including the map, background music and all the game sound, how to modify I will say next. I kind of wrote a pvz from scratch, all the game layout and zombie and plant game logic algorithm, all the game interface design, data structure are their own original, no reference to any source code. Not all the plants and zombies algorithms have been written yet, but it will be soon.
 
@@ -284,7 +284,7 @@ More features that can be set during the game.
 
 pvz极简版，完全原创，自由度最大的植物大战僵尸
 
-你可以从[这里](https://www.jianguoyun.com/p/Dfm6ocYQhPG0CBjE3rUEIAA)下载最新版本
+你可以从[这里](https://www.jianguoyun.com/p/DcEb38QQt43aDBirycoFIAA)下载最新版本
 
 最近用python的tkinter写了一个极简版的植物大战僵尸，目前完成度差不多了。在这个版本里，大家可以非常简单随意地修改所有植物和僵尸的游戏参数，可以自己定制关卡，可以自己制作新植物，新僵尸，而且所有游戏画面里的东西都可以改，也包括地图，背景音乐和所有游戏音效，如何修改我接下来会说。我算是从零开始写了一个pvz，一切游戏布局和僵尸和植物的游戏逻辑算法，全部的游戏界面设计，数据结构都是自己原创，没有参考任何源代码。目前还没有把所有的植物和僵尸的算法都写完，不过很快的。
 
